@@ -160,7 +160,7 @@ workflows:
 #          pipeline_number: <<pipeline.number>>
 #          context:
 #            - hmpps-common-vars
-#            - hmpps-template-typescript-preprod
+#            - hmpps-tier-ui-preprod
 #          requires:
 #            - request-preprod-approval
 #          helm_timeout: 5m
@@ -179,7 +179,7 @@ workflows:
 #          slack_channel_name: << pipeline.parameters.releases-slack-channel >>
 #          context:
 #            - hmpps-common-vars
-#            - hmpps-template-typescript-prod
+#            - hmpps-tier-ui-prod
 #          requires:
 #            - request-prod-approval
 #          helm_timeout: 5m
@@ -187,7 +187,7 @@ workflows:
   security:
     triggers:
       - schedule:
-          cron: "30 5 * * 1-5"
+          cron: "50 7 * * 1-5"
           filters:
             branches:
               only:
@@ -213,7 +213,7 @@ workflows:
   security-weekly:
     triggers:
       - schedule:
-          cron: "0 5 * * 1"
+          cron: "42 7 * * 1"
           filters:
             branches:
               only:
