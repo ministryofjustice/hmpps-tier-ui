@@ -1,7 +1,7 @@
 {
   "name": "hmpps-tier-ui",
   "version": "0.0.1",
-  "description": "Hmpps Tier Ui",
+  "description": "HMPPS Tier UI",
   "repository": "git@github.com:ministryofjustice/hmpps-tier-ui.git",
   "license": "MIT",
   "scripts": {
