@@ -5,6 +5,9 @@
 table.heatmap {
   caption, th {
     text-align: center;
+    & small {
+      font-weight: normal;
+    }
   }
   td, td:last-child {
     padding: govuk-spacing(2) govuk-spacing(3);
