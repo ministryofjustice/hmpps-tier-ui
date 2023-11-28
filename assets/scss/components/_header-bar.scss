@@ -143,4 +143,5 @@
 .govuk-phase-banner {
   @include govuk-width-container;
   border: none;
+  padding: 0 govuk-spacing(2);
 }

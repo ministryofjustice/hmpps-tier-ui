@@ -12,9 +12,9 @@ export default function nunjucksSetup(app: express.Express, applicationInfo: App
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
-  app.locals.applicationName = 'HMPPS Tier UI'
-  app.locals.environmentName = config.environmentName
-  app.locals.environmentNameColour = config.environmentName === 'PRE-PRODUCTION' ? 'govuk-tag--green' : ''
+  app.locals.applicationName = 'Tier'
+  app.locals.environmentName = config.env
+  app.locals.environmentNameColour = config.env === 'preprod' ? 'govuk-tag--green' : ''
 
   // Cachebusting version string
   if (production) {
@@ -35,6 +35,7 @@ export default function nunjucksSetup(app: express.Express, applicationInfo: App
       'node_modules/govuk-frontend/components/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
+      'node_modules/@ministryofjustice/probation-search-frontend/components',
     ],
     {
       autoescape: true,

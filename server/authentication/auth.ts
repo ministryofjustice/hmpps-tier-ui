@@ -1,7 +1,8 @@
-import passport from 'passport'
-import { Strategy } from 'passport-oauth2'
+import passport, { Strategy } from 'passport'
+import { Strategy as OAuth2Strategy } from 'passport-oauth2'
 import type { RequestHandler } from 'express'
-
+import jwt from 'jsonwebtoken'
+import { generateUUID } from 'listr2/dist/utils/uuid'
 import config from '../config'
 import generateOauthClientToken from './clientCredentials'
 import type { TokenVerifier } from '../data/tokenVerification'
@@ -29,7 +30,7 @@ const authenticationMiddleware: AuthenticationMiddleware = verifyToken => {
 }
 
 function init(): void {
-  const strategy = new Strategy(
+  const oauth2Strategy = new OAuth2Strategy(
     {
       authorizationURL: `${config.apis.hmppsAuth.externalUrl}/oauth/authorize`,
       tokenURL: `${config.apis.hmppsAuth.url}/oauth/token`,
@@ -43,8 +44,23 @@ function init(): void {
       return done(null, { token, username: params.user_name, authSource: params.auth_source })
     },
   )
+  passport.use('oauth2', oauth2Strategy)
 
-  passport.use(strategy)
+  const localStrategy = new (class extends Strategy {
+    authenticate() {
+      const payload = {
+        auth_source: 'delius',
+        authorities: ['ROLE_USER'], // Update this to set roles during local dev/testing
+        client_id: 'clientid',
+        jti: generateUUID(),
+        scope: ['read'],
+        user_name: 'AUTH_USER',
+      }
+      const token = jwt.sign(payload, 'secret', { expiresIn: '24h' })
+      this.success({ token, username: 'AUTH_USER', authSource: 'delius', displayName: 'Test User' })
+    }
+  })()
+  passport.use('local', localStrategy)
 }
 
 export default {
