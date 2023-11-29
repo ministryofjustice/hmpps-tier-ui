@@ -48,6 +48,7 @@ export default function setUpAuth(): Router {
     router.get('/sign-in', (req, res, next) =>
       passport.authenticate('local', {
         successReturnToOrRedirect: req.session.returnTo || '/',
+        failureRedirect: '/autherror',
       })(req, res, next),
     )
   }

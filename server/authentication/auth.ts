@@ -1,10 +1,10 @@
 import passport, { Strategy } from 'passport'
 import { Strategy as OAuth2Strategy } from 'passport-oauth2'
 import type { RequestHandler } from 'express'
-import jwt from 'jsonwebtoken'
 import config from '../config'
 import generateOauthClientToken from './clientCredentials'
 import type { TokenVerifier } from '../data/tokenVerification'
+import createUserToken from '../testutils/createUserToken'
 
 passport.serializeUser((user, done) => {
   // Not used but required for Passport
@@ -48,15 +48,16 @@ function init(): void {
   const localStrategy = new (class extends Strategy {
     authenticate() {
       const payload = {
-        auth_source: 'delius',
-        authorities: ['ROLE_USER'], // Update this to set roles during local dev/testing
-        client_id: 'clientid',
-        jti: '00000000-0000-0000-0000-000000000000',
-        scope: ['read'],
-        user_name: 'AUTH_USER',
+        user_name: 'user1',
+        name: 'Test User',
+        displayName: 'Test User',
+        authorities: ['ROLE_USER'],
+        authSource: 'nomis',
+        active: true,
       }
-      const token = jwt.sign(payload, 'secret', { expiresIn: '24h' })
-      this.success({ token, username: 'AUTH_USER', authSource: 'delius', displayName: 'Test User' })
+      const token = createUserToken(payload)
+      const roles = payload.authorities.map(authority => authority.replace(/^ROLE_/, ''))
+      this.success({ token, roles, ...payload })
     }
   })()
   passport.use('local', localStrategy)
