@@ -2,7 +2,6 @@ import passport, { Strategy } from 'passport'
 import { Strategy as OAuth2Strategy } from 'passport-oauth2'
 import type { RequestHandler } from 'express'
 import jwt from 'jsonwebtoken'
-import { generateUUID } from 'listr2/dist/utils/uuid'
 import config from '../config'
 import generateOauthClientToken from './clientCredentials'
 import type { TokenVerifier } from '../data/tokenVerification'
@@ -52,7 +51,7 @@ function init(): void {
         auth_source: 'delius',
         authorities: ['ROLE_USER'], // Update this to set roles during local dev/testing
         client_id: 'clientid',
-        jti: generateUUID(),
+        jti: '00000000-0000-0000-0000-000000000000',
         scope: ['read'],
         user_name: 'AUTH_USER',
       }
