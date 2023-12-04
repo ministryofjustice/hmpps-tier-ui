@@ -1,0 +1,23 @@
+.banner {
+  background-color: govuk-colour('blue');
+  padding-bottom: 15px;
+  padding-top: 20px;
+
+  &.banner-secondary {
+    background-color: govuk-colour('light-blue');
+    padding-top: 15px;
+  }
+
+  .banner-header, .banner-content {
+    margin-bottom: 0;
+    span {
+      color: govuk-colour('white');
+      white-space: nowrap;
+    }
+  }
+
+  .divider::before {
+    content: '|';
+    margin: 0 10px;
+  }
+}

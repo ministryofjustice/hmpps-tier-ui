@@ -4,8 +4,78 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
+    <h1 class="govuk-heading-l">Check a Tier</h1>
+    <div class="govuk-grid-column-two-thirds">
+        <p>You can use this service to:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>check the tier for a person on probation</li>
+            <li>investigate what factors contributes to a person's tier value</li>
+        </ul>
 
-  <h1>This site is under construction...</h1>
-  <p>Please check back later when there is content to view.</p>
+        <p>A <strong>tier</strong> reflects the level of risk and complexity involved in managing a probation case. It
+        informs workload measurement and case allocation decisions, as well as planning and resourcing at a strategic
+        management level. The tier is calculated according to the Unified Tiering Model, which is made up of various
+        factors including:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>assessment scores such as
+                <abbr title="Risk of Serious Recidivism">RSR</abbr> and
+                <abbr title="Offender Group Re-conviction Scale">OGRS</abbr>,
+            </li>
+            <li>register levels such as
+                <abbr title="Risk of Serious Harm">RoSH</abbr> and
+                <abbr title="Multi-Agency Public Protection Arrangements">MAPPA</abbr>,
+            </li>
+            <li>additional factors such as risk to children, or self-harm.</li>
+        </ul>
 
+        <p>For more information about the Unified Tiering Model, <a href="/tiering-model">download the slide pack</a>.</p>
+
+        {%- from "govuk/components/button/macro.njk" import govukButton -%}
+        {{ govukButton({ text: "Start now", href: "/search", isStartButton: true }) }}
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+            <caption class="govuk-table__caption govuk-table__caption--m">Current Tier Distribution</caption>
+            <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">3<br/><small>High</small></th>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">246</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">5,033</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">10,950</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">1,688</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">2<br/><small>Medium</small></th>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-100">282,814</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-70">187,916</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-30">56,395</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">3,527</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">1<br/><small>Low</small></th>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-20">28,671</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-30">68,822</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-20">19,448</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">587</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <th scope="row" class="govuk-table__header">0</th>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-90">253,928</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-40">94,186</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">13,467</td>
+                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-10">709</td>
+            </tr>
+            </tbody>
+            <tfoot class="govuk-table__head">
+            <tr class="govuk-table__row">
+                <th scope="col" class="govuk-table__header"></th>
+                <th scope="col" class="govuk-table__header">D<br/><small>Low</small></th>
+                <th scope="col" class="govuk-table__header">C<br/><small>Medium</small></th>
+                <th scope="col" class="govuk-table__header">B<br/><small>High</small></th>
+                <th scope="col" class="govuk-table__header">A<br/><small>Very High</small></th>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
 {% endblock %}

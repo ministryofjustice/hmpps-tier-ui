@@ -1,5 +1,5 @@
 # Stage: base image
-FROM node:20.8-bullseye-slim as base
+FROM node:21-slim AS base
 
 ARG BUILD_NUMBER
 ARG GIT_REF
@@ -31,14 +31,11 @@ RUN apt-get update && \
         rm -rf /var/lib/apt/lists/*
 
 # Stage: build assets
-FROM base as build
+FROM base AS build
 
 ARG BUILD_NUMBER
 ARG GIT_REF
 ARG GIT_BRANCH
-
-RUN apt-get update && \
-        apt-get install -y make python g++
 
 COPY package*.json ./
 RUN CYPRESS_INSTALL_BINARY=0 npm ci --no-audit

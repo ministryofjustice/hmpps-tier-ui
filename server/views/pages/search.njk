@@ -1,0 +1,11 @@
+{% extends "../partials/layout.njk" %}
+
+{% set pageTitle = applicationName + " - Search" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block content %}
+  <div class="govuk-grid-column-two-thirds">
+    {% from "probationSearch/macro.njk" import probationSearch %}
+    {{ probationSearch({ id: "search", results: probationSearchResults }) }}
+  </div>
+{% endblock %}
