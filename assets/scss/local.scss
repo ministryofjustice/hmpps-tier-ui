@@ -11,6 +11,7 @@ table.heatmap {
   }
   td, td:last-child {
     padding: govuk-spacing(2) govuk-spacing(3);
+    vertical-align: middle;
   }
   @for $i from 1 through 10 {
     td.heatmap-#{$i * 10}, th.heatmap-#{$i * 10} {
