@@ -47,7 +47,10 @@ NODE_ENV=development
 ENVIRONMENT=dev
 REDIS_ENABLED=false
 HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
-TIER_API_URL=https://hmpps-tier-dev.prison.service.justice.gov.uk
+MANAGE_USERS_API_URL=https://manage-users-api-dev.hmpps.service.justice.gov.uk
+DELIUS_INTEGRATION_URL=https://tier-to-delius-dev.hmpps.service.justice.gov.uk
+TIER_API_URL=https://hmpps-tier-dev.hmpps.service.justice.gov.uk
+
 ```
 
 Run the following to grab client credentials from the dev namespace:
@@ -85,8 +88,8 @@ npm run start:dev
 To run the Cypress integration tests locally:
 
 ```shell
-# Start dependencies
-docker-compose -f docker-compose-test.yml up -d
+# Start WireMock
+docker-compose up -d
 
 # Start the UI in test mode
 npm run start-feature:dev

@@ -1,0 +1,115 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/tier/crn/X000001/tier/details",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "tierScore": "B1",
+          "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db37",
+          "calculationDate": "2023-12-07T12:05:11.524616",
+          "data": {
+            "protect": {
+              "tier": "B",
+              "points": 29,
+              "pointsBreakdown": {
+                "RSR": 20,
+                "ROSH": 10,
+                "MAPPA": 5,
+                "COMPLEXITY": 2,
+                "ADDITIONAL_FACTORS_FOR_WOMEN": 2
+              }
+            },
+            "change": {
+              "tier": "ONE",
+              "points": 9,
+              "pointsBreakdown": {
+                "NEEDS": 2,
+                "IOM": 2,
+                "OGRS": 5
+              }
+            },
+            "calculationVersion": "2"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/person/X000001",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "X000001",
+          "name": {
+            "forenames": "Jane",
+            "surname": "Doe"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/tier-details/X000001",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "gender": "Female",
+          "currentTier": "UB1",
+          "registrations": [
+            {
+              "code": "MAPP",
+              "description": "MAPPA",
+              "level": "M1",
+              "date": "2023-12-07"
+            },
+            {
+              "code": "IIOM",
+              "description": "Integrated Offender Management",
+              "date": "2023-12-07"
+            },
+            {
+              "code": "RMRH",
+              "description": "Medium RoSH",
+              "date": "2023-12-07"
+            },
+            {
+              "code": "STRG",
+              "description": "Street Gangs",
+              "date": "2023-03-09"
+            },
+            {
+              "code": "OTHR",
+              "description": "Some other registration",
+              "date": "2023-03-09"
+            }
+          ],
+          "convictions": [
+            {
+              "sentenceTypeCode": "SC"
+            }
+          ],
+          "previousEnforcementActivity": true,
+          "rsrscore": 12.3,
+          "ogrsscore": 56.7
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}
