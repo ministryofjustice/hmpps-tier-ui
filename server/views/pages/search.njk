@@ -4,8 +4,10 @@
 {% set mainClasses = "app-container govuk-body" %}
 
 {% block content %}
-  <div class="govuk-grid-column-two-thirds">
-    {% from "probationSearch/macro.njk" import probationSearch %}
-    {{ probationSearch({ id: "search", results: probationSearchResults }) }}
-  </div>
+    <div class="govuk-grid-row">
+        <div class="govuk-grid-column-two-thirds">
+            {% from "probationSearch/macro.njk" import probationSearch %}
+            {{ probationSearch({ id: "search", results: probationSearchResults }) }}
+        </div>
+    </div>
 {% endblock %}

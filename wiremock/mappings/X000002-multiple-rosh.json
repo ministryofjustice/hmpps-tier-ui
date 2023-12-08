@@ -1,0 +1,91 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/tier/crn/X000002/tier/details",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "tierScore": "C0",
+          "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db37",
+          "calculationDate": "2023-12-07T12:05:11.524616",
+          "data": {
+            "protect": {
+              "tier": "C",
+              "points": 10,
+              "pointsBreakdown": {
+                "RSR": 0,
+                "ROSH": 10,
+                "MAPPA": 0,
+                "COMPLEXITY": 0,
+                "ADDITIONAL_FACTORS_FOR_WOMEN": 0
+              }
+            },
+            "change": {
+              "tier": "ZERO",
+              "points": 0,
+              "pointsBreakdown": {
+                "NO_MANDATE_FOR_CHANGE": 0
+              }
+            },
+            "calculationVersion": "2"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/person/X000002",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "X000002",
+          "name": {
+            "forenames": "John",
+            "surname": "Doe"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/tier-details/X000002",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "gender": "Male",
+          "currentTier": "UB0",
+          "registrations": [
+            {
+              "code": "RMRH",
+              "description": "Medium RoSH",
+              "date": "2023-12-07"
+            },
+            {
+              "code": "RHRH",
+              "description": "High RoSH",
+              "date": "2023-12-06"
+            }
+          ],
+          "convictions": [],
+          "previousEnforcementActivity": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}
