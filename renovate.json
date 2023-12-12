@@ -15,19 +15,13 @@
       "stabilityDays": 5
     },
     {
-      "matchPackageNames": ["typescript", "govuk-frontend"],
+      "matchPackageNames": ["typescript", "@ministryofjustice/probation-search-frontend"],
       "rangeStrategy": "bump",
       "stabilityDays": 0
     },
     {
       "matchManagers": ["npm"],
-      "matchPackageNames": ["@types/node"],
-      "matchUpdateTypes": ["major"],
-      "enabled": false
-    },
-    {
-      "matchDatasources": ["docker"],
-      "matchPackageNames": ["node"],
+      "matchPackageNames": ["@types/node", "govuk-frontend"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     }
