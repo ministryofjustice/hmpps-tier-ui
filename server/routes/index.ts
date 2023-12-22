@@ -1,33 +1,62 @@
 import { type RequestHandler, Router } from 'express'
 
 import probationSearchRoutes from '@ministryofjustice/probation-search-frontend/routes/search'
+import { isAfter, startOfDay, subWeeks } from 'date-fns'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import config from '../config'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
 import TierApiClient, { TierLevel } from '../data/tierApiClient'
+import OasysApiClient, { Section11Answers, Section6Answers } from '../data/oasysApiClient'
 
-export default function routes({ hmppsAuthClient: oauthClient }: Services): Router {
+export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
-  probationSearchRoutes({ router, oauthClient, environment: config.env })
+  probationSearchRoutes({ router, oauthClient: hmppsAuthClient, environment: config.env })
 
   get('/', (_req, res, _next) => res.render('pages/index'))
 
   get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
-    const token = await oauthClient.getSystemClientToken()
-    const deliusClient = new DeliusIntegrationClient(token)
-    const tierClient = new TierApiClient(token)
-    const [personalDetails, deliusInputs, tierCalculation] = await Promise.all([
-      deliusClient.getPersonalDetails(crn),
-      deliusClient.getTierDetails(crn),
-      tierClient.getCalculationDetails(crn),
+    const [[personalDetails, deliusInputs, tierCalculation], [section6Answers, section11Answers]] = await Promise.all([
+      hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
+        const deliusClient = new DeliusIntegrationClient(token)
+        const tierClient = new TierApiClient(token)
+        return Promise.all([
+          deliusClient.getPersonalDetails(crn),
+          deliusClient.getTierDetails(crn),
+          tierClient.getCalculationDetails(crn),
+        ])
+      }),
+      oasysAuthClient.getToken().then(async token => {
+        const oasysClient = new OasysApiClient(token)
+        const assessmentsResponse = await oasysClient.getAssessments(crn)
+        const assessments =
+          assessmentsResponse?.timeline?.filter(
+            assessment =>
+              assessment.assessmentType === 'LAYER3' &&
+              ['COMPLETE', 'LOCKED_INCOMPLETE'].includes(assessment.status) &&
+              assessment.completedDate &&
+              isAfter(assessment.completedDate, subWeeks(startOfDay(new Date()), 55)),
+          ) ?? []
+        if (assessments.length === 0) return [null, null]
+        const { assessmentPk } = assessments.sort((a, b) => b.completedDate.getTime() - a.completedDate.getTime())[0]
+        return Promise.all([
+          oasysClient.getSection6Answers(assessmentPk),
+          oasysClient.getSection11Answers(assessmentPk),
+        ])
+      }),
     ])
 
     const warnings: string[] = []
-    const protectTable = calculateProtectLevel(deliusInputs, tierCalculation.data.protect, warnings)
+    const protectTable = calculateProtectLevel(
+      deliusInputs,
+      tierCalculation.data.protect,
+      section6Answers,
+      section11Answers,
+      warnings,
+    )
     const changeTable = calculateChangeLevel(deliusInputs, tierCalculation.data.change, warnings)
 
     res.render('pages/case', {
@@ -40,7 +69,13 @@ export default function routes({ hmppsAuthClient: oauthClient }: Services): Rout
     })
   })
 
-  function calculateProtectLevel(deliusInputs: DeliusTierInputs, tierLevel: TierLevel, warnings: string[]) {
+  function calculateProtectLevel(
+    deliusInputs: DeliusTierInputs,
+    tierLevel: TierLevel,
+    section6Answers: Section6Answers | null,
+    section11Answers: Section11Answers | null,
+    warnings: string[],
+  ) {
     const table = []
     const points = tierLevel.pointsBreakdown
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
@@ -80,10 +115,13 @@ export default function routes({ hmppsAuthClient: oauthClient }: Services): Rout
     }
 
     if (points.ADDITIONAL_FACTORS_FOR_WOMEN > 0) {
+      if (deliusInputs.gender.toLowerCase() !== 'female') {
+        warnings.push(`Additional factors for women were applied, but Delius gender is "${deliusInputs.gender}"`)
+      }
       table.push(row('Additional factors for women'))
       if (deliusInputs.previousEnforcementActivity) table.push(row('', 'Breach or recall', `+2`))
-      table.push(row('', 'Parenting responsibilities', missingOasysDataTag))
-      table.push(row('', 'Impulsivity and temper control', missingOasysDataTag))
+      if (hasParentingResponsibilities(section6Answers)) table.push(row('', 'Parenting responsibilities', `+2`))
+      if (hasImpulsivityOrTemperControl(section11Answers)) table.push(row('', 'Impulsivity and temper control', `+2`))
     }
 
     table.push(row('Total', undefined, `<strong>${tierLevel.points}</strong>`))
@@ -94,13 +132,16 @@ export default function routes({ hmppsAuthClient: oauthClient }: Services): Rout
   function calculateChangeLevel(deliusInputs: DeliusTierInputs, tierLevel: TierLevel, warnings: string[]) {
     const table = []
     const points = tierLevel.pointsBreakdown
+
     if (typeof points.NO_MANDATE_FOR_CHANGE !== 'undefined' || typeof points.NO_VALID_ASSESSMENT !== 'undefined')
       return []
 
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
-    if (deliusInputs.ogrsscore) {
+    if (points.OGRS > 0) {
       table.push(row(Abbreviations.OGRS, `${deliusInputs.ogrsscore}%`, `+${points.OGRS}`))
+    } else if (deliusInputs.ogrsscore) {
+      warnings.push(`OGRS score not used in Tier calculation, but Delius OGRS score is '${deliusInputs.ogrsscore}'`)
     }
 
     if (points.IOM > 0) {
@@ -136,6 +177,17 @@ export default function routes({ hmppsAuthClient: oauthClient }: Services): Rout
   function mappaDescription(levelCode?: string): string {
     if (!levelCode) return 'Not found'
     return levelCode.replace('M', 'Level ')
+  }
+
+  function hasParentingResponsibilities(answers: Section6Answers): boolean {
+    return answers.assessments[0]?.relParentalResponsibilities === 'Yes'
+  }
+
+  function hasImpulsivityOrTemperControl(answers: Section11Answers): boolean {
+    return (
+      answers.assessments[0]?.impulsivity !== '0-No problems' ||
+      answers.assessments[0]?.temperControl !== '0-No problems'
+    )
   }
 
   function row(input: string | Abbreviation, value?: string, points?: string) {

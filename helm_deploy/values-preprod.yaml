@@ -14,4 +14,6 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-preprod.prison.service.justice.gov.uk"
     DELIUS_INTEGRATION_URL: "https://tier-to-delius-preprod.hmpps.service.justice.gov.uk"
     TIER_API_URL: "https://hmpps-tier-preprod.hmpps.service.justice.gov.uk"
+    OASYS_API_URL: "https://bridge-pp-oasys.az.justice.gov.uk/eor/oasys"
+    OASYS_AUTH_URL: "https://bridge-pp-oasys.az.justice.gov.uk/eor/oasys/oauth/token"
     ENVIRONMENT: preprod

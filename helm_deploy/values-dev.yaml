@@ -14,4 +14,6 @@ generic-service:
     TOKEN_VERIFICATION_API_URL: "https://token-verification-api-dev.prison.service.justice.gov.uk"
     DELIUS_INTEGRATION_URL: "https://tier-to-delius-dev.hmpps.service.justice.gov.uk"
     TIER_API_URL: "https://hmpps-tier-dev.hmpps.service.justice.gov.uk"
+    OASYS_API_URL: "https://t2.oasys.service.justice.gov.uk/eor/oasys"
+    OASYS_AUTH_URL: "https://t2.oasys.service.justice.gov.uk/eor/oasys/oauth/token"
     ENVIRONMENT: dev

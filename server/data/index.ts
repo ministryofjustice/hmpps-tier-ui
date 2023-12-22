@@ -16,12 +16,16 @@ import { createRedisClient } from './redisClient'
 import RedisTokenStore from './tokenStore/redisTokenStore'
 import TestingTokenStore from './tokenStore/testingTokenStore'
 import config from '../config'
+import OasysAuthClient from './oasysAuthClient'
 
 type RestClientBuilder<T> = (token: string) => T
 
 export const dataAccess = () => ({
   applicationInfo,
   hmppsAuthClient: new HmppsAuthClient(
+    config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new TestingTokenStore(),
+  ),
+  oasysAuthClient: new OasysAuthClient(
     config.redis.enabled ? new RedisTokenStore(createRedisClient()) : new TestingTokenStore(),
   ),
   manageUsersApiClient: new ManageUsersApiClient(),
