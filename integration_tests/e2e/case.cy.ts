@@ -26,9 +26,10 @@ context('Case view screen', () => {
     cy.get(page.protectTableRow(5)).should('contain.text', 'Street gangs').should('contain.text', '+2')
     cy.get(page.protectTableRow(6)).should('contain.text', 'Additional factors for women')
     cy.get(page.protectTableRow(7)).should('contain.text', 'Breach or recall').should('contain.text', '+2')
-    cy.get(page.protectTableRow(8)).should('contain.text', 'Parenting responsibilities')
-    cy.get(page.protectTableRow(9)).should('contain.text', 'Impulsivity and temper control')
-    cy.get(page.protectTableRow(10)).should('contain.text', 'Total').should('contain.text', '29')
+    cy.get(page.protectTableRow(8))
+      .should('contain.text', 'Impulsivity and temper control')
+      .should('contain.text', '+2')
+    cy.get(page.protectTableRow(9)).should('contain.text', 'Total').should('contain.text', '31')
   })
 
   it('handles multiple rosh registrations', () => {

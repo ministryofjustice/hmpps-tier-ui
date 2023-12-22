@@ -97,6 +97,24 @@ export default {
       },
       agent: new AgentConfig(Number(get('TIER_API_TIMEOUT_RESPONSE', 5000))),
     },
+    oasysAuth: {
+      url: get('OASYS_AUTH_URL', 'http://localhost:8100/oasysAuth', requiredInProduction),
+      timeout: {
+        response: Number(get('OASYS_AUTH_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('OASYS_AUTH_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('OASYS_AUTH_TIMEOUT_RESPONSE', 10000))),
+      clientId: get('OASYS_CLIENT_ID', 'clientid', requiredInProduction),
+      clientSecret: get('OASYS_CLIENT_SECRET', 'clientsecret', requiredInProduction),
+    },
+    oasysApi: {
+      url: get('OASYS_API_URL', 'http://localhost:8100', requiredInProduction),
+      timeout: {
+        response: Number(get('OASYS_API_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('OASYS_API_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('OASYS_API_TIMEOUT_RESPONSE', 10000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }
