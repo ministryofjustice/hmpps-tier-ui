@@ -3,7 +3,7 @@
 [![Repository Standards](https://img.shields.io/badge/dynamic/json?color=blue&logo=github&label=MoJ%20Compliant&query=%24.message&url=https%3A%2F%2Foperations-engineering-reports.cloud-platform.service.justice.gov.uk%2Fapi%2Fv1%2Fcompliant_public_repositories%2Fhmpps-tier-ui)](https://operations-engineering-reports.cloud-platform.service.justice.gov.uk/public-report/hmpps-tier-ui "Link to report")
 
 A user interface for the [HMPPS Tier API](https://github.com/ministryofjustice/hmpps-tier).
-Try it out in the dev environment: https://tier-ui-dev.hmpps.service.justice.gov.uk
+Try it out in the dev environment: https://tier-dev.hmpps.service.justice.gov.uk
 
 ## Get started
 

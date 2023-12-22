@@ -3,7 +3,7 @@ import RestClient from './restClient'
 
 export default class OasysApiClient extends RestClient {
   constructor(token: string) {
-    super('OASysAPI', config.apis.oasysApi, token)
+    super('OASys ORDS API', config.apis.oasysApi, token)
   }
 
   async getAssessments(crn: string): Promise<AssessmentTimeline> {

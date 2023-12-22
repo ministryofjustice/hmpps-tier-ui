@@ -3,7 +3,7 @@ import RestClient from './restClient'
 
 export default class TierApiClient extends RestClient {
   constructor(token: string) {
-    super('TierApi', config.apis.tierApi, token)
+    super('Tier API', config.apis.tierApi, token)
   }
 
   async getCalculationDetails(crn: string): Promise<TierCalculation> {

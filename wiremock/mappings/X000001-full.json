@@ -8,7 +8,7 @@
       "response": {
         "status": 200,
         "jsonBody": {
-          "tierScore": "B1",
+          "tierScore": "B2",
           "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db37",
           "calculationDate": "2023-12-07T12:05:11.524616",
           "data": {
@@ -24,10 +24,10 @@
               }
             },
             "change": {
-              "tier": "ONE",
-              "points": 9,
+              "tier": "TWO",
+              "points": 14,
               "pointsBreakdown": {
-                "NEEDS": 2,
+                "NEEDS": 7,
                 "IOM": 2,
                 "OGRS": 5
               }
@@ -68,7 +68,7 @@
         "status": 200,
         "jsonBody": {
           "gender": "Female",
-          "currentTier": "UB1",
+          "currentTier": "UB2",
           "registrations": [
             {
               "code": "MAPP",
@@ -265,6 +265,134 @@
               }
             }
           ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/needs/crn/X000001",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "identifiedNeeds": [
+            {
+              "section": "RELATIONSHIPS",
+              "name": "Relationships",
+              "overThreshold": true,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "STANDARD",
+              "identifiedAsNeed": true,
+              "needScore": 2
+            },
+            {
+              "section": "LIFESTYLE_AND_ASSOCIATES",
+              "name": "Lifestyle and Associates",
+              "overThreshold": true,
+              "riskOfHarm": true,
+              "riskOfReoffending": true,
+              "flaggedAsNeed": false,
+              "severity": "STANDARD",
+              "identifiedAsNeed": true,
+              "needScore": 3
+            },
+            {
+              "section": "ALCOHOL_MISUSE",
+              "name": "Alcohol Misuse",
+              "overThreshold": true,
+              "riskOfHarm": false,
+              "riskOfReoffending": true,
+              "flaggedAsNeed": false,
+              "severity": "STANDARD",
+              "identifiedAsNeed": true,
+              "needScore": 4
+            },
+            {
+              "section": "THINKING_AND_BEHAVIOUR",
+              "name": "Thinking and Behaviour",
+              "overThreshold": true,
+              "riskOfHarm": true,
+              "riskOfReoffending": true,
+              "flaggedAsNeed": false,
+              "severity": "SEVERE",
+              "identifiedAsNeed": true,
+              "needScore": 7
+            }
+          ],
+          "notIdentifiedNeeds": [
+            {
+              "section": "ACCOMMODATION",
+              "name": "Accommodation",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false,
+              "needScore": 0
+            },
+            {
+              "section": "EDUCATION_TRAINING_AND_EMPLOYABILITY",
+              "name": "4 - Education, Training and Employability",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false,
+              "needScore": 0
+            },
+            {
+              "section": "FINANCIAL_MANAGEMENT_AND_INCOME",
+              "name": "Financial Management and Income",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false
+            },
+            {
+              "section": "DRUG_MISUSE",
+              "name": "Drug Misuse",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false,
+              "needScore": 0
+            },
+            {
+              "section": "EMOTIONAL_WELL_BEING",
+              "name": "Emotional Well-being",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false
+            },
+            {
+              "section": "ATTITUDES",
+              "name": "Attitudes",
+              "overThreshold": false,
+              "riskOfHarm": false,
+              "riskOfReoffending": false,
+              "flaggedAsNeed": false,
+              "severity": "NO_NEED",
+              "identifiedAsNeed": false,
+              "needScore": 0
+            }
+          ],
+          "unansweredNeeds": [],
+          "assessedOn": "2023-12-19T16:57:25"
         },
         "headers": {
           "Content-Type": "application/json"

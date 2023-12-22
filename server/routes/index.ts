@@ -8,6 +8,7 @@ import config from '../config'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
 import TierApiClient, { TierLevel } from '../data/tierApiClient'
 import OasysApiClient, { Section11Answers, Section6Answers } from '../data/oasysApiClient'
+import ArnsApiClient, { Needs } from '../data/arnsApiClient'
 
 export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): Router {
   const router = Router()
@@ -19,35 +20,39 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
   get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
-    const [[personalDetails, deliusInputs, tierCalculation], [section6Answers, section11Answers]] = await Promise.all([
-      hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
-        const deliusClient = new DeliusIntegrationClient(token)
-        const tierClient = new TierApiClient(token)
-        return Promise.all([
-          deliusClient.getPersonalDetails(crn),
-          deliusClient.getTierDetails(crn),
-          tierClient.getCalculationDetails(crn),
-        ])
-      }),
-      oasysAuthClient.getToken().then(async token => {
-        const oasysClient = new OasysApiClient(token)
-        const assessmentsResponse = await oasysClient.getAssessments(crn)
-        const assessments =
-          assessmentsResponse?.timeline?.filter(
-            assessment =>
-              assessment.assessmentType === 'LAYER3' &&
-              ['COMPLETE', 'LOCKED_INCOMPLETE'].includes(assessment.status) &&
-              assessment.completedDate &&
-              isAfter(assessment.completedDate, subWeeks(startOfDay(new Date()), 55)),
-          ) ?? []
-        if (assessments.length === 0) return [null, null]
-        const { assessmentPk } = assessments.sort((a, b) => b.completedDate.getTime() - a.completedDate.getTime())[0]
-        return Promise.all([
-          oasysClient.getSection6Answers(assessmentPk),
-          oasysClient.getSection11Answers(assessmentPk),
-        ])
-      }),
-    ])
+    const [[personalDetails, deliusInputs, tierCalculation, needs], [section6Answers, section11Answers]] =
+      await Promise.all([
+        hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
+          const deliusClient = new DeliusIntegrationClient(token)
+          const tierClient = new TierApiClient(token)
+          const arnsClient = new ArnsApiClient(token)
+          return Promise.all([
+            deliusClient.getPersonalDetails(crn),
+            deliusClient.getTierDetails(crn),
+            tierClient.getCalculationDetails(crn),
+            arnsClient.getNeeds(crn),
+          ])
+        }),
+        oasysAuthClient.getToken().then(async token => {
+          const oasysClient = new OasysApiClient(token)
+          const assessmentsResponse = await oasysClient.getAssessments(crn)
+          const assessments =
+            assessmentsResponse?.timeline?.filter(
+              assessment =>
+                assessment.assessmentType === 'LAYER3' &&
+                (assessment.status === 'COMPLETE' || assessment.status === 'LOCKED_INCOMPLETE') &&
+                assessment.completedDate &&
+                isWithinLast55Weeks(assessment.completedDate),
+            ) ?? []
+          if (assessments.length === 0) return [null, null]
+          const { assessmentPk } = assessments.reduce((a, b) => (isAfter(a.completedDate, b.completedDate) ? a : b))
+          if (!assessmentPk) return [null, null]
+          return Promise.all([
+            oasysClient.getSection6Answers(assessmentPk),
+            oasysClient.getSection11Answers(assessmentPk),
+          ])
+        }),
+      ])
 
     const warnings: string[] = []
     const protectTable = calculateProtectLevel(
@@ -57,7 +62,12 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
       section11Answers,
       warnings,
     )
-    const changeTable = calculateChangeLevel(deliusInputs, tierCalculation.data.change, warnings)
+    const changeTable = calculateChangeLevel(
+      deliusInputs,
+      tierCalculation.data.change,
+      needs && isWithinLast55Weeks(needs.assessedOn) ? needs : null,
+      warnings,
+    )
 
     res.render('pages/case', {
       personalDetails,
@@ -129,17 +139,29 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     return table
   }
 
-  function calculateChangeLevel(deliusInputs: DeliusTierInputs, tierLevel: TierLevel, warnings: string[]) {
+  function calculateChangeLevel(
+    deliusInputs: DeliusTierInputs,
+    tierLevel: TierLevel,
+    needs: Needs | null,
+    warnings: string[],
+  ) {
     const table = []
     const points = tierLevel.pointsBreakdown
 
-    if (typeof points.NO_MANDATE_FOR_CHANGE !== 'undefined' || typeof points.NO_VALID_ASSESSMENT !== 'undefined')
+    if (typeof points.NO_VALID_ASSESSMENT !== 'undefined' && needs) {
+      warnings.push('Change level has not been calculated, however an assessment was found in OASys')
+    }
+
+    if (typeof points.NO_MANDATE_FOR_CHANGE !== 'undefined' || typeof points.NO_VALID_ASSESSMENT !== 'undefined') {
       return []
+    }
+
+    if (!needs) warnings.push('Change level has been calculated, however no assessment was found in OASys')
 
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
     if (points.OGRS > 0) {
-      table.push(row(Abbreviations.OGRS, `${deliusInputs.ogrsscore}%`, `+${points.OGRS}`))
+      table.push(row(Abbreviations.OGRS, `${deliusInputs.ogrsscore ?? 0}%`, `+${points.OGRS}`))
     } else if (deliusInputs.ogrsscore) {
       warnings.push(`OGRS score not used in Tier calculation, but Delius OGRS score is '${deliusInputs.ogrsscore}'`)
     }
@@ -153,21 +175,22 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
     if (points.NEEDS > 0) {
       table.push(row('Criminogenic needs'))
-      table.push(row('', 'Accommodation', missingOasysDataTag))
-      table.push(row('', 'Education, training and employability', missingOasysDataTag))
-      table.push(row('', 'Relationships', missingOasysDataTag))
-      table.push(row('', 'Lifestyle and associates', missingOasysDataTag))
-      table.push(row('', 'Drug misuse', missingOasysDataTag))
-      table.push(row('', 'Alcohol misuse', missingOasysDataTag))
-      table.push(row('', 'Thinking and behaviour', missingOasysDataTag))
-      table.push(row('', 'Attitudes', missingOasysDataTag))
-      table.push(row('', 'Financial management and income', missingOasysDataTag))
-      table.push(row('', 'Emotional wellbeing', missingOasysDataTag))
+      calculateNeedScores(needs, table)
     }
 
     table.push(row('Total', undefined, `<strong>${tierLevel.points}</strong>`))
 
     return table
+  }
+
+  function calculateNeedScores(needs: Needs, table: Table) {
+    const severeNeedTag = '<span class="govuk-tag govuk-tag--red" title="Severe need">SEVERE</span>'
+    needs?.identifiedNeeds?.forEach(need => {
+      const isSevere = need.severity === 'SEVERE'
+      const label = `${need.name} ${isSevere ? severeNeedTag : ''}`
+      const score = NeedsWeighting[need.section] * (isSevere ? 2 : 1)
+      table.push(row('', label, `+${score}`))
+    })
   }
 
   /**
@@ -190,6 +213,10 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     )
   }
 
+  function isWithinLast55Weeks(date: Date) {
+    return isAfter(date, subWeeks(startOfDay(new Date()), 55))
+  }
+
   function row(input: string | Abbreviation, value?: string, points?: string) {
     const items = []
     let colspan = 1
@@ -200,13 +227,15 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     } else {
       items.push({ html: `<abbr title="${input.text}">${input.abbreviation}</abbr>`, colspan })
     }
-    if (value) items.push({ text: value })
+    if (value) items.push({ html: value })
     if (points) items.push({ html: points, format: 'numeric' })
     return items
   }
 
   return router
 }
+
+type Table = { text?: string; html?: string; colspan?: number; format?: string }[][]
 
 type Abbreviation = {
   abbreviation: string
@@ -234,5 +263,15 @@ const ComplexityFactors = {
   RTAO: 'Terrorism',
 }
 
-const missingOasysDataTag =
-  '<span class="govuk-tag govuk-tag--red" title="OASys integration coming soon!">Unknown</span>'
+const NeedsWeighting = {
+  ACCOMMODATION: 1,
+  EDUCATION_TRAINING_AND_EMPLOYABILITY: 1,
+  RELATIONSHIPS: 1,
+  LIFESTYLE_AND_ASSOCIATES: 1,
+  DRUG_MISUSE: 1,
+  ALCOHOL_MISUSE: 1,
+  THINKING_AND_BEHAVIOUR: 2,
+  ATTITUDES: 2,
+  FINANCIAL_MANAGEMENT_AND_INCOME: 0,
+  EMOTIONAL_WELL_BEING: 0,
+}
