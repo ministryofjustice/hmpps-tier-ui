@@ -100,7 +100,7 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
       table.push(row(Abbreviations.ROSH, description, roshPoints))
     }
 
-    if (deliusInputs.rsrscore) {
+    if (points.RSR) {
       const score = `${deliusInputs.rsrscore}%`
       const rsrPoints =
         points.RSR > points.ROSH ? `+${points.RSR}` : `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`
