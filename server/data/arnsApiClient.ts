@@ -11,7 +11,7 @@ export default class ArnsApiClient extends RestClient {
   }
 }
 
-type Severity = 'STANDARD' | 'SEVERE'
+type Severity = 'NO_NEED' | 'STANDARD' | 'SEVERE'
 
 type Section =
   | 'ACCOMMODATION'
