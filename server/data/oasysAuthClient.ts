@@ -28,7 +28,7 @@ export default class OasysAuthClient {
     const grantRequest = new URLSearchParams({ grant_type: 'client_credentials' }).toString()
 
     return superagent
-      .post(`${config.apis.oasysAuth.url}/oauth/token`)
+      .post(config.apis.oasysAuth.url)
       .set('Authorization', clientToken)
       .set('content-type', 'application/x-www-form-urlencoded')
       .send(grantRequest)

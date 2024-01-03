@@ -115,6 +115,14 @@ export default {
       },
       agent: new AgentConfig(Number(get('OASYS_API_TIMEOUT_RESPONSE', 10000))),
     },
+    arnsApi: {
+      url: get('ARNS_API_URL', 'http://localhost:8100', requiredInProduction),
+      timeout: {
+        response: Number(get('ARNS_API_TIMEOUT_RESPONSE', 10000)),
+        deadline: Number(get('ARNS_API_TIMEOUT_DEADLINE', 10000)),
+      },
+      agent: new AgentConfig(Number(get('ARNS_API_TIMEOUT_RESPONSE', 10000))),
+    },
   },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
 }

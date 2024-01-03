@@ -16,4 +16,5 @@ generic-service:
     TIER_API_URL: "https://hmpps-tier-preprod.hmpps.service.justice.gov.uk"
     OASYS_API_URL: "https://bridge-pp-oasys.az.justice.gov.uk/eor/oasys"
     OASYS_AUTH_URL: "https://bridge-pp-oasys.az.justice.gov.uk/eor/oasys/oauth/token"
+    ARNS_API_URL: "https://assess-risks-and-needs-preprod.hmpps.service.justice.gov.uk"
     ENVIRONMENT: preprod
