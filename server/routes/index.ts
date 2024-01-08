@@ -303,7 +303,7 @@ class TierCountDetail {
   }
 
   getTierCount(protect: string, change: number): number {
-    return this.tierCounts.find(count => count.protectLevel === protect && count.changeLevel === change).count
+    return this.tierCounts.find(count => count.protectLevel === protect && count.changeLevel === change)?.count ?? 0
   }
 
   getHeat(protect: string, change: number): number {
