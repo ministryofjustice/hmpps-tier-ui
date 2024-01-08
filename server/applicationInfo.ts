@@ -12,5 +12,12 @@ export type ApplicationInfo = {
 }
 
 export default (): ApplicationInfo => {
-  return { applicationName: 'hmpps-tier-ui', buildNumber, gitRef, gitShortHash: gitRef.substring(0, 7), productId, branchName }
+  return {
+    applicationName: 'hmpps-tier-ui',
+    buildNumber,
+    gitRef,
+    gitShortHash: gitRef.substring(0, 7),
+    productId,
+    branchName,
+  }
 }
