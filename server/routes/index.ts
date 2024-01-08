@@ -100,7 +100,7 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
       table.push(row(Abbreviations.ROSH, description, roshPoints))
     }
 
-    if (deliusInputs.rsrscore) {
+    if (points.RSR) {
       const score = `${deliusInputs.rsrscore}%`
       const rsrPoints =
         points.RSR > points.ROSH ? `+${points.RSR}` : `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`
@@ -175,7 +175,7 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
     if (points.NEEDS > 0) {
       table.push(row('Criminogenic needs'))
-      calculateNeedScores(needs, table)
+      calculateNeedScores(needs, table, points.NEEDS, warnings)
     }
 
     table.push(row('Total', undefined, `<strong>${tierLevel.points}</strong>`))
@@ -183,14 +183,21 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     return table
   }
 
-  function calculateNeedScores(needs: Needs, table: Table) {
+  function calculateNeedScores(needs: Needs, table: Table, expectedScore: number, warnings: string[]) {
     const severeNeedTag = '<span class="govuk-tag govuk-tag--red" title="Severe need">SEVERE</span>'
-    needs?.identifiedNeeds?.forEach(need => {
-      const isSevere = need.severity === 'SEVERE'
-      const label = `${need.name} ${isSevere ? severeNeedTag : ''}`
-      const score = NeedsWeighting[need.section] * (isSevere ? 2 : 1)
-      table.push(row('', label, `+${score}`))
-    })
+    let totalScore = 0
+    needs?.identifiedNeeds
+      ?.filter(need => need.severity !== 'NO_NEED')
+      ?.forEach(need => {
+        const isSevere = need.severity === 'SEVERE'
+        const label = `${need.name} ${isSevere ? severeNeedTag : ''}`
+        const score = NeedsWeighting[need.section] * (isSevere ? 2 : 1)
+        totalScore += score
+        table.push(row('', label, `+${score}`))
+      })
+    if (totalScore !== expectedScore)
+      warnings.push(`Criminogenic needs score mismatch. \
+      The tier has been calculated based on a needs score of ${expectedScore}, but the score is ${totalScore}.`)
   }
 
   /**
