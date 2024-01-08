@@ -295,19 +295,19 @@ const NeedsWeighting = {
 class TierCountDetail {
   tierCounts: TierCount[]
 
-  totalCases: number
+  maxCount: number
 
   constructor(tierCounts: TierCount[]) {
     this.tierCounts = tierCounts
-    this.totalCases = tierCounts.map(count => count.count).reduce((sum, current) => sum + current, 0)
+    this.maxCount = tierCounts.map(count => count.count).reduce((max, current) => Math.max(max, current), 0)
   }
 
   getTierCount(protect: string, change: number): number {
-    return this.tierCounts.find(count => count.protectLevel === protect && count.changeLevel === change).count
+    return this.tierCounts.find(count => count.protectLevel === protect && count.changeLevel === change)?.count ?? 0
   }
 
   getHeat(protect: string, change: number): number {
-    const percentage = (this.getTierCount(protect, change) / this.totalCases) * 100
+    const percentage = (this.getTierCount(protect, change) / this.maxCount) * 100
     if (Math.ceil(percentage) < 10) {
       return 10
     }
