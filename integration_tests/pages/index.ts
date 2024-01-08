@@ -8,4 +8,6 @@ export default class IndexPage extends Page {
   headerUserName = (): PageElement => cy.get('[data-qa=header-user-name]')
 
   headerPhaseBanner = (): PageElement => cy.get('[data-qa=header-phase-banner]')
+
+  heatMapCell = (row: number, col: number): string => `tbody tr:nth-child(${row}) td:nth-child(${col})`
 }

@@ -1,0 +1,98 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/tier/tier-counts",
+        "method": "GET"
+      },
+      "response": {
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "status": 200,
+        "jsonBody": [
+          {
+            "count": 178,
+            "protectLevel": "A",
+            "changeLevel": 0
+          },
+          {
+            "count": 403,
+            "protectLevel": "A",
+            "changeLevel": 1
+          },
+          {
+            "count": 2841,
+            "protectLevel": "A",
+            "changeLevel": 2
+          },
+          {
+            "count": 1323,
+            "protectLevel": "A",
+            "changeLevel": 3
+          },
+          {
+            "count": 3168,
+            "protectLevel": "B",
+            "changeLevel": 0
+          },
+          {
+            "count": 9194,
+            "protectLevel": "B",
+            "changeLevel": 1
+          },
+          {
+            "count": 39095,
+            "protectLevel": "B",
+            "changeLevel": 2
+          },
+          {
+            "count": 8176,
+            "protectLevel": "B",
+            "changeLevel": 3
+          },
+          {
+            "count": 22295,
+            "protectLevel": "C",
+            "changeLevel": 0
+          },
+          {
+            "count": 32420,
+            "protectLevel": "C",
+            "changeLevel": 1
+          },
+          {
+            "count": 52016,
+            "protectLevel": "C",
+            "changeLevel": 2
+          },
+          {
+            "count": 4079,
+            "protectLevel": "C",
+            "changeLevel": 3
+          },
+          {
+            "count": 84663,
+            "protectLevel": "D",
+            "changeLevel": 0
+          },
+          {
+            "count": 10793,
+            "protectLevel": "D",
+            "changeLevel": 1
+          },
+          {
+            "count": 13038,
+            "protectLevel": "D",
+            "changeLevel": 2
+          },
+          {
+            "count": 218,
+            "protectLevel": "D",
+            "changeLevel": 3
+          }
+        ]
+      }
+    }
+  ]
+}
