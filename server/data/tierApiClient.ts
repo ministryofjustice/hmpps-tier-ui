@@ -9,6 +9,10 @@ export default class TierApiClient extends RestClient {
   async getCalculationDetails(crn: string): Promise<TierCalculation> {
     return this.get({ path: `/crn/${crn}/tier/details` })
   }
+
+  async getTierCounts(): Promise<TierCount[]> {
+    return this.get({ path: '/tier-counts' })
+  }
 }
 
 export type CalculationRule =
@@ -38,4 +42,10 @@ export interface TierLevel {
   tier: string
   points: number
   pointsBreakdown: Record<CalculationRule, number>
+}
+
+export interface TierCount {
+  protectLevel: string
+  changeLevel: number
+  count: number
 }

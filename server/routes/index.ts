@@ -6,7 +6,7 @@ import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import config from '../config'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
-import TierApiClient, { TierLevel } from '../data/tierApiClient'
+import TierApiClient, { TierCount, TierLevel } from '../data/tierApiClient'
 import OasysApiClient, { Section11Answers, Section6Answers } from '../data/oasysApiClient'
 import ArnsApiClient, { Needs } from '../data/arnsApiClient'
 
@@ -16,7 +16,16 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
   probationSearchRoutes({ router, oauthClient: hmppsAuthClient, environment: config.env })
 
-  get('/', (_req, res, _next) => res.render('pages/index'))
+  get('/', async (_req, res, _next) => {
+    const counts = await hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
+      const tierClient = new TierApiClient(token)
+      return tierClient.getTierCounts()
+    })
+
+    const tierCounts = new TierCountDetail(counts)
+
+    res.render('pages/index', { tierCounts })
+  })
 
   get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
@@ -281,4 +290,27 @@ const NeedsWeighting = {
   ATTITUDES: 2,
   FINANCIAL_MANAGEMENT_AND_INCOME: 0,
   EMOTIONAL_WELL_BEING: 0,
+}
+
+class TierCountDetail {
+  tierCounts: TierCount[]
+
+  totalCases: number
+
+  constructor(tierCounts: TierCount[]) {
+    this.tierCounts = tierCounts
+    this.totalCases = tierCounts.map(count => count.count).reduce((sum, current) => sum + current, 0)
+  }
+
+  getTierCount(protect: string, change: number): number {
+    return this.tierCounts.find(count => count.protectLevel === protect && count.changeLevel === change).count
+  }
+
+  getHeat(protect: string, change: number): number {
+    const percentage = (this.getTierCount(protect, change) / this.totalCases) * 100
+    if (Math.ceil(percentage) < 10) {
+      return 10
+    }
+    return Math.ceil(percentage / 10) * 10
+  }
 }
