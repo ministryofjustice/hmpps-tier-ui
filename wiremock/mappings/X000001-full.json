@@ -14,13 +14,13 @@
           "data": {
             "protect": {
               "tier": "B",
-              "points": 31,
+              "points": 33,
               "pointsBreakdown": {
                 "RSR": 20,
                 "ROSH": 10,
                 "MAPPA": 5,
                 "COMPLEXITY": 2,
-                "ADDITIONAL_FACTORS_FOR_WOMEN": 4
+                "ADDITIONAL_FACTORS_FOR_WOMEN": 6
               }
             },
             "change": {
