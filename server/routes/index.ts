@@ -101,26 +101,32 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
     if (points.ROSH) {
-      totalScore += Math.max(points.ROSH, points.RSR)
       const rosh = registrations.filter(r => ['RVHR', 'RHRH', 'RMRH'].includes(r.code))
-      const roshPoints =
-        points.ROSH >= points.RSR ? `+${points.ROSH}` : `<s>+${points.ROSH}</s><br/><small>(superseded by RSR)</small>`
       const description = rosh.find(() => true)?.description ?? 'Not found'
+      if (points.ROSH >= points.RSR) {
+        totalScore += +points.ROSH
+        table.push(row(Abbreviations.ROSH, description, `+${points.ROSH}`))
+      } else {
+        table.push(
+          row(Abbreviations.ROSH, description, `<s>+${points.ROSH}</s><br/><small>(superseded by RSR)</small>`),
+        )
+      }
       if (rosh.length > 1) warnings.push('Multiple RoSH registrations were found in Delius.')
       if (rosh.length === 0) warnings.push('No RoSH registrations were found in Delius.')
-      table.push(row(Abbreviations.ROSH, description, roshPoints))
     }
 
     if (points.RSR) {
-      totalScore += deliusInputs.rsrscore
       const score = `${deliusInputs.rsrscore}%`
-      const rsrPoints =
-        points.RSR > points.ROSH ? `+${points.RSR}` : `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`
-      table.push(row(Abbreviations.RSR, score, rsrPoints))
+      if (points.RSR > points.ROSH) {
+        totalScore += +points.RSR
+        table.push(row(Abbreviations.RSR, score, `+${points.RSR}`))
+      } else {
+        table.push(row(Abbreviations.RSR, score, `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`))
+      }
     }
 
     if (points.MAPPA > 0) {
-      totalScore += points.MAPPA
+      totalScore += +points.MAPPA
       const mappa = registrations.find(r => r.code === 'MAPP' && ['M1', 'M2', 'M3'].includes(r.level))
       const description = mappaDescription(mappa?.level) ?? 'Not found'
       if (!mappa) warnings.push('No MAPPA registration was found in Delius.')
