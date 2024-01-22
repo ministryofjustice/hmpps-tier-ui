@@ -95,31 +95,41 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     section11Answers: Section11Answers | null,
     warnings: string[],
   ) {
+    let totalScore = 0
     const table = []
     const points = tierLevel.pointsBreakdown
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
     if (points.ROSH) {
       const rosh = registrations.filter(r => ['RVHR', 'RHRH', 'RMRH'].includes(r.code))
-      const roshPoints =
-        points.ROSH >= points.RSR ? `+${points.ROSH}` : `<s>+${points.ROSH}</s><br/><small>(superseded by RSR)</small>`
       const description = rosh.find(() => true)?.description ?? 'Not found'
-      if (rosh.length > 1) warnings.push('Multiple RoSH registrations were found in Delius')
-      if (rosh.length === 0) warnings.push('No RoSH registrations were found in Delius')
-      table.push(row(Abbreviations.ROSH, description, roshPoints))
+      if (points.ROSH >= points.RSR) {
+        totalScore += +points.ROSH
+        table.push(row(Abbreviations.ROSH, description, `+${points.ROSH}`))
+      } else {
+        table.push(
+          row(Abbreviations.ROSH, description, `<s>+${points.ROSH}</s><br/><small>(superseded by RSR)</small>`),
+        )
+      }
+      if (rosh.length > 1) warnings.push('Multiple RoSH registrations were found in Delius.')
+      if (rosh.length === 0) warnings.push('No RoSH registrations were found in Delius.')
     }
 
     if (points.RSR) {
       const score = `${deliusInputs.rsrscore}%`
-      const rsrPoints =
-        points.RSR > points.ROSH ? `+${points.RSR}` : `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`
-      table.push(row(Abbreviations.RSR, score, rsrPoints))
+      if (points.RSR > points.ROSH) {
+        totalScore += +points.RSR
+        table.push(row(Abbreviations.RSR, score, `+${points.RSR}`))
+      } else {
+        table.push(row(Abbreviations.RSR, score, `<s>+${points.RSR}</s><br/><small>(superseded by RoSH)</small>`))
+      }
     }
 
     if (points.MAPPA > 0) {
+      totalScore += +points.MAPPA
       const mappa = registrations.find(r => r.code === 'MAPP' && ['M1', 'M2', 'M3'].includes(r.level))
       const description = mappaDescription(mappa?.level) ?? 'Not found'
-      if (!mappa) warnings.push('No MAPPA registration was found in Delius')
+      if (!mappa) warnings.push('No MAPPA registration was found in Delius.')
       table.push(row(Abbreviations.MAPPA, description, `+${points.MAPPA}`))
     }
 
@@ -127,23 +137,39 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
       table.push(row('Additional complexity factors'))
       const factors = registrations.filter(r => r.code in ComplexityFactors)
       if (factors.length === 0)
-        warnings.push(`No additional factors were found in Delius, but complexity score is ${points.COMPLEXITY}`)
+        warnings.push(`No additional factors were found in Delius, but the complexity score is ${points.COMPLEXITY}.`)
       if (factors.length * 2 !== points.COMPLEXITY)
-        warnings.push(`Additional complexity factors do not match the calculated score of ${points.COMPLEXITY}`)
-      factors.forEach(r => table.push(row('', ComplexityFactors[r.code as keyof typeof ComplexityFactors], `+2`)))
+        warnings.push(`Additional complexity factors do not match the calculated score of ${points.COMPLEXITY}.`)
+      factors.forEach(r => {
+        totalScore += 2
+        table.push(row('', ComplexityFactors[r.code as keyof typeof ComplexityFactors], `+2`))
+      })
     }
 
     if (points.ADDITIONAL_FACTORS_FOR_WOMEN > 0) {
       if (deliusInputs.gender.toLowerCase() !== 'female') {
-        warnings.push(`Additional factors for women were applied, but Delius gender is "${deliusInputs.gender}"`)
+        warnings.push(`Additional factors for women were applied, but Delius gender is "${deliusInputs.gender}".`)
       }
       table.push(row('Additional factors for women'))
-      if (deliusInputs.previousEnforcementActivity) table.push(row('', 'Breach or recall', `+2`))
-      if (hasParentingResponsibilities(section6Answers)) table.push(row('', 'Parenting responsibilities', `+2`))
-      if (hasImpulsivityOrTemperControl(section11Answers)) table.push(row('', 'Impulsivity and temper control', `+2`))
+      if (deliusInputs.previousEnforcementActivity) {
+        totalScore += 2
+        table.push(row('', 'Breach or recall', `+2`))
+      }
+      if (hasParentingResponsibilities(section6Answers)) {
+        totalScore += 2
+        table.push(row('', 'Parenting responsibilities', `+2`))
+      }
+      if (hasImpulsivityOrTemperControl(section11Answers)) {
+        totalScore += 2
+        table.push(row('', 'Impulsivity and temper control', `+2`))
+      }
     }
 
     table.push(row('Total', undefined, `<strong>${tierLevel.points}</strong>`))
+
+    if (totalScore !== tierLevel.points)
+      warnings.push(`Protect points mismatch. \
+      The tier has been calculated based on ${tierLevel.points} protect points, but the actual total is ${totalScore}.`)
 
     return table
   }
@@ -158,27 +184,27 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
     const points = tierLevel.pointsBreakdown
 
     if (typeof points.NO_VALID_ASSESSMENT !== 'undefined' && needs) {
-      warnings.push('Change level has not been calculated, however an assessment was found in OASys')
+      warnings.push('Change level has not been calculated, however an assessment was found in OASys.')
     }
 
     if (typeof points.NO_MANDATE_FOR_CHANGE !== 'undefined' || typeof points.NO_VALID_ASSESSMENT !== 'undefined') {
       return []
     }
 
-    if (!needs) warnings.push('Change level has been calculated, however no assessment was found in OASys')
+    if (!needs) warnings.push('Change level has been calculated, however no assessment was found in OASys.')
 
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
     if (points.OGRS > 0) {
       table.push(row(Abbreviations.OGRS, `${deliusInputs.ogrsscore ?? 0}%`, `+${points.OGRS}`))
     } else if (deliusInputs.ogrsscore) {
-      warnings.push(`OGRS score not used in Tier calculation, but Delius OGRS score is '${deliusInputs.ogrsscore}'`)
+      warnings.push(`OGRS score not used in Tier calculation, but Delius OGRS score is '${deliusInputs.ogrsscore}'.`)
     }
 
     if (points.IOM > 0) {
       const iom = registrations.find(r => r.code === 'IIOM')
       const description = iom ? 'Yes' : 'None'
-      if (!iom) warnings.push('No IOM nominal registration found in Delius')
+      if (!iom) warnings.push('No IOM nominal registration found in Delius.')
       table.push(row(Abbreviations.IOM, description, `+${points.IOM}`))
     }
 

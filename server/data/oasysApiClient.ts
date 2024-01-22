@@ -11,11 +11,11 @@ export default class OasysApiClient extends RestClient {
   }
 
   async getSection6Answers(assessmentId: number): Promise<Section6Answers> {
-    return this.get({ path: `/ass/section11/ALLOW/${assessmentId}` })
+    return this.get({ path: `/ass/section6/ALLOW/${assessmentId}` })
   }
 
   async getSection11Answers(assessmentId: number): Promise<Section11Answers> {
-    return this.get({ path: `/ass/section6/ALLOW/${assessmentId}` })
+    return this.get({ path: `/ass/section11/ALLOW/${assessmentId}` })
   }
 }
 
