@@ -6,30 +6,37 @@ export default class ArnsApiClient extends RestClient {
     super('Assess Risks and Needs API', config.apis.arnsApi, token)
   }
 
-  async getNeeds(crn: string): Promise<Needs> {
-    return this.get({ path: `/needs/crn/${crn}`, handle404: true })
+  async getTierAssessmentInfo(crn: string): Promise<OASysTierInputs | null> {
+    return this.get({ path: `/tier-assessment/sections/${crn}`, handle404: true })
   }
 }
 
-type Severity = 'NO_NEED' | 'STANDARD' | 'SEVERE'
-
-type Section =
-  | 'ACCOMMODATION'
-  | 'EDUCATION_TRAINING_AND_EMPLOYABILITY'
-  | 'RELATIONSHIPS'
-  | 'LIFESTYLE_AND_ASSOCIATES'
-  | 'DRUG_MISUSE'
-  | 'ALCOHOL_MISUSE'
-  | 'THINKING_AND_BEHAVIOUR'
-  | 'ATTITUDES'
-  | 'FINANCIAL_MANAGEMENT_AND_INCOME'
-  | 'EMOTIONAL_WELL_BEING'
-
-export interface Needs {
-  assessedOn: Date
-  identifiedNeeds: {
-    section: Section
-    name: string
-    severity: Severity
-  }[]
+export interface OASysTierInputs {
+  accommodation?: Section
+  educationTrainingEmployment?: Section
+  relationships?: RelationshipsSection
+  lifestyleAndAssociates?: Section
+  drugMisuse?: Section
+  alcoholMisuse?: Section
+  thinkingAndBehaviour?: ThinkingAndBehaviourSection
+  attitudes?: Section
 }
+
+export interface Section {
+  severity: Severity
+}
+
+export interface RelationshipsSection extends Section {
+  severity: Severity
+  parentalResponsibilities?: YesNo
+}
+
+export interface ThinkingAndBehaviourSection extends Section {
+  severity: Severity
+  impulsivity: Answer
+  temperControl: Answer
+}
+
+export type Severity = 'NO_NEED' | 'STANDARD' | 'SEVERE'
+type YesNo = 'Yes' | 'No'
+type Answer = 'No problems' | 'Some' | 'Significant'

@@ -24,10 +24,10 @@
               }
             },
             "change": {
-              "tier": "ZERO",
-              "points": 0,
+              "tier": "ONE",
+              "points": 1,
               "pointsBreakdown": {
-                "NO_MANDATE_FOR_CHANGE": 0
+                "NEEDS": 1
               }
             },
             "calculationVersion": "2"
@@ -81,6 +81,31 @@
           ],
           "convictions": [],
           "previousEnforcementActivity": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/tier-assessment/sections/X000002",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "assessment": {
+            "assessmentId": 2,
+            "completedDate": "2023-12-19T16:57:25",
+            "assessmentType": "LAYER3",
+            "status": "COMPLETE"
+          },
+          "accommodation": {
+            "linkedToReOffending": "No",
+            "linkedToHarm": "No",
+            "severity": "STANDARD"
+          }
         },
         "headers": {
           "Content-Type": "application/json"
