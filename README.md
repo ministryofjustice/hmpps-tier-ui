@@ -49,6 +49,7 @@ REDIS_ENABLED=false
 HMPPS_AUTH_URL=https://sign-in-dev.hmpps.service.justice.gov.uk/auth
 MANAGE_USERS_API_URL=https://manage-users-api-dev.hmpps.service.justice.gov.uk
 DELIUS_INTEGRATION_URL=https://tier-to-delius-dev.hmpps.service.justice.gov.uk
+ARNS_API_URL=https://assess-risks-and-needs-dev.hmpps.service.justice.gov.uk
 TIER_API_URL=https://hmpps-tier-dev.hmpps.service.justice.gov.uk
 
 ```
