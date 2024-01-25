@@ -81,6 +81,18 @@
           "Content-Type": "application/json"
         }
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/tier-assessment/sections/X000004",
+        "method": "GET"
+      },
+      "response": {
+        "status": 404,
+        "jsonBody": {
+          "status": 404
+        }
+      }
     }
   ]
 }

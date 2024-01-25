@@ -1,16 +1,16 @@
 import { type RequestHandler, Router } from 'express'
 
 import probationSearchRoutes from '@ministryofjustice/probation-search-frontend/routes/search'
-import { isAfter, startOfDay, subWeeks } from 'date-fns'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import config from '../config'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
+import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
 import TierApiClient, { TierCount, TierLevel } from '../data/tierApiClient'
-import OasysApiClient, { Section11Answers, Section6Answers } from '../data/oasysApiClient'
-import ArnsApiClient, { Needs } from '../data/arnsApiClient'
+import { needsRow, row, Table } from '../utils/table'
+import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/mappings'
 
-export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): Router {
+export default function routes({ hmppsAuthClient }: Services): Router {
   const router = Router()
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
@@ -29,54 +29,20 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
   get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
-    const [[personalDetails, deliusInputs, tierCalculation, needs], [section6Answers, section11Answers]] =
-      await Promise.all([
-        hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
-          const deliusClient = new DeliusIntegrationClient(token)
-          const tierClient = new TierApiClient(token)
-          const arnsClient = new ArnsApiClient(token)
-          return Promise.all([
-            deliusClient.getPersonalDetails(crn),
-            deliusClient.getTierDetails(crn),
-            tierClient.getCalculationDetails(crn),
-            arnsClient.getNeeds(crn),
-          ])
-        }),
-        oasysAuthClient.getToken().then(async token => {
-          const oasysClient = new OasysApiClient(token)
-          const assessmentsResponse = await oasysClient.getAssessments(crn)
-          const assessments =
-            assessmentsResponse?.timeline?.filter(
-              assessment =>
-                assessment.assessmentType === 'LAYER3' &&
-                (assessment.status === 'COMPLETE' || assessment.status === 'LOCKED_INCOMPLETE') &&
-                assessment.completedDate &&
-                isWithinLast55Weeks(assessment.completedDate),
-            ) ?? []
-          if (assessments.length === 0) return [null, null]
-          const { assessmentPk } = assessments.reduce((a, b) => (isAfter(a.completedDate, b.completedDate) ? a : b))
-          if (!assessmentPk) return [null, null]
-          return Promise.all([
-            oasysClient.getSection6Answers(assessmentPk),
-            oasysClient.getSection11Answers(assessmentPk),
-          ])
-        }),
-      ])
+    const token = await hmppsAuthClient.getSystemClientToken(res.locals.user.username)
+    const deliusClient = new DeliusIntegrationClient(token)
+    const tierClient = new TierApiClient(token)
+    const arnsClient = new ArnsApiClient(token)
+    const [personalDetails, deliusInputs, oasysInputs, tierCalculation] = await Promise.all([
+      deliusClient.getPersonalDetails(crn),
+      deliusClient.getTierDetails(crn),
+      arnsClient.getTierAssessmentInfo(crn),
+      tierClient.getCalculationDetails(crn),
+    ])
 
     const warnings: string[] = []
-    const protectTable = calculateProtectLevel(
-      deliusInputs,
-      tierCalculation.data.protect,
-      section6Answers,
-      section11Answers,
-      warnings,
-    )
-    const changeTable = calculateChangeLevel(
-      deliusInputs,
-      tierCalculation.data.change,
-      needs && isWithinLast55Weeks(needs.assessedOn) ? needs : null,
-      warnings,
-    )
+    const protectTable = calculateProtectLevel(deliusInputs, oasysInputs, tierCalculation.data.protect, warnings)
+    const changeTable = calculateChangeLevel(deliusInputs, oasysInputs, tierCalculation.data.change, warnings)
 
     res.render('pages/case', {
       personalDetails,
@@ -90,9 +56,8 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
   function calculateProtectLevel(
     deliusInputs: DeliusTierInputs,
+    oasysInputs: OASysTierInputs | null,
     tierLevel: TierLevel,
-    section6Answers: Section6Answers | null,
-    section11Answers: Section11Answers | null,
     warnings: string[],
   ) {
     let totalScore = 0
@@ -155,11 +120,14 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
         totalScore += 2
         table.push(row('', 'Breach or recall', `+2`))
       }
-      if (hasParentingResponsibilities(section6Answers)) {
+      if (oasysInputs?.relationships?.parentalResponsibilities === 'Yes') {
         totalScore += 2
         table.push(row('', 'Parenting responsibilities', `+2`))
       }
-      if (hasImpulsivityOrTemperControl(section11Answers)) {
+      if (
+        ['Some', 'Significant'].includes(oasysInputs?.thinkingAndBehaviour?.impulsivity) ||
+        ['Some', 'Significant'].includes(oasysInputs?.thinkingAndBehaviour?.temperControl)
+      ) {
         totalScore += 2
         table.push(row('', 'Impulsivity and temper control', `+2`))
       }
@@ -176,14 +144,15 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
 
   function calculateChangeLevel(
     deliusInputs: DeliusTierInputs,
+    oasysInputs: OASysTierInputs | null,
     tierLevel: TierLevel,
-    needs: Needs | null,
     warnings: string[],
   ) {
+    let totalScore = 0
     const table = []
     const points = tierLevel.pointsBreakdown
 
-    if (typeof points.NO_VALID_ASSESSMENT !== 'undefined' && needs) {
+    if (typeof points.NO_VALID_ASSESSMENT !== 'undefined' && oasysInputs) {
       warnings.push('Change level has not been calculated, however an assessment was found in OASys.')
     }
 
@@ -191,131 +160,53 @@ export default function routes({ hmppsAuthClient, oasysAuthClient }: Services): 
       return []
     }
 
-    if (!needs) warnings.push('Change level has been calculated, however no assessment was found in OASys.')
+    if (!oasysInputs) warnings.push('Change level has been calculated, however no assessment was found in OASys.')
 
     const registrations = deliusInputs.registrations.sort((a, b) => Date.parse(b.date) - Date.parse(a.date))
 
     if (points.OGRS > 0) {
+      totalScore += points.OGRS
       table.push(row(Abbreviations.OGRS, `${deliusInputs.ogrsscore ?? 0}%`, `+${points.OGRS}`))
     } else if (deliusInputs.ogrsscore) {
       warnings.push(`OGRS score not used in Tier calculation, but Delius OGRS score is '${deliusInputs.ogrsscore}'.`)
     }
 
     if (points.IOM > 0) {
+      totalScore += points.IOM
       const iom = registrations.find(r => r.code === 'IIOM')
       const description = iom ? 'Yes' : 'None'
       if (!iom) warnings.push('No IOM nominal registration found in Delius.')
       table.push(row(Abbreviations.IOM, description, `+${points.IOM}`))
     }
 
-    if (points.NEEDS > 0) {
+    if (oasysInputs && points.NEEDS > 0) {
       table.push(row('Criminogenic needs'))
-      calculateNeedScores(needs, table, points.NEEDS, warnings)
+      totalScore += calculateNeedScores(oasysInputs, table)
     }
+
+    if (totalScore !== tierLevel.points)
+      warnings.push(`Change points mismatch. \
+      The tier has been calculated based on ${tierLevel.points} change points, but the actual total is ${totalScore}.`)
 
     table.push(row('Total', undefined, `<strong>${tierLevel.points}</strong>`))
 
     return table
   }
 
-  function calculateNeedScores(needs: Needs, table: Table, expectedScore: number, warnings: string[]) {
-    const severeNeedTag = '<span class="govuk-tag govuk-tag--red" title="Severe need">SEVERE</span>'
-    let totalScore = 0
-    needs?.identifiedNeeds
-      ?.filter(need => need.severity !== 'NO_NEED')
-      ?.forEach(need => {
-        const isSevere = need.severity === 'SEVERE'
-        const label = `${need.name} ${isSevere ? severeNeedTag : ''}`
-        const score = NeedsWeighting[need.section] * (isSevere ? 2 : 1)
-        totalScore += score
-        table.push(row('', label, `+${score}`))
-      })
-    if (totalScore !== expectedScore)
-      warnings.push(`Criminogenic needs score mismatch. \
-      The tier has been calculated based on a needs score of ${expectedScore}, but the score is ${totalScore}.`)
-  }
-
-  /**
-   * Infer description from level code (e.g. 'M1' -> 'Level 1')
-   * @param levelCode
-   */
-  function mappaDescription(levelCode?: string): string {
-    if (!levelCode) return 'Not found'
-    return levelCode.replace('M', 'Level ')
-  }
-
-  function hasParentingResponsibilities(answers: Section6Answers): boolean {
-    return answers.assessments[0]?.relParentalResponsibilities === 'Yes'
-  }
-
-  function hasImpulsivityOrTemperControl(answers: Section11Answers): boolean {
-    return (
-      answers.assessments[0]?.impulsivity !== '0-No problems' ||
-      answers.assessments[0]?.temperControl !== '0-No problems'
-    )
-  }
-
-  function isWithinLast55Weeks(date: Date) {
-    return isAfter(date, subWeeks(startOfDay(new Date()), 55))
-  }
-
-  function row(input: string | Abbreviation, value?: string, points?: string) {
-    const items = []
-    let colspan = 1
-    if (!value) colspan = 2
-    if (!value && !points) colspan = 3
-    if (typeof input === 'string') {
-      items.push({ text: input, colspan })
-    } else {
-      items.push({ html: `<abbr title="${input.text}">${input.abbreviation}</abbr>`, colspan })
-    }
-    if (value) items.push({ html: value })
-    if (points) items.push({ html: points, format: 'numeric' })
-    return items
+  function calculateNeedScores(oasysInputs: OASysTierInputs, table: Table): number {
+    return [
+      needsRow(oasysInputs, 'attitudes', table),
+      needsRow(oasysInputs, 'accommodation', table),
+      needsRow(oasysInputs, 'educationTrainingEmployment', table),
+      needsRow(oasysInputs, 'relationships', table),
+      needsRow(oasysInputs, 'lifestyleAndAssociates', table),
+      needsRow(oasysInputs, 'drugMisuse', table),
+      needsRow(oasysInputs, 'alcoholMisuse', table),
+      needsRow(oasysInputs, 'thinkingAndBehaviour', table),
+    ].reduce((a, b) => a + b, 0)
   }
 
   return router
-}
-
-type Table = { text?: string; html?: string; colspan?: number; format?: string }[][]
-
-type Abbreviation = {
-  abbreviation: string
-  text: string
-}
-
-const Abbreviations = {
-  ROSH: { abbreviation: 'RoSH', text: 'Risk of Serious Harm' },
-  RSR: { abbreviation: 'RSR', text: 'Risk of Serious Recidivism' },
-  MAPPA: { abbreviation: 'MAPPA', text: 'Multi-Agency Public Protection Arrangements' },
-  IOM: { abbreviation: 'IOM', text: 'Integrated Offender Management' },
-  OGRS: { abbreviation: 'OGRS', text: 'Offender Group Reconviction Scale' },
-}
-
-const ComplexityFactors = {
-  RMDO: 'Mental health',
-  ALSH: 'Attempted suicide or self-harm',
-  RVLN: 'Vulnerability issues',
-  RCCO: 'Child concerns',
-  RCPR: 'Child protection',
-  RCHD: 'Risk to children',
-  RPIR: 'Public interest',
-  RVAD: 'Adult at risk',
-  STRG: 'Street gangs',
-  RTAO: 'Terrorism',
-}
-
-const NeedsWeighting = {
-  ACCOMMODATION: 1,
-  EDUCATION_TRAINING_AND_EMPLOYABILITY: 1,
-  RELATIONSHIPS: 1,
-  LIFESTYLE_AND_ASSOCIATES: 1,
-  DRUG_MISUSE: 1,
-  ALCOHOL_MISUSE: 1,
-  THINKING_AND_BEHAVIOUR: 2,
-  ATTITUDES: 2,
-  FINANCIAL_MANAGEMENT_AND_INCOME: 0,
-  EMOTIONAL_WELL_BEING: 0,
 }
 
 class TierCountDetail {

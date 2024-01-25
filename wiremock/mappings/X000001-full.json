@@ -113,286 +113,61 @@
     },
     {
       "request": {
-        "urlPattern": "/oasys/ass/allasslist/prob/X000001/ALLOW",
+        "urlPattern": "/arns/tier-assessment/sections/X000001",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "source": "OASys",
-          "inputs": {
-            "crnSource": "prob",
-            "crn": "X000001",
-            "laoPrivilege": "ALLOW"
+          "assessment": {
+            "assessmentId": 1,
+            "completedDate": "2023-12-19T16:57:25",
+            "assessmentType": "LAYER3",
+            "status": "COMPLETE"
           },
-          "probNumber": "X000001",
-          "limitedAccessOffender": false,
-          "timeline": [
-            {
-              "assessmentPk": 1,
-              "assessmentType": "LAYER3",
-              "initiationDate": "2023-07-20T14:50:12",
-              "completedDate": "2023-07-30T14:50:12",
-              "status": "COMPLETE"
-            }
-          ],
-          "assessments": [
-            {}
-          ]
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      }
-    },
-    {
-      "request": {
-        "urlPattern": "/oasys/ass/section6/ALLOW/1",
-        "method": "GET"
-      },
-      "response": {
-        "status": 200,
-        "jsonBody": {
-          "source": "OASys",
-          "inputs": {
-            "laoPrivilege": "ALLOW",
-            "assessmentPk": 1
+          "accommodation": {
+            "linkedToReOffending": "No",
+            "linkedToHarm": "No",
+            "severity": "NO_NEED"
           },
-          "probNumber": "X000001",
-          "limitedAccessOffender": false,
-          "assessments": [
-            {
-              "assessmentPk": 1,
-              "assessmentType": "LAYER3",
-              "dateCompleted": "2023-07-30T14:50:12",
-              "assessorSignedDate": null,
-              "initiationDate": "2023-12-20T09:03:55",
-              "assessmentStatus": "COMPLETE",
-              "superStatus": "WIP",
-              "laterWIPAssessmentExists": false,
-              "latestWIPDate": "2023-12-20T09:03:55",
-              "laterSignLockAssessmentExists": false,
-              "latestSignLockDate": null,
-              "laterPartCompUnsignedAssessmentExists": false,
-              "latestPartCompUnsignedDate": "2012-06-13T11:17:30",
-              "laterPartCompSignedAssessmentExists": false,
-              "latestPartCompSignedDate": null,
-              "laterCompleteAssessmentExists": false,
-              "latestCompleteDate": "2012-06-13T09:59:22",
-              "emotionalCongruence": "0-No problems",
-              "experienceOfChildhood": "2-Significant problems",
-              "openSexualOffendingQuestions": null,
-              "parentalRespProblem": null,
-              "perpAgainstFamily": "Yes",
-              "perpAgainstPartner": "Yes",
-              "prevCloseRelationships": "2-Significant problems",
-              "prevOrCurrentDomesticAbuse": "Yes",
-              "relCloseFamily": "2-Significant problems",
-              "relCurrRelationshipStatus": "Not in a relationship",
-              "relIssuesDetails": "none",
-              "relLinkedToHarm": "No",
-              "relLinkedToReoffending": "No",
-              "relParentalResponsibilities": "Yes",
-              "relationshipWithPartner": "0-No problems",
-              "victimOfFamily": "No",
-              "victimOfPartner": "No",
-              "SARA": {
-                "imminentRiskOfViolenceTowardsPartner": null,
-                "imminentRiskOfViolenceTowardsOthers": null
-              },
-              "assessor": {
-                "name": "Test Assessor"
-              }
-            }
-          ]
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      }
-    },
-    {
-      "request": {
-        "urlPattern": "/oasys/ass/section11/ALLOW/1",
-        "method": "GET"
-      },
-      "response": {
-        "status": 200,
-        "jsonBody": {
-          "source": "OASys",
-          "inputs": {
-            "laoPrivilege": "ALLOW",
-            "assessmentPk": 1
+          "educationTrainingEmployment": {
+            "linkedToReOffending": "Unknown",
+            "linkedToHarm": "Unknown",
+            "severity": "NO_NEED"
           },
-          "probNumber": "X000001",
-          "limitedAccessOffender": false,
-          "assessments": [
-            {
-              "assessmentPk": 1,
-              "assessmentType": "LAYER3",
-              "dateCompleted": "2023-07-30T14:50:12",
-              "assessorSignedDate": null,
-              "initiationDate": "2023-12-20T09:03:55",
-              "assessmentStatus": "COMPLETE",
-              "superStatus": "WIP",
-              "laterWIPAssessmentExists": false,
-              "latestWIPDate": "2023-12-20T09:03:55",
-              "laterSignLockAssessmentExists": false,
-              "latestSignLockDate": null,
-              "laterPartCompUnsignedAssessmentExists": false,
-              "latestPartCompUnsignedDate": "2012-06-13T11:17:30",
-              "laterPartCompSignedAssessmentExists": false,
-              "latestPartCompSignedDate": null,
-              "laterCompleteAssessmentExists": false,
-              "latestCompleteDate": "2012-06-13T09:59:22",
-              "achieveGoals": "1-Some problems",
-              "aggressiveControllingBehavour": "1-Some problems",
-              "awarenessOfConsequences": "2-Significant problems",
-              "concreteAbstractThinking": "1-Some problems",
-              "impulsivity": "0-No problems",
-              "interpersonalSkills": "0-No problems",
-              "offenceRelatedSexualInterests": "0-No problems",
-              "problemSolvingSkills": "1-Some problems",
-              "recogniseProblems": "1-Some problems",
-              "sexualPreOccupation": "0-No problems",
-              "temperControl": "2-Significant problems",
-              "thinkIssuesDetails": "Some notes",
-              "thinkLinkedToHarm": "No",
-              "thinkLinkedToReoffending": "Yes",
-              "understandsViewsOfOthers": "1-Some problems",
-              "assessor": {
-                "name": "Test Assessor"
-              }
-            }
-          ]
-        },
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      }
-    },
-    {
-      "request": {
-        "urlPattern": "/arns/needs/crn/X000001",
-        "method": "GET"
-      },
-      "response": {
-        "status": 200,
-        "jsonBody": {
-          "identifiedNeeds": [
-            {
-              "section": "RELATIONSHIPS",
-              "name": "Relationships",
-              "overThreshold": true,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "STANDARD",
-              "identifiedAsNeed": true,
-              "needScore": 2
-            },
-            {
-              "section": "LIFESTYLE_AND_ASSOCIATES",
-              "name": "Lifestyle and Associates",
-              "overThreshold": true,
-              "riskOfHarm": true,
-              "riskOfReoffending": true,
-              "flaggedAsNeed": false,
-              "severity": "STANDARD",
-              "identifiedAsNeed": true,
-              "needScore": 3
-            },
-            {
-              "section": "ALCOHOL_MISUSE",
-              "name": "Alcohol Misuse",
-              "overThreshold": true,
-              "riskOfHarm": false,
-              "riskOfReoffending": true,
-              "flaggedAsNeed": false,
-              "severity": "STANDARD",
-              "identifiedAsNeed": true,
-              "needScore": 4
-            },
-            {
-              "section": "THINKING_AND_BEHAVIOUR",
-              "name": "Thinking and Behaviour",
-              "overThreshold": true,
-              "riskOfHarm": true,
-              "riskOfReoffending": true,
-              "flaggedAsNeed": false,
-              "severity": "SEVERE",
-              "identifiedAsNeed": true,
-              "needScore": 7
-            }
-          ],
-          "notIdentifiedNeeds": [
-            {
-              "section": "ACCOMMODATION",
-              "name": "Accommodation",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false,
-              "needScore": 0
-            },
-            {
-              "section": "EDUCATION_TRAINING_AND_EMPLOYABILITY",
-              "name": "4 - Education, Training and Employability",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false,
-              "needScore": 0
-            },
-            {
-              "section": "FINANCIAL_MANAGEMENT_AND_INCOME",
-              "name": "Financial Management and Income",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false
-            },
-            {
-              "section": "DRUG_MISUSE",
-              "name": "Drug Misuse",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false,
-              "needScore": 0
-            },
-            {
-              "section": "EMOTIONAL_WELL_BEING",
-              "name": "Emotional Well-being",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false
-            },
-            {
-              "section": "ATTITUDES",
-              "name": "Attitudes",
-              "overThreshold": false,
-              "riskOfHarm": false,
-              "riskOfReoffending": false,
-              "flaggedAsNeed": false,
-              "severity": "NO_NEED",
-              "identifiedAsNeed": false,
-              "needScore": 0
-            }
-          ],
-          "unansweredNeeds": [],
-          "assessedOn": "2023-12-19T16:57:25"
+          "relationships": {
+            "linkedToReOffending": "No",
+            "linkedToHarm": "No",
+            "parentalResponsibilities": "Yes",
+            "severity": "STANDARD"
+          },
+          "lifestyleAndAssociates": {
+            "linkedToReOffending": "Yes",
+            "linkedToHarm": "Yes",
+            "severity": "STANDARD"
+          },
+          "drugMisuse": {
+            "linkedToReOffending": "Unknown",
+            "linkedToHarm": "Unknown",
+            "severity": "NO_NEED"
+          },
+          "alcoholMisuse": {
+            "linkedToReOffending": "Yes",
+            "linkedToHarm": "No",
+            "severity": "STANDARD"
+          },
+          "thinkingAndBehaviour": {
+            "linkedToReOffending": "Yes",
+            "linkedToHarm": "Yes",
+            "impulsivity": "Significant",
+            "temperControl": "Some",
+            "severity": "SEVERE"
+          },
+          "attitudes": {
+            "linkedToReOffending": "No",
+            "linkedToHarm": "No",
+            "severity": "NO_NEED"
+          }
         },
         "headers": {
           "Content-Type": "application/json"
