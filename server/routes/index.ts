@@ -1,6 +1,8 @@
 import { type RequestHandler, Router } from 'express'
 
 import probationSearchRoutes from '@ministryofjustice/probation-search-frontend/routes/search'
+import { auditService } from '@ministryofjustice/hmpps-audit-client'
+import { v4 } from 'uuid'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import config from '../config'
@@ -33,6 +35,16 @@ export default function routes({ hmppsAuthClient }: Services): Router {
     const deliusClient = new DeliusIntegrationClient(token)
     const tierClient = new TierApiClient(token)
     const arnsClient = new ArnsApiClient(token)
+
+    await auditService.sendAuditMessage({
+      action: 'VIEW_TIER_INFORMATION',
+      who: res.locals.user.username,
+      subjectId: crn,
+      subjectType: 'CRN',
+      correlationId: v4(),
+      service: 'hmpps-tier-ui',
+    })
+
     const [personalDetails, deliusInputs, oasysInputs, tierCalculation] = await Promise.all([
       deliusClient.getPersonalDetails(crn),
       deliusClient.getTierDetails(crn),
