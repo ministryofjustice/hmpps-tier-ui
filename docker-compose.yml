@@ -2,7 +2,7 @@ version: '3.1'
 services:
 
   wiremock:
-    image: wiremock/wiremock
+    image: wiremock/wiremock:3.3.1
     command:
       - --local-response-templating
     ports:

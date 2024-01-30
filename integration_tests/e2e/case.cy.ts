@@ -78,4 +78,9 @@ context('Case view screen', () => {
     page.changeTable().should('not.exist')
     cy.get('body').should('contain.text', 'This case has not had an OASys assessment in the last 55 weeks')
   })
+
+  it('handles case with limited access', () => {
+    cy.visit('/case/X000005')
+    cy.get('body').should('contain.text', 'You are not authorised to view this case')
+  })
 })
