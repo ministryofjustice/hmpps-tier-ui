@@ -215,7 +215,7 @@ export default function routes({ hmppsAuthClient }: Services): Router {
     return [
       needsRow(oasysInputs, 'attitudes', table),
       needsRow(oasysInputs, 'accommodation', table),
-      needsRow(oasysInputs, 'educationTrainingEmployment', table),
+      needsRow(oasysInputs, 'educationTrainingEmployability', table),
       needsRow(oasysInputs, 'relationships', table),
       needsRow(oasysInputs, 'lifestyleAndAssociates', table),
       needsRow(oasysInputs, 'drugMisuse', table),
