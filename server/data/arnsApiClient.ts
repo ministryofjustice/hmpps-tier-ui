@@ -13,7 +13,7 @@ export default class ArnsApiClient extends RestClient {
 
 export interface OASysTierInputs {
   accommodation?: Section
-  educationTrainingEmployment?: Section
+  educationTrainingEmployability?: Section
   relationships?: RelationshipsSection
   lifestyleAndAssociates?: Section
   drugMisuse?: Section

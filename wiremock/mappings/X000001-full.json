@@ -130,7 +130,7 @@
             "linkedToHarm": "No",
             "severity": "NO_NEED"
           },
-          "educationTrainingEmployment": {
+          "educationTrainingEmployability": {
             "linkedToReOffending": "Unknown",
             "linkedToHarm": "Unknown",
             "severity": "NO_NEED"
