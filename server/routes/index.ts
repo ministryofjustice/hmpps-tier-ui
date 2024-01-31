@@ -213,7 +213,6 @@ export default function routes({ hmppsAuthClient }: Services): Router {
 
   function calculateNeedScores(oasysInputs: OASysTierInputs, table: Table): number {
     return [
-      needsRow(oasysInputs, 'attitudes', table),
       needsRow(oasysInputs, 'accommodation', table),
       needsRow(oasysInputs, 'educationTrainingEmployability', table),
       needsRow(oasysInputs, 'relationships', table),
@@ -221,6 +220,7 @@ export default function routes({ hmppsAuthClient }: Services): Router {
       needsRow(oasysInputs, 'drugMisuse', table),
       needsRow(oasysInputs, 'alcoholMisuse', table),
       needsRow(oasysInputs, 'thinkingAndBehaviour', table),
+      needsRow(oasysInputs, 'attitudes', table),
     ].reduce((a, b) => a + b, 0)
   }
 
