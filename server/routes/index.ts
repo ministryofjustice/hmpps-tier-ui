@@ -33,6 +33,12 @@ export default function routes({ hmppsAuthClient }: Services): Router {
     const { crn } = req.params
     const token = await hmppsAuthClient.getSystemClientToken(res.locals.user.username)
     const deliusClient = new DeliusIntegrationClient(token)
+    const limitedAccess = await deliusClient.getLimitedAccessDetails(res.locals.user.username, crn)
+    if (limitedAccess.userRestricted || limitedAccess.userExcluded) {
+      res.render('autherror-lao')
+      return
+    }
+
     const tierClient = new TierApiClient(token)
     const arnsClient = new ArnsApiClient(token)
 

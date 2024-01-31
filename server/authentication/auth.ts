@@ -51,8 +51,8 @@ function init(): void {
         user_name: 'user1',
         name: 'Test User',
         displayName: 'Test User',
-        authorities: ['ROLE_USER'],
-        authSource: 'nomis',
+        authorities: ['ROLE_TIER_SERVICE_USER'],
+        authSource: 'delius',
         active: true,
       }
       const token = createUserToken(payload)

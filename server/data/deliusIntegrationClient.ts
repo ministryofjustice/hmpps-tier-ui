@@ -6,6 +6,10 @@ export default class DeliusIntegrationClient extends RestClient {
     super('DeliusIntegration', config.apis.deliusIntegration, token)
   }
 
+  async getLimitedAccessDetails(username: string, crn: string): Promise<CaseAccess> {
+    return this.get({ path: `/users/${username}/access/${crn}` })
+  }
+
   async getTierDetails(crn: string): Promise<DeliusTierInputs> {
     return this.get({ path: `/tier-details/${crn}` })
   }
@@ -13,6 +17,12 @@ export default class DeliusIntegrationClient extends RestClient {
   async getPersonalDetails(crn: string): Promise<PersonalDetails> {
     return this.get({ path: `/person/${crn}` })
   }
+}
+
+interface CaseAccess {
+  crn: string
+  userExcluded: string
+  userRestricted: string
 }
 
 export interface PersonalDetails {

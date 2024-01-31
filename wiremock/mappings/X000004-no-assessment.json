@@ -93,6 +93,23 @@
           "status": 404
         }
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/users/.+/access/X000004",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "X000004",
+          "userRestricted": false,
+          "userExcluded": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
     }
   ]
 }
