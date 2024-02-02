@@ -66,6 +66,8 @@ generic-service:
       - internal
       - unilink_staff
 
+  serviceAccountName: hmpps-tier
+
 generic-prometheus-alerts:
   targetApplication: hmpps-tier-ui
   alertSeverity: probation-integration-notifications
