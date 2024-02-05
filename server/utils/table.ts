@@ -1,4 +1,4 @@
-import { OASysTierInputs } from '../data/arnsApiClient'
+import { OASysSections, OASysTierInputs } from '../data/arnsApiClient'
 import { Abbreviation, NeedsDescriptions, NeedsWeighting } from './mappings'
 
 export type Table = { text?: string; html?: string; colspan?: number; format?: string }[][]
@@ -20,7 +20,7 @@ export function row(input: string | Abbreviation, value?: string, points?: strin
   return items
 }
 
-export function needsRow(oasysInputs: OASysTierInputs, key: keyof OASysTierInputs, table: Table) {
+export function needsRow(oasysInputs: OASysTierInputs, key: keyof OASysSections, table: Table) {
   const section = oasysInputs[key]
   if (!section || section.severity === 'NO_NEED') return 0
   const isSevere = section.severity === 'SEVERE'

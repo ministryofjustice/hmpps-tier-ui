@@ -65,6 +65,7 @@ export default function routes({ hmppsAuthClient }: Services): Router {
     res.render('pages/case', {
       personalDetails,
       deliusInputs,
+      oasysInputs,
       tierCalculation,
       protectTable,
       changeTable,

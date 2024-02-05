@@ -1,4 +1,4 @@
-import { OASysTierInputs } from '../data/arnsApiClient'
+import { OASysSections } from '../data/arnsApiClient'
 
 export type Abbreviation = {
   abbreviation: string
@@ -35,7 +35,7 @@ export function mappaDescription(levelCode?: string): string {
   return levelCode.replace('M', 'Level ')
 }
 
-export const NeedsDescriptions: Record<keyof OASysTierInputs, string> = {
+export const NeedsDescriptions: Record<keyof OASysSections, string> = {
   accommodation: 'Accommodation',
   alcoholMisuse: 'Alcohol misuse',
   attitudes: 'Attitudes',
@@ -46,7 +46,7 @@ export const NeedsDescriptions: Record<keyof OASysTierInputs, string> = {
   thinkingAndBehaviour: 'Thinking and behaviour',
 }
 
-export const NeedsWeighting: Record<keyof OASysTierInputs, number> = {
+export const NeedsWeighting: Record<keyof OASysSections, number> = {
   accommodation: 1,
   alcoholMisuse: 1,
   attitudes: 2,

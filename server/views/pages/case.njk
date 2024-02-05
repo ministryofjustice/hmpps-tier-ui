@@ -37,15 +37,18 @@
     <section>
         <h2 class='govuk-heading-l'>Summary</h2>
         <p>
-            {{ personalDetails.name.forenames }} {{ personalDetails.name.surname }} has a tier of
-            <strong>{{ tierCalculation.tierScore }}</strong>, based on a calculation of
+            {{ personalDetails.name.forenames }} {{ personalDetails.name.surname }} has a tier of <strong>{{ tierCalculation.tierScore }}</strong>.
+        </p>
+        <p>
+            The tier was last calculated <abbr title="{{ tierCalculation.calculationDate }}">{{ tierCalculation.calculationDate | ago }}</abbr>,
+            based on a total of
             <a href="#assess-protect">{{ tierCalculation.data.protect.points }} protect points</a> and
             <a href="#change">{{ tierCalculation.data.change.points }} change points</a>.
         </p>
     </section>
 
+    <h2 class='govuk-heading-l'>Details</h2>
     <section>
-        <h2 class='govuk-heading-l'>Details</h2>
         <div class="govuk-grid-row">
             <div class="govuk-grid-column-two-thirds">
                 <h2 id="assess-protect" class='govuk-heading-m'>Assess & Protect Axis</h2>
@@ -115,9 +118,13 @@
                     <p>This case has not had an OASys assessment in the last 55 weeks, so the change axis has been set
                         to <strong>TWO</strong>.</p>
                 {% else %}
-                    <p>The total number of points in this section is
+                    <p>
+                        The total number of points in this section is
                         <strong>{{ tierCalculation.data.change.points }}</strong>,
-                        resulting in a tier number of <strong>{{ tierCalculation.data.change.tier }}</strong>.</p>
+                        resulting in a tier number of <strong>{{ tierCalculation.data.change.tier }}</strong>.
+                        This is based on a Layer 3 OASys assessment that was completed
+                        <abbr title="{{ oasysInputs.assessment.completedDate }}">{{ oasysInputs.assessment.completedDate | ago }}</abbr>.
+                    </p>
 
                     {{ govukTable({
                         attributes: { "data-qa": "change-table" },

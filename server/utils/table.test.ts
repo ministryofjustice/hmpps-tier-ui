@@ -26,14 +26,20 @@ describe('row', () => {
 
 describe('needsRow', () => {
   it('doesn\'t add a row or calculate a score when severity is "NO_NEED"', () => {
-    const oasysInputs: OASysTierInputs = { accommodation: { severity: 'NO_NEED' } }
+    const oasysInputs: OASysTierInputs = {
+      assessment: { assessmentId: 1, completedDate: new Date() },
+      accommodation: { severity: 'NO_NEED' },
+    }
     const table: Table = []
     expect(needsRow(oasysInputs, 'accommodation', [])).toEqual(0)
     expect(table).toEqual([])
   })
 
   it('adds a row', () => {
-    const oasysInputs: OASysTierInputs = { relationships: { severity: 'SEVERE' } }
+    const oasysInputs: OASysTierInputs = {
+      assessment: { assessmentId: 1, completedDate: new Date() },
+      relationships: { severity: 'SEVERE' },
+    }
     const table: Table = []
     expect(needsRow(oasysInputs, 'relationships', table)).toEqual(2)
     expect(table).toEqual([
