@@ -12,6 +12,10 @@ export default class ArnsApiClient extends RestClient {
 }
 
 export interface OASysTierInputs {
+  assessment: {
+    assessmentId: number
+    completedDate: Date
+  }
   accommodation?: Section
   educationTrainingEmployability?: Section
   relationships?: RelationshipsSection
