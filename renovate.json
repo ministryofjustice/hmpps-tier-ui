@@ -21,7 +21,7 @@
     },
     {
       "matchManagers": ["npm"],
-      "matchPackageNames": ["@types/node", "govuk-frontend/dist"],
+      "matchPackageNames": ["@types/node", "govuk-frontend"],
       "matchUpdateTypes": ["major"],
       "enabled": false
     },
