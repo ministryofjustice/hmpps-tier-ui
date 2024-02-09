@@ -3,6 +3,7 @@ import { type RequestHandler, Router } from 'express'
 import probationSearchRoutes from '@ministryofjustice/probation-search-frontend/routes/search'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import { v4 } from 'uuid'
+import { defaultClient } from 'applicationinsights'
 import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import config from '../config'
@@ -11,7 +12,6 @@ import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
 import TierApiClient, { TierCount, TierLevel } from '../data/tierApiClient'
 import { needsRow, row, Table } from '../utils/table'
 import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/mappings'
-import { defaultClient } from 'applicationinsights'
 
 export default function routes({ hmppsAuthClient }: Services): Router {
   const router = Router()
