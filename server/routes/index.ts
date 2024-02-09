@@ -11,9 +11,28 @@ import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
 import TierApiClient, { TierCount, TierLevel } from '../data/tierApiClient'
 import { needsRow, row, Table } from '../utils/table'
 import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/mappings'
+import { defaultClient } from 'applicationinsights'
 
 export default function routes({ hmppsAuthClient }: Services): Router {
   const router = Router()
+
+  router.use((req, res, next) => {
+    if (!res.get('startTime')) {
+      res.set('startTime', new Date().toISOString())
+    }
+    res.on('finish', async () => {
+      if (req.route?.path && res.statusCode && res.get('startTime')) {
+        defaultClient?.trackRequest({
+          name: req.route.path,
+          url: req.url,
+          duration: new Date().getTime() - new Date(res.get('startTime')).getTime(),
+          resultCode: res.statusCode,
+          success: res.statusCode >= 200 && res.statusCode < 300,
+        })
+      }
+    })
+    next()
+  })
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
 
   probationSearchRoutes({ router, oauthClient: hmppsAuthClient, environment: config.env })
