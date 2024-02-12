@@ -1,6 +1,6 @@
 {% extends "../partials/layout.njk" %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
-{% from "probationSearch/macro.njk" import probationSearch %}
+{% from "probation/case-search/macro.njk" import caseSearch %}
 
 {% set pageTitle = applicationName + " - Search" %}
 {% set mainClasses = "app-container govuk-body" %}
@@ -10,9 +10,5 @@
 {% endblock %}
 
 {% block content %}
-    <div class="govuk-grid-row">
-        <div class="govuk-grid-column-two-thirds">
-            {{ probationSearch({ id: "search", results: probationSearchResults }) }}
-        </div>
-    </div>
+    {{ caseSearch({ id: "search", results: searchResults }) }}
 {% endblock %}
