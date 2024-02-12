@@ -1,4 +1,3 @@
-import { defaultClient } from 'applicationinsights'
 import { Router } from 'express'
 import type { Services } from '../services'
 import startRoutes from './start'
