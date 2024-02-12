@@ -1,4 +1,5 @@
 import { setup, defaultClient, TelemetryClient, DistributedTracingModes } from 'applicationinsights'
+import { RequestHandler } from 'express'
 import type { ApplicationInfo } from '../applicationInfo'
 
 export function initialiseAppInsights(): void {
@@ -20,4 +21,15 @@ export function buildAppInsightsClient(
     return defaultClient
   }
   return null
+}
+
+export function appInsightsMiddleware(): RequestHandler {
+  return (req, res, next) => {
+    res.on('finish', () => {
+      if (req.route?.path && defaultClient) {
+        defaultClient.context.tags['ai.operation.name'] = `${req.method} ${req.route?.path}`
+      }
+    })
+    next()
+  }
 }
