@@ -13,7 +13,7 @@ export default function createUserToken(payload: Partial<TokenPayload> = {}): st
   const defaultPayload: TokenPayload = {
     user_name: 'user1',
     scope: ['read', 'write'],
-    auth_source: 'nomis',
+    auth_source: 'delius',
     authorities: [],
     jti: '00000000-0000-0000-0000-000000000000',
     client_id: 'clientid',
