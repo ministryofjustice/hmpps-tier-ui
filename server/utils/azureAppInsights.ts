@@ -26,8 +26,9 @@ export function buildAppInsightsClient(
 export function appInsightsMiddleware(): RequestHandler {
   return (req, res, next) => {
     res.on('finish', () => {
-      if (req.route?.path && defaultClient) {
-        defaultClient.context.tags['ai.operation.name'] = `${req.method} ${req.route?.path}`
+      if (defaultClient) {
+        const path = req?.route?.path ?? req.path
+        defaultClient.context.tags['ai.operation.name'] = `${req.method} ${path}`
       }
     })
     next()
