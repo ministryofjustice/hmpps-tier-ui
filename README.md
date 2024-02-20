@@ -89,9 +89,6 @@ npm run start:dev
 To run the Cypress integration tests locally:
 
 ```shell
-# Start WireMock
-docker-compose up -d
-
 # Start the UI in test mode
 npm run start-feature:dev
 
