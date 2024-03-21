@@ -1,0 +1,588 @@
+{% extends "../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+
+{% set pageTitle = applicationName + " - Tier Calculation Explained" %}
+{% set mainClasses = "app-container govuk-body" %}
+
+{% block beforeContent %}
+    {{ govukBackLink({ text: "Back", href: "/" }) }}
+{% endblock %}
+
+{% block content %}
+    <h1 class="govuk-heading-l">How is the tier calculation produced?</h1>
+    <h2 class="govuk-heading-s">Table of Contents</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <ul class="govuk-list">
+                    <li><a class="govuk-list" href="#currentnps">Current NPS Position – Interim Tiering Model</a></li>
+                    <li><a class="govuk-list" href="#prob-ref-des">Probation Reform Programme Design and the Unified Tiering Model</a></li>
+                    <li><a class="govuk-list" href="#UTM">Unified Tiering Model</a></li>
+                    <li><a class="govuk-list" href="#assess-protect">Assess & Protect</a></li>
+                    <li><a class="govuk-list" href="#assess-protect-add">Assess & Protect - Additional Factors</a></li>
+                    <li><a class="govuk-list" href="#change-overview">Change - Overview</a></li>
+                    <li><a class="govuk-list" href="#change-axis">Business Rules - Change Axis</a></li>
+                    <li><a class="govuk-list" href="#osays-sw">OASys needs – Score and weightings</a></li>
+                    <li><a class="govuk-list" href="#offender-mngmnt-cust-tier">Offender Management in Custody Tiering</a></li>
+                    <li><a class="govuk-list" href="#digital">Digital</a></li>
+                    <li><a class="govuk-list" href="#tier-calc-service">Tiering Calculation Service</a></li>
+                    <li><a class="govuk-list" href="#future-tier-calc">To be Tiering calculation</a></li>
+                    <li><a class="govuk-list" href="#tier-principles">Tiering Principles</a></li>
+                    <li><a class="govuk-list" href="#weight-methodology">Development of weightings methodology</a></li>
+                    <li><a class="govuk-list" href="#unified-weightings">Unifited Weightings - Principles</a></li>
+                    <li><a class="govuk-list" href="#phase1">Phase 1 weightings: Logic</a></li>
+                    <li><a class="govuk-list" href="#wmt-chnges">Changes to WMT</a></li>
+                    <li><a class="govuk-list" href="#utm-benefits">Unified Tiering Model Benefits</a></li>
+                </ul>
+            </div>
+        </div>
+    <h2 class="govuk-heading-m" id="currentnps">Current NPS Position – Interim Tiering Model</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-one-half">
+                    <p>The interim tiering model is a modification of the NPS E3 tiering model.</p>
+                </div>
+
+                <div class="govuk-grid-column-one-half">
+                    <p>In November 2019, to support the transfer of cases in Wales, additional tiers were added for standalone UPW and restricted requirement.
+                        However, the focus remained on risk of serious harm</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <div class="govuk-grid-column-one-half">
+                    <img src="../../../assets/images/nps1.png" alt="NPS E3 Tiers" height="400" width="500">
+                </div>
+                <div class="govuk-grid-column-one-half">
+                    <img src="../../../assets/images/nps2.png" alt="Additional Interim Tiering" height="400" width="500">
+                </div>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="prob-ref-des">Probation Reform Programme Design and the Unified Tiering Model</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>As stated on the previous page, the tier calculation is produced according to the Unified Tiering Model. Some of the factors include:
+                </p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li><strong>Assess</strong> is quantified by RoSH and RSR scores, aiming to balance: risk, need, responsivity and rehabilitation.</li>
+                    <li><strong>Protect</strong> is quantified by MAPPA, aiming to ensure protective and restrictive requirements are appropriate.</li>
+                    <li><strong>Change</strong> is quantified by OSP or OGRS scores, OASys needs, and IOM. The aim of Change is to ensure people on probation receive the right
+                        rehabilitative support to address offending behaviour and provide public protection</li>
+                </ul>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="UTM">Unified Tiering Model</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>Reflecting the Probation Reform Programme designs for the Unified Model it is proposed that tiering is revised to reflect both Risk of Serious Harm and Need.
+                </p>
+                    <div class="image-container">
+                        <img src="../../../assets/images/unified_tiering_model.png" alt="Unified Tiering Model visual represenation" height="500" width="1100">
+                    </div>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="assess-protect">Assess & Protect</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>The Assess & Protect axis inputs:<br/>
+                NB: RoSH and MAPPA have been designed to ensure additional factors cannot move a case into Tier A
+                </p>
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <img src="../../../assets/images/tiercalc.png" height="300" width="800" alt="Asses & Protect chart">
+            </div>
+
+            <div class="govuk-grid-column-one-third">
+                <img src="../../../assets/images/total%20table.png" height="350" width="320" alt="Total Points available">
+            </div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full-from-desktop">
+                <table class="govuk-table">
+                    <caption class="govuk-table__caption govuk-table__caption--m">Scores – all data source are from nDelius</caption>
+                    <tbody class="govuk-table__body">
+                        <tr class="govuk-table__row">
+                            <th scope="row" class="govuk-table__header"><strong>ROSH</strong></th>
+                            <td class="govuk-table__cell"><strong>RSR</strong></td>
+                            <td class="govuk-table__cell"><strong>MAPPA</strong></td>
+                            <td class="govuk-table__cell"><strong>Additional Factors</strong></td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Low<br/>0</td>
+                            <td class="govuk-table__cell">0.00 - 2.99<br/>0</td>
+                            <td class="govuk-table__cell">No MAPPA<br/>0</td>
+                            <td class="govuk-table__cell">All additional factors are 2 points</td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Medium<br/>10</td>
+                            <td class="govuk-table__cell">3.00 - 6.99<br/>10</td>
+                            <td class="govuk-table__cell">Level 1<br/>5</td>
+                            <td class="govuk-table__cell"></td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">High<br/>20</td>
+                            <td class="govuk-table__cell">7.00 - 9.99<br/>20</td>
+                            <td class="govuk-table__cell">Level 2<br/>150</td>
+                            <td class="govuk-table__cell"></td>
+                        </tr>
+                        <tr class="govuk-table__row">
+                            <td class="govuk-table__cell">Very High<br/>150</td>
+                            <td class="govuk-table__cell"></td>
+                            <td class="govuk-table__cell">Level 3<br/>150</td>
+                            <td class="govuk-table__cell"></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="assess-protect-add">Assess & Protect - Additional Factors</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>Scoring mechanism: 2 points per additional factor, but they cannot move a Person on Probation  into tier A.
+                The “additional factors” in the proposed model are made up of two components:</p>
+
+            <strong>Statutory responsibilities</strong> - these apply to all Person on Probation s and include:
+               <ul class="govuk-list govuk-list--bullet">
+               <li>Child Concerns</li>
+               <li>Child Protection</li>
+               <li>Risk to Children</li>
+               <li>Public INterest Case</li>
+               <li>Terrorism Act Person on Probation s</li>
+               <li>Safeguarding - Adult at risk</li>
+               <li>Street Gangs - Serious Group Offending</li>
+               <li>Mentally Disordered Offender</li>
+               <li>Suicide/Self Harm</li>
+               <li>Vulnerability</li>
+               </ul>
+
+           <strong>Additional Factors for Women</strong>
+                (these apply to female Person on Probation s in line with research which identifies the need for additional resources.):
+               <ul class="govuk-list govuk-list--bullet">
+               <li>Breach or recall</li>
+               <li>Parenting / Caring Responsibilities</li>
+               <li>Self-Control / Temper</li>
+               </ul>
+
+           <p>Three additional factors for women are not in the current version of the tiering calculation of the UTM. These factors are being evaluated with digital for future implementation:</p>
+               <ul class="govuk-list govuk-list--bullet">
+               <li>Main offences of Violence or Arson (Only apply to women in custody)</li>
+               <li>Sentence Length more than 10 months or indeterminate (Only apply to women in custody)</li>
+               <li>Harassment</li>
+               </ul>
+
+            <p><strong>Additional factors can be added or removed when evidence becomes available</strong></p>
+
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds"><img src="../../../assets/images/ndelius_ss.png" alt="Example of nDelius" width="700" height="300"></div>
+            <br/><br/><div class="govuk-grid-column-one-third"><img src="../../../assets/images/tags_example.png" alt="Example of Tags" width="300" height="100"></div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <th scope="row" class="govuk-table__header"><strong>Statutory Responsibilities</strong></th>
+                    <td class="govuk-table__cell"><strong>Output</strong></td>
+                    <td class="govuk-table__cell"><strong>Data Source</strong></td>
+                    <td class="govuk-table__cell"><strong>Score</strong></td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Child Concerns</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RCCO (Child Concerns)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Child Protection</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RCPR (Child Protection)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Risk to Children</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RCHD (Risk to Children)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Public Interest Case</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RPIR (Public Interest Case)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Terrorism Act Person on Probation s</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RTAO (Terrorism Act Offender)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Safeguarding - Adult at Risk</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RVAD (Safeguarding - Adult at Risk)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Street Gangs - Serious Group Offending</td>
+                    <td class="govuk-table__cell">Output on Registration Table - STRG (Street Gangs)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Vulnerability *</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RVLN (Vulnerability)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Mentally Disordered Offender *</td>
+                    <td class="govuk-table__cell">Output on Registration Table - RMDO (Mentally Disordered Offender)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Suicide / Self Harm *</td>
+                    <td class="govuk-table__cell">Output on Registration Table - ALSH (Suicide / Self Harm)</td>
+                    <td class="govuk-table__cell">nDelius</td>
+                    <td class="govuk-table__cell">2</td>
+                </tr>
+                </tbody>
+            </table>
+            <p>A Person on Probation can have multiple Additional factors <br/>(*)Three statutory responsibilities are also additional factors for women – will avoid double counting
+            </p>
+        </div>
+    <br/>
+    <br/>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds"><img src="../../../assets/images/ndelius_ss.png" alt="Example of nDelius" width="700" height="300"></div>
+        </div>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third"><img src="../../../assets/images/oasys_example.png" alt="Example of oasys" width="700" height="300"></div>
+        </div>
+
+        <div class="govuk-grid-row">
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+                    <tr class="govuk-table__row">
+                        <th scope="row" class="govuk-table__header"><strong>Additional Factors for Women</strong></th>
+                        <td class="govuk-table__cell"><strong>Output</strong></td>
+                        <td class="govuk-table__cell"><strong>Data Source</strong></td>
+                        <td class="govuk-table__cell"><strong>Score</strong></td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Breach or Recall</td>
+                        <td class="govuk-table__cell">NSI - Any successful prosecuted on an active event or event terminated in the past 12 months</td>
+                        <td class="govuk-table__cell">nDelius</td>
+                        <td class="govuk-table__cell">2</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Parenting / Caring Responsibilities </td>
+                        <td class="govuk-table__cell">Output is captured in question 6.9 (Childcare/other domestic responsibilities) within OASys - answers 0,1</td>
+                        <td class="govuk-table__cell">OASys</td>
+                        <td class="govuk-table__cell">2</td>
+                    </tr>
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Self-control / Temper</td>
+                        <td class="govuk-table__cell">Output is from questions 11.2 (Impulsivity - impulsive people prefer to act not rather than plan)<br/>
+                                                      and 11.4 (Temper Control - Some people lose their temper regularly and easily)
+                                                      <br/>The answer to question 11.2 can be 0, 1 & 2
+                                                        <br/>The answer to question 11.4 can be 0, 1 & 2
+                                                        <br/>If the Person on Probation scores more than 1 in any of the above we trigger the Additional factor</td>
+                        <td class="govuk-table__cell">OASys</td>
+                        <td class="govuk-table__cell">2</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    <br/>
+    <br/>
+
+    <div class="govuk-grid-row">
+            <table class="govuk-table">
+                <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell"><strong>Future Evaluations</strong></td>
+                <td class="govuk-table__cell">Three additional factors for women are not in the current version of the tiering calculation of the UTM.
+                    <br/>These factors are being evaluated with digital for future implementation</td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">Harassment</td>
+                <td class="govuk-table__cell"></td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">Main offence of violence or arson </td>
+                <td class="govuk-table__cell"></td>
+            </tr>
+            <tr class="govuk-table__row">
+                <td class="govuk-table__cell">Sentence length more than 10 months or indeterminate</td>
+                <td class="govuk-table__cell"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="change-overview">Change - Overview</h2>
+        <div class="govuk-grid-row">
+           <div class="govuk-grid-column-full">
+               <p>To support the Programme’s resettlement and rehabilitation design  – The Unified Tiering introduces criminogenic need:</p>
+               <img src="../../../assets/images/change_overview.png" alt="Change Overview" height="500" width="1300">
+           </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="change-axis">Business Rules - Change Axis</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <img src="../../../assets/images/brule_changeaxis.png" alt="Change Axis Flow Chart" height="500" width="1300">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="osays-sw">OASys needs – Score and weightings</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                    <p>These scores can have weightings to increase the impact of a certain criminogenic need,
+                        a Person on Probation  can have multiple criminogenic needs, there is no limit.
+                    </p>
+                    <img src="../../../assets/images/OASYS_S_W.png" alt="OASys Scores and Weightings" height="600" width="1300">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="offender-mngmnt-cust-tier">Offender Management in Custody Tiering</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                    <p>Offender Management in Custody utilises the same tiering framework as Community Probation to allocate cases, measure and compare workload
+                    </p>
+                    <p>Unified Tiering Model change factors will be introduced at the point of handover to the Community Offender Manager
+                    </p>
+                    <img src="../../../assets/images/offender_manager.png" alt="Assess and Protect Chart" height="400" width="900">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="digital">Digital</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-two-thirds">
+                <img src="../../../assets/images/nd_oa_utiering.png" alt="Unified Tiering consists of OASys and nDelius data" height="400" width="700">
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Combine nDelius and OASys to calculate tier of case. Opportunity to use OSP to be reviewed through Digital discovery.
+                    </li>
+                    <li>Tiering to be automated at various points of recording.
+                    </li>
+                    <li>New “Service” agreed with Digital due to complexity of works which will link with Case allocation and Workload Measurement Tool (WMT )
+                    </li>
+                    <li>Work with digital to undertake discovery phase and implementation.
+                    </li>
+                    <li>Exploration to build and implement design.
+                    </li>
+                    <li>Recovery, transition and implementation of the Unified model has been considered inline with all digital requirements.
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="tier-calc-service">Tiering Calculation Service</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>As part of the probation programmes principle of breaking services out of legacy applications and going for a micro service lead approach,
+                    the decision was made to follow this principle.
+                </p>
+                <img src="../../../assets/images/calc_process_flowdiagram.png" alt="Tier Calculation process" height="400" width="1100">
+                <br/>
+                <p>The aim of the design is to automate the calculation of a new tier whenever a business event happens which requires us to update the
+                    calculation of a tier.
+                </p>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="future-tier-calc">To be Tiering calculation</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <img src="../../../assets/images/future_tier_calc.png" alt="Expanded Tiering Calculation process" height="600" width="1400">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="tier-principles">Tiering Principles</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>Sentence Management Design have drafted a set of principles to guide this process, but recognise that further work and engagement on these is required once a
+                    decision has been reached on the methodology to be used
+                </p>
+                <br/>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>A PSO should not be responsible for the case of Tier A or B cases. </li>
+                    <li>POs can be responsible for cases of all Tiers (to continuity of relationship) </li>
+                    <li>The Protect axis is more heavily weighted than the Change axis to direct PP resource towards prioritising cases with
+                        the most serious risk of harm. 
+                    </li>
+                    <li> Change axis more heavily weighted for Tiers where Person on Probation s are more likely to demonstrate high responsivity
+                        to undertaking change work 
+                    </li>
+                    <li>Tier A and B cases will need to have the highest resource weighting to ensure public protection requirements are met. </li>
+                    <li>The role boundary between PSO and PO appropriate level work aligns to risk of serious harm to a case and falls at the boundary between Tier C and Tier B.</li>
+                    <li>Tiering calculations should reflect the average annual hours, required by a PP, to meet the policy requirements (e.g. National Standards) and associated mandatory
+                        activity of working on a case. 
+                    </li>
+                    <li>Tier C should have a more equitable split between protecting the public and change work </li>
+                    <li>Tier D with lower risk is more focussed on addressing need and change work </li>
+                    <li>Tiering calculations will occur digitally through specific inputs using set criteria (up to date OASys being encouraged), all associated decisions remain professional
+                        judgement of the SPO (e.g allocations) and probation practitioners (e.g blended supervision arrangements)
+                    </li>
+                </ul>
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="weight-methodology">Development of weightings methodology</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-full">
+                <p>The Unified Tiering Model (UTM) requires weightings to feed other organisational tools such as the Workload Measurement Tool (WMT).
+                    (Current Kainos WMT will be replaced by MoJ WMT by Dec 2021)
+                </p><br/>
+                <p>Plan is to move beyond dated probation modelling (used in the NPS Interim Tiering Model) and take a new approach using a
+                    renewed activity-based methodology (utilising learning from the OMiC model).
+                </p><br/>
+                <strong>2-phase approach to be taken:</strong>
+                <ul class="govuk-list--bullet">
+                    <li>Phase 1: To facilitate launch of UTM in April 21, will utilise current ITM weightings methodology with additional logic
+                    </li>
+                    <li>Phase 2: New weightings methodology, based on key activity timings, to be embedded through an iterative process
+                    </li>
+                </ul>
+                <img src="../../../assets/images/dev_of_weightings.png" alt="Phase 1 and phase 2 chart" height="600" width="1300">
+
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="unified-weightings">Unifited Weightings - Principles</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <img src="../../../assets/images/unified_weight1.png" alt="UTM Timings" height="500" width="350">
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <ul class="govuk-list--bullet"><strong>Principles underpinning chosen methodology:</strong>
+                    <li>Maintain continuity and minimise disruption for staff and Person on Probation s (core tiers to keep same value)</li>
+                    <li>Maintain ITM methodology where possible (accepting limitations)</li>
+                    <li>Maintain current PO/PSO role boundaries (sits between Tiers C and D)</li>
+                    <li>Produce value for all 16 UTM tier categories (continue with 3 sperate values for each sentence type)</li>
+                    <li>Overall resource to follow risk of serious harm (weightings on assess/protect axis increase with risk)</li>
+                    <li>Weightings ascend as level of need increases (weightings on change axis increase with need)</li>
+                    <li>Recognise Layer 0 cases are stand alone requirements with no remit for change activity</li>
+                    <li>Recognise Layer 3 cases have multiple needs, should attract enhanced resource (benefit female cases)</li>
+                </ul>
+            </div>
+            <div class="govuk-grid-column-one-third">
+                <img src="../../../assets/images/unified_weight2.png" alt="UTM WMT Weightings" height="500" width="350">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="phase1">Phase 1 weightings: Logic</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-third">
+                <img src="../../../assets/images/p1_logic_1.png" alt="Phase 1 logic" height="500" width="390">
+            </div>
+            <div class="govuk-grid-column-two-thirds">
+                <strong>Practical steps:</strong>
+                <ul class="govuk-list--bullet">
+                    <li>Map ITM tiers to UTM (change ‘number’ order i.e. ITM C2 becomes UTM C1)</li>
+                    <li>Remove a set % of time from L1 to produce L0 values (30% community, 25% Licence & pre release)</li>
+                    <li>Add % of time on L2 to produce L3 values (value corresponds to L1/L0 change)</li>
+                    <li>Adjustment made for Tier D0 (baseline to remain consistent with ITM lowest value i.e. D0 same as D1)</li>
+                </ul>
+                <br/>
+                <img src="../../../assets/images/p1_logic_2.png" alt="Phase 1 lead up" height="125" width="800">
+            </div>
+        </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="wmt-chnges">Changes to WMT</h2>
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <img src="../../../assets/images/wmtexmaple.png" alt="Example of WMT" height="400" width="600">
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+                <ul class="govuk-list--bullet">
+                    <li>The look of WMT will not change after the Unified Tiering Model update</li>
+                    <li>Behind the scenes an update will be undertaken to incorporate the new tiers based on the Unified Tiering Model.</li>
+                    <li>Each of the new tiers will be allocated an associated weighting (as shown on slide 30)</li>
+                </ul>
+            </div>
+            <div class="govuk-grid-column-one-quarter">
+                <ul class="govuk-list--bullet">
+                    <li>The weightings have been sighed off by Design Authority Board on 17th March 21</li>
+                    <li>The noticeable differences within the WMT – will be those shown around Capacity. These will fluctuate dependant on the weighting associated to each of the tiers.
+                        These will inform the overall capacities at all levels
+                    </li>
+                    <li>Tiering data changes will be reflected in the WMT Export reports. <br/>Data within the Capacity tab for individual caseloads will also show the new tiering.</li>
+                </ul>
+            </div>
+
+            </div>
+    <br/>
+    <br/>
+
+    <h2 class="govuk-heading-m" id="utm-benefits">Unified Tiering Model Benefits</h2>
+        <div class="govuk-grid-row">
+            <ul class="govuk-list--bullet">
+                <li>Dynamic and flexible to adapt to future organisational change in policy  and prioritises as more evidence becomes available
+                </li>
+                <li>Reflect Target Operating Model to Assess, Protect and change which directs resource by both Risk of Serious harm and Intensity of need
+                </li>
+                <li>Will reflect the strategic inputs of the Unified model such as Women’s strategy, Sentence Management and Resettlement design
+                </li>
+                <li>Enabler to allocating cases to right Probation Practitioner with the right skills and experience at the right time
+                </li>
+                <li>Provide consistent view of workforce and workload to expose challenges in staff capacity
+                </li>
+                <li>Unified Tiering supports Standalone Unpaid Work and restrictive  operational requirements
+                </li>
+                <li>Additional enhancement for IOM to support new national Strategy
+                </li>
+            </ul>
+        </div>
+
+{% endblock %}
