@@ -22,6 +22,12 @@ table.heatmap {
   }
 }
 
+.back-to-top{
+  position: fixed;
+  top: 800px;
+  left: 15.9%;
+  display: none;
+}
 
 s {
   color: $govuk-secondary-text-colour;
