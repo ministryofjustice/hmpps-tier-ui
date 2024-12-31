@@ -11,7 +11,7 @@ Try it out in the dev environment: https://tier-dev.hmpps.service.justice.gov.uk
 
 You'll need to install:
 
-* [Node 21.x](https://nodejs.org/download/release/latest-v21.x)*
+* [Node 22.x](https://nodejs.org/download/release/latest-v22.x)*
 * [Docker](https://www.docker.com/)
 
 *If you're already using [nvm](https://github.com/nvm-sh/nvm) or [fnm](https://github.com/Schniz/fnm), run:
