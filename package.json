@@ -94,7 +94,6 @@
     ]
   },
   "dependencies": {
-    "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.1",
     "@ministryofjustice/frontend": "^3.3.0",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
     "@ministryofjustice/probation-search-frontend": "^2.2.0",
@@ -127,6 +126,7 @@
     "uuid": "^11.0.3"
   },
   "devDependencies": {
+    "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.1",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.7.5",
