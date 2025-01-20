@@ -126,7 +126,7 @@
     "uuid": "^11.0.5"
   },
   "devDependencies": {
-    "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.1",
+    "@ministryofjustice/eslint-config-hmpps": "^0.0.1-beta.2",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.7.5",
