@@ -46,13 +46,8 @@
       <a href="#change" class="govuk-link--no-visited-state">{{ tierCalculation.data.change.points }} change points</a>.
     </p>
     <p class="govuk-caption-m">
-      Last updated
-      {% if history and history | length > 0 %}
-        <a href="#history" title="{{ tierCalculation.calculationDate }}"
-           class="govuk-link--no-visited-state">{{ tierCalculation.calculationDate | ago }}</a>.
-      {% else %}
-        <abbr title="{{ tierCalculation.calculationDate }}">{{ tierCalculation.calculationDate | ago }}</abbr>.
-      {% endif %}
+      Last calculated
+      <abbr title="{{ tierCalculation.calculationDate }}">{{ tierCalculation.calculationDate | ago }}</abbr>.
     </p>
   </section>
 
