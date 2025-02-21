@@ -2,168 +2,204 @@
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "moj/components/timeline/macro.njk" import mojTimeline %}
 
 {% set pageTitle = applicationName + " - View" %}
-{% set mainClasses = "app-container govuk-body" %}
+{% set mainClasses = "app-container govuk-body govuk-!-padding-top-1" %}
 
 {% block banner %}
-    <section class='banner' aria-label='Case details'>
-        <div class='banner-header govuk-width-container'>
-            <span class='govuk-visually-hidden'>Name:</span>
-            <h1 class='banner-title govuk-heading-l govuk-!-margin-bottom-3'>
-                <span class='govuk-!-margin-right-6'
-                      data-qa='name'>{{ personalDetails.name.forenames }} {{ personalDetails.name.surname }}</span>
-            </h1>
-        </div>
-        <div class='banner-content govuk-width-container govuk-body'>
-            <span data-qa='crn' title='Case Reference Number'><strong>{{ personalDetails.crn }}</strong></span>
-            <span class='divider'></span>
-            <span data-qa='sex' title='Sex'><strong>{{ deliusInputs.gender }}</strong></span>
-            <span class='divider'></span>
-            <span data-qa='tier'><strong>Tier: </strong> {{ tierCalculation.tierScore }}</span>
-        </div>
-    </section>
+  <section class="banner" aria-label="Case details">
+    <div class="banner-header govuk-width-container">
+      <span class="govuk-visually-hidden">Name:</span>
+      <h1 class="banner-title govuk-heading-xl govuk-!-margin-bottom-3">
+                <span class="govuk-!-margin-right-6"
+                      data-qa="name">{{ personalDetails.name.forenames }} {{ personalDetails.name.surname }}</span>
+      </h1>
+    </div>
+    <div class="banner-content govuk-width-container govuk-body">
+      <span data-qa="crn" title="Case Reference Number"><strong>{{ personalDetails.crn }}</strong></span>
+      <span class="divider"></span>
+      <span data-qa="sex" title="Sex"><strong>{{ deliusInputs.gender }}</strong></span>
+      <span class="divider"></span>
+      <span data-qa="tier"><strong>Tier: </strong> {{ tierCalculation.tierScore }}</span>
+    </div>
+  </section>
 {% endblock %}
 
 {% block beforeContent %}
-    {{ govukBackLink({ text: "Back", href: "/search" }) }}
+  {{ govukBackLink({ text: "Back", href: "/search" }) }}
 {% endblock %}
 
 {% block content %}
-    {% if warnings.length %}
-        {{ govukErrorSummary({ titleText: "There is a problem", errorList: warnings }) }}
-    {% endif %}
+  {% if warnings.length %}
+    {{ govukErrorSummary({ titleText: "There is a problem", errorList: warnings }) }}
+  {% endif %}
 
+  <section>
+    <h2 class="govuk-heading-l">Summary</h2>
+    <p>
+      {{ personalDetails.name.forenames }} {{ personalDetails.name.surname }} has a tier of
+      <strong>{{ tierCalculation.tierScore }}</strong>,
+      based on a total of
+      <a href="#assess-protect" class="govuk-link--no-visited-state">
+        {{ tierCalculation.data.protect.points }} protect points</a> and
+      <a href="#change" class="govuk-link--no-visited-state">{{ tierCalculation.data.change.points }} change points</a>.
+    </p>
+    <p class="govuk-caption-m">
+      Last updated
+      {% if history and history | length > 0 %}
+        <a href="#history" title="{{ tierCalculation.calculationDate }}"
+           class="govuk-link--no-visited-state">{{ tierCalculation.calculationDate | ago }}</a>.
+      {% else %}
+        <abbr title="{{ tierCalculation.calculationDate }}">{{ tierCalculation.calculationDate | ago }}</abbr>.
+      {% endif %}
+    </p>
+  </section>
+
+  <h2 class="govuk-heading-l govuk-!-margin-top-7">Calculation</h2>
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="assess-protect" class="govuk-heading-m">Assess & Protect Axis</h2>
+        <p>The total number of protect points is
+          <strong>{{ tierCalculation.data.protect.points }}</strong>,
+          resulting in a tier letter of <strong>{{ tierCalculation.data.protect.tier }}</strong>.</p>
+
+        {{ govukTable({
+          attributes: { "data-qa": "protect-table" },
+          firstCellIsHeader: true,
+          head: [{ text: "Input" }, { text: "Value" }, { text: "Points", format: "numeric" }],
+          rows: protectTable
+        }) }}
+      </div>
+
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap mw-300">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Value</th>
+            <th scope="col" class="govuk-table__header">Points</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+            <td class="govuk-table__cell heatmap-100">150+</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-70">B</th>
+            <td class="govuk-table__cell heatmap-70">20 - 149</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-40">C</th>
+            <td class="govuk-table__cell heatmap-40">10 - 19</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-10">D</th>
+            <td class="govuk-table__cell heatmap-10">0 - 9</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="change" class="govuk-heading-m">Change Axis</h2>
+        {% if "NO_MANDATE_FOR_CHANGE" in tierCalculation.data.change.pointsBreakdown %}
+          <p>This case has no mandate for change, so the change axis has been set to <strong>ZERO</strong>.
+            The rules for
+            determining whether there is a mandate for change are as follows:</p>
+          <ul class="govuk-list govuk-list--bullet">
+            <li>If a Person on Probation has an active conviction and a custodial sentence, then the Change
+              Needs axis is always calculated.
+            </li>
+            <li>If a Person on Probation has an active conviction and a non-custodial sentence and at least
+              one non-restrictive requirement on that sentence (excluding Unpaid Work and Order Length
+              Extended), then they have a mandate for change, and the Change Needs axis is calculated.
+            </li>
+            <li>Otherwise, there is no mandate for change and the change axis result is set to zero.</li>
+          </ul>
+        {% elseif "NO_VALID_ASSESSMENT" in tierCalculation.data.change.pointsBreakdown %}
+          <p>This case has not had an OASys assessment in the last 55 weeks, so the change axis has been set
+            to <strong>TWO</strong>.</p>
+        {% else %}
+          <p>
+            The total number of change points is
+            <strong>{{ tierCalculation.data.change.points }}</strong>,
+            resulting in a tier number of <strong>{{ tierCalculation.data.change.tier }}</strong>.
+            This is based on a Layer 3 OASys assessment that was completed
+            <abbr
+              title="{{ oasysInputs.assessment.completedDate }}">{{ oasysInputs.assessment.completedDate | ago }}</abbr>.
+          </p>
+
+          {{ govukTable({
+            attributes: { "data-qa": "change-table" },
+            firstCellIsHeader: true,
+            head: [{ text: "Input" }, { text: "Value" }, { text: "Points", format: "numeric" }],
+            rows: changeTable
+          }) }}
+        {% endif %}
+      </div>
+
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap mw-300">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Value</th>
+            <th scope="col" class="govuk-table__header">Points</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-100">3</th>
+            <td class="govuk-table__cell heatmap-100">20+</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-70">2</th>
+            <td class="govuk-table__cell heatmap-70">10 - 19</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-40">1</th>
+            <td class="govuk-table__cell heatmap-40">1 - 9</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-10">0</th>
+            <td class="govuk-table__cell heatmap-10">0</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  {% if history and history | length > 0 %}
+    <h2 class="govuk-heading-l govuk-!-margin-top-7" id="history">History</h2>
     <section>
-        <h2 class='govuk-heading-l'>Summary</h2>
-        <p>
-            {{ personalDetails.name.forenames }} {{ personalDetails.name.surname }} has a tier of <strong>{{ tierCalculation.tierScore }}</strong>.
-        </p>
-        <p>
-            The tier was last calculated <abbr title="{{ tierCalculation.calculationDate }}">{{ tierCalculation.calculationDate | ago }}</abbr>,
-            based on a total of
-            <a href="#assess-protect">{{ tierCalculation.data.protect.points }} protect points</a> and
-            <a href="#change">{{ tierCalculation.data.change.points }} change points</a>.
-        </p>
-    </section>
-
-    <h2 class='govuk-heading-l'>Details</h2>
-    <section>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 id="assess-protect" class='govuk-heading-m'>Assess & Protect Axis</h2>
-                <p>The total number of points in this section is
-                    <strong>{{ tierCalculation.data.protect.points }}</strong>,
-                    resulting in a tier letter of <strong>{{ tierCalculation.data.protect.tier }}</strong>.</p>
-
-                {{ govukTable({
-                    attributes: { "data-qa": "protect-table" },
-                    firstCellIsHeader: true,
-                    head: [{ text: "Input" }, { text: "Value" }, { text: "Points", format: "numeric" }],
-                    rows: protectTable
-                }) }}
-            </div>
-
-            <div class="govuk-grid-column-one-third">
-                <table class="govuk-table heatmap mw-300">
-                    <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Value</th>
-                        <th scope="col" class="govuk-table__header">Points</th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-100">A</th>
-                        <td class="govuk-table__cell heatmap-100">150+</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-70">B</th>
-                        <td class="govuk-table__cell heatmap-70">20 - 149</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-40">C</th>
-                        <td class="govuk-table__cell heatmap-40">10 - 19</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-10">D</th>
-                        <td class="govuk-table__cell heatmap-10">0 - 9</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </section>
-
-    <section>
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <h2 id="change" class='govuk-heading-m'>Change Axis</h2>
-                {% if 'NO_MANDATE_FOR_CHANGE' in tierCalculation.data.change.pointsBreakdown %}
-                    <p>This case has no mandate for change, so the change axis has been set to <strong>ZERO</strong>.
-                        The rules for
-                        determining whether there is a mandate for change are as follows:</p>
-                    <ul class="govuk-list govuk-list--bullet">
-                        <li>If a Person on Probation has an active conviction and a custodial sentence, then the Change
-                            Needs axis is always calculated.
-                        </li>
-                        <li>If a Person on Probation has an active conviction and a non-custodial sentence and at least
-                            one non-restrictive requirement on that sentence (excluding Unpaid Work and Order Length
-                            Extended), then they have a mandate for change, and the Change Needs axis is calculated.
-                        </li>
-                        <li>Otherwise, there is no mandate for change and the change axis result is set to zero.</li>
-                    </ul>
-                {% elseif 'NO_VALID_ASSESSMENT' in tierCalculation.data.change.pointsBreakdown %}
-                    <p>This case has not had an OASys assessment in the last 55 weeks, so the change axis has been set
-                        to <strong>TWO</strong>.</p>
-                {% else %}
-                    <p>
-                        The total number of points in this section is
-                        <strong>{{ tierCalculation.data.change.points }}</strong>,
-                        resulting in a tier number of <strong>{{ tierCalculation.data.change.tier }}</strong>.
-                        This is based on a Layer 3 OASys assessment that was completed
-                        <abbr title="{{ oasysInputs.assessment.completedDate }}">{{ oasysInputs.assessment.completedDate | ago }}</abbr>.
-                    </p>
-
-                    {{ govukTable({
-                        attributes: { "data-qa": "change-table" },
-                        firstCellIsHeader: true,
-                        head: [{ text: "Input" }, { text: "Value" }, { text: "Points", format: "numeric" }],
-                        rows: changeTable
-                    }) }}
+      <div class="govuk-grid-row">
+        <div class="govuk-grid-column-full">
+          <div class="moj-timeline">
+            {% for item in history %}
+              <div class="moj-timeline__item">
+                <div class="moj-timeline__header">
+                  <h2 class="moj-timeline__title">{{ item.tierScore }}</h2>
+                </div>
+                <p class="moj-timeline__date">
+                  <time datetime="{{ item.calculationDate }}"
+                        title="{{ item.calculationDate }}">{{ item.calculationDate | formatDate }}</time>
+                </p>
+                {% if item.changeReason %}
+                  <div class="moj-timeline__description">{{ item.changeReason }}</div>
                 {% endif %}
-            </div>
-
-            <div class="govuk-grid-column-one-third">
-                <table class="govuk-table heatmap mw-300">
-                    <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
-                    <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Value</th>
-                        <th scope="col" class="govuk-table__header">Points</th>
-                    </tr>
-                    </thead>
-                    <tbody class="govuk-table__body">
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-100">3</th>
-                        <td class="govuk-table__cell heatmap-100">20+</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-70">2</th>
-                        <td class="govuk-table__cell heatmap-70">10 - 19</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-40">1</th>
-                        <td class="govuk-table__cell heatmap-40">1 - 9</td>
-                    </tr>
-                    <tr class="govuk-table__row">
-                        <th scope="row" class="govuk-table__header heatmap-10">0</th>
-                        <td class="govuk-table__cell heatmap-10">0</td>
-                    </tr>
-                    </tbody>
-                </table>
-            </div>
+              </div>
+            {% endfor %}
+          </div>
         </div>
+      </div>
     </section>
+  {% endif %}
 {% endblock %}

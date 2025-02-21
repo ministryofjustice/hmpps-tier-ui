@@ -8,6 +8,7 @@ import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
 import TierApiClient, { TierLevel } from '../data/tierApiClient'
 import { needsRow, row, Table } from '../utils/table'
 import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/mappings'
+import config from '../config'
 
 export default function caseRoutes(router: Router, { hmppsAuthClient }: Services) {
   const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
@@ -25,20 +26,23 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
     const tierClient = new TierApiClient(token)
     const arnsClient = new ArnsApiClient(token)
 
-    await auditService.sendAuditMessage({
-      action: 'VIEW_TIER_INFORMATION',
-      who: res.locals.user.username,
-      subjectId: crn,
-      subjectType: 'CRN',
-      correlationId: v4(),
-      service: 'hmpps-tier-ui',
-    })
+    if (config.audit.enabled) {
+      await auditService.sendAuditMessage({
+        action: 'VIEW_TIER_INFORMATION',
+        who: res.locals.user.username,
+        subjectId: crn,
+        subjectType: 'CRN',
+        correlationId: v4(),
+        service: 'hmpps-tier-ui',
+      })
+    }
 
-    const [personalDetails, deliusInputs, oasysInputs, tierCalculation] = await Promise.all([
+    const [personalDetails, deliusInputs, oasysInputs, tierCalculation, history] = await Promise.all([
       deliusClient.getPersonalDetails(crn),
       deliusClient.getTierDetails(crn),
       arnsClient.getTierAssessmentInfo(crn),
       tierClient.getCalculationDetails(crn),
+      tierClient.getHistory(crn),
     ])
 
     const warnings: string[] = []
@@ -52,6 +56,9 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       tierCalculation,
       protectTable,
       changeTable,
+      history: history.filter(
+        (item, index) => index === history.length - 1 || item.tierScore !== history[index + 1].tierScore,
+      ),
       warnings: warnings.map(warning => ({ text: warning })),
     })
   })

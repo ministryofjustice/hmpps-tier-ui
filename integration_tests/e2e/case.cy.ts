@@ -2,13 +2,18 @@ import CasePage from '../pages/case'
 import Page from '../pages/page'
 
 context('Case view screen', () => {
-  it('basic case', () => {
-    cy.visit('/case/X000001')
+  it('displays case details header', () => {
+    cy.visit('/case/A000001')
     const page = Page.verifyOnPage(CasePage)
-    page.headerCrn().should('contain.text', 'X000001')
+    page.headerCrn().should('contain.text', 'A000001')
     page.headerSex().should('contain.text', 'Female')
     page.headerTier().should('contain.text', 'B2')
     page.warnings().should('not.exist')
+  })
+
+  it('displays protect section', () => {
+    cy.visit('/case/A000001')
+    const page = Page.verifyOnPage(CasePage)
     cy.get(page.protectTableRow(1))
       .should('contain.text', 'Medium RoSH')
       .should('contain.text', '+10')
@@ -31,7 +36,11 @@ context('Case view screen', () => {
       .should('contain.text', 'Impulsivity and temper control')
       .should('contain.text', '+2')
     cy.get(page.protectTableRow(10)).should('contain.text', 'Total').should('contain.text', '33')
+  })
 
+  it('displays change section', () => {
+    cy.visit('/case/A000001')
+    const page = Page.verifyOnPage(CasePage)
     cy.get(page.changeTableRow(1))
       .should('contain.text', 'OGRS')
       .should('contain.text', '56.7%')
@@ -52,8 +61,30 @@ context('Case view screen', () => {
     cy.get(page.changeTableRow(8)).should('contain.text', 'Total').should('contain.text', '14')
   })
 
+  it('displays history', () => {
+    cy.visit('/case/A000001')
+    const page = Page.verifyOnPage(CasePage)
+    cy.get(page.timelineItem(1))
+      .should('contain.text', 'B2')
+      .should('contain.text', '7 December 2023 at 12:05 PM')
+      .should('contain.text', 'A breach was raised')
+    cy.get(page.timelineItem(2))
+      .should('contain.text', 'C2')
+      .should('contain.text', '13 October 2023 at 11:10 AM')
+      .should('contain.text', "A registration of type 'MAPPA' was added")
+    cy.get(page.timelineItem(3))
+      .should('contain.text', 'D2')
+      .should('contain.text', '28 July 2023 at 5:09 PM')
+      .should('contain.text', 'An OASys assessment was produced')
+    cy.get(page.timelineItem(4)).should('contain.text', 'C0').should('contain.text', '7 October 2023 at 12:12 PM')
+    cy.get(page.timelineItem(5))
+      .should('contain.text', 'D0')
+      .should('contain.text', '7 October 2023 at 9:34 AM')
+      .should('contain.text', 'The case was created')
+  })
+
   it('handles multiple rosh registrations', () => {
-    cy.visit('/case/X000002')
+    cy.visit('/case/A000002')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('contain.text', 'Multiple RoSH registrations were found in Delius')
     page.protectTable().should('not.contain.text', 'High RoSH')
@@ -61,7 +92,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with no mandate for change', () => {
-    cy.visit('/case/X000003')
+    cy.visit('/case/A000003')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('not.exist')
     page.changeTable().should('not.exist')
@@ -72,7 +103,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with no assessment', () => {
-    cy.visit('/case/X000004')
+    cy.visit('/case/A000004')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('not.exist')
     page.changeTable().should('not.exist')
@@ -80,7 +111,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with limited access', () => {
-    cy.visit('/case/X000005')
+    cy.visit('/case/A000005')
     cy.get('body').should('contain.text', 'You are not authorised to view this case')
   })
 })

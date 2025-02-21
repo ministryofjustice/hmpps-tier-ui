@@ -10,6 +10,10 @@ export default class TierApiClient extends RestClient {
     return this.get({ path: `/crn/${crn}/tier/details` })
   }
 
+  async getHistory(crn: string): Promise<TierCalculation[]> {
+    return (await this.get({ path: `/crn/${crn}/tier/history`, handle404: true })) ?? []
+  }
+
   async getTierCounts(): Promise<TierCount[]> {
     return this.get({ path: '/tier-counts' })
   }
@@ -36,6 +40,7 @@ export interface TierCalculation {
     change: TierLevel
     calculationVersion: string
   }
+  changeReason?: string
 }
 
 export interface TierLevel {

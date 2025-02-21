@@ -27,7 +27,7 @@ npm install
 
 ### Run the service
 
-To run the service locally, with an in-memory session store and local user account, run:
+To run the service locally with an in-memory session store, a local user account, and dependencies running in WireMock:
 
 ```shell
 npm run start:dev

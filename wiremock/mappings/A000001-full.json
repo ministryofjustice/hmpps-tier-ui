@@ -2,7 +2,7 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/tier/crn/X000001/tier/details",
+        "urlPattern": "/tier/crn/A000001/tier/details",
         "method": "GET"
       },
       "response": {
@@ -42,13 +42,78 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/person/X000001",
+        "urlPattern": "/tier/crn/A000001/tier/history",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "tierScore": "B2",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db37",
+            "calculationDate": "2023-12-07T12:05:11.524616",
+            "changeReason": "A breach was raised"
+          },
+          {
+            "tierScore": "C2",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db38",
+            "calculationDate": "2023-10-13T11:10:01.123",
+            "changeReason": "A registration of type 'MAPPA' was added"
+          },
+          {
+            "tierScore": "D2",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db39",
+            "calculationDate": "2023-07-28T17:11:59.123",
+            "changeReason": "A requirement of type 'Unpaid work' was removed"
+          },
+          {
+            "tierScore": "D2",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db39",
+            "calculationDate": "2023-07-28T17:10:59.123",
+            "changeReason": "A requirement of type 'Unpaid work' was added"
+          },
+          {
+            "tierScore": "D2",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db39",
+            "calculationDate": "2023-07-28T17:09:59.123",
+            "changeReason": "An OASys assessment was produced"
+          },
+          {
+            "tierScore": "C0",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db40",
+            "calculationDate": "2023-10-07T12:16:41.123"
+          },
+          {
+            "tierScore": "C0",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db40",
+            "calculationDate": "2023-10-07T12:14:41.123"
+          },
+          {
+            "tierScore": "C0",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db40",
+            "calculationDate": "2023-10-07T12:12:41.123"
+          },
+          {
+            "tierScore": "D0",
+            "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db40",
+            "calculationDate": "2023-10-07T09:34:41.123",
+            "changeReason": "The case was created"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/person/A000001",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000001",
+          "crn": "A000001",
           "name": {
             "forenames": "Jane",
             "surname": "Doe"
@@ -61,7 +126,7 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/tier-details/X000001",
+        "urlPattern": "/delius/tier-details/A000001",
         "method": "GET"
       },
       "response": {
@@ -113,7 +178,7 @@
     },
     {
       "request": {
-        "urlPattern": "/arns/tier-assessment/sections/X000001",
+        "urlPattern": "/arns/tier-assessment/sections/A000001",
         "method": "GET"
       },
       "response": {
@@ -176,13 +241,13 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/users/.+/access/X000001",
+        "urlPattern": "/delius/users/.+/access/A000001",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000001",
+          "crn": "A000001",
           "userRestricted": false,
           "userExcluded": false
         },

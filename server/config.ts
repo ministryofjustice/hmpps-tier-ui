@@ -49,11 +49,14 @@ export default {
     secret: get('SESSION_SECRET', 'app-insecure-default-session', requiredInProduction),
     expiryMinutes: Number(get('WEB_SESSION_TIMEOUT_IN_MINUTES', 120)),
   },
+  audit: {
+    enabled: get('AUDIT_ENABLED', 'false') === 'true',
+  },
   apis: {
     hmppsAuth: {
       enabled: get('HMPPS_AUTH_ENABLED', 'false', requiredInProduction) === 'true',
-      url: get('HMPPS_AUTH_URL', 'http://localhost:9090/auth', requiredInProduction),
-      externalUrl: get('HMPPS_AUTH_EXTERNAL_URL', get('HMPPS_AUTH_URL', 'http://localhost:9090/auth')),
+      url: get('HMPPS_AUTH_URL', 'http://localhost:9091/auth', requiredInProduction),
+      externalUrl: get('HMPPS_AUTH_EXTERNAL_URL', get('HMPPS_AUTH_URL', 'http://localhost:9091/auth')),
       timeout: {
         response: Number(get('HMPPS_AUTH_TIMEOUT_RESPONSE', 10000)),
         deadline: Number(get('HMPPS_AUTH_TIMEOUT_DEADLINE', 10000)),
@@ -65,7 +68,7 @@ export default {
       systemClientSecret: get('SYSTEM_CLIENT_SECRET', 'clientsecret', requiredInProduction),
     },
     manageUsersApi: {
-      url: get('MANAGE_USERS_API_URL', 'http://localhost:9091', requiredInProduction),
+      url: get('MANAGE_USERS_API_URL', 'http://localhost:9091/manage-users-api', requiredInProduction),
       timeout: {
         response: Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 10000)),
         deadline: Number(get('MANAGE_USERS_API_TIMEOUT_DEADLINE', 10000)),
@@ -73,7 +76,7 @@ export default {
       agent: new AgentConfig(Number(get('MANAGE_USERS_API_TIMEOUT_RESPONSE', 10000))),
     },
     tokenVerification: {
-      url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:8100', requiredInProduction),
+      url: get('TOKEN_VERIFICATION_API_URL', 'http://localhost:9091/token-verification-api', requiredInProduction),
       timeout: {
         response: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_RESPONSE', 5000)),
         deadline: Number(get('TOKEN_VERIFICATION_API_TIMEOUT_DEADLINE', 5000)),
@@ -82,7 +85,7 @@ export default {
       enabled: get('TOKEN_VERIFICATION_ENABLED', 'false') === 'true',
     },
     deliusIntegration: {
-      url: get('DELIUS_INTEGRATION_URL', 'http://localhost:8100', requiredInProduction),
+      url: get('DELIUS_INTEGRATION_URL', 'http://localhost:9091/delius', requiredInProduction),
       timeout: {
         response: Number(get('DELIUS_INTEGRATION_TIMEOUT_RESPONSE', 5000)),
         deadline: Number(get('DELIUS_INTEGRATION_TIMEOUT_DEADLINE', 5000)),
@@ -90,7 +93,7 @@ export default {
       agent: new AgentConfig(Number(get('DELIUS_INTEGRATION_TIMEOUT_RESPONSE', 5000))),
     },
     tierApi: {
-      url: get('TIER_API_URL', 'http://localhost:8100', requiredInProduction),
+      url: get('TIER_API_URL', 'http://localhost:9091/tier', requiredInProduction),
       timeout: {
         response: Number(get('TIER_API_TIMEOUT_RESPONSE', 5000)),
         deadline: Number(get('TIER_API_TIMEOUT_DEADLINE', 5000)),
@@ -98,7 +101,7 @@ export default {
       agent: new AgentConfig(Number(get('TIER_API_TIMEOUT_RESPONSE', 5000))),
     },
     arnsApi: {
-      url: get('ARNS_API_URL', 'http://localhost:8100', requiredInProduction),
+      url: get('ARNS_API_URL', 'http://localhost:9091/arns', requiredInProduction),
       timeout: {
         response: Number(get('ARNS_API_TIMEOUT_RESPONSE', 10000)),
         deadline: Number(get('ARNS_API_TIMEOUT_DEADLINE', 10000)),
