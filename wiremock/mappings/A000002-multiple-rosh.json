@@ -2,13 +2,13 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/tier/crn/X000004/tier/details",
+        "urlPattern": "/tier/crn/A000002/tier/details",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "tierScore": "C2",
+          "tierScore": "C0",
           "calculationId": "ee1f151f-7417-47f8-9366-2ced6356db37",
           "calculationDate": "2023-12-07T12:05:11.524616",
           "data": {
@@ -24,10 +24,10 @@
               }
             },
             "change": {
-              "tier": "TWO",
-              "points": 0,
+              "tier": "ONE",
+              "points": 1,
               "pointsBreakdown": {
-                "NO_VALID_ASSESSMENT": 0
+                "NEEDS": 1
               }
             },
             "calculationVersion": "2"
@@ -40,13 +40,13 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/person/X000004",
+        "urlPattern": "/delius/person/A000002",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000004",
+          "crn": "A000002",
           "name": {
             "forenames": "John",
             "surname": "Doe"
@@ -59,19 +59,24 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/tier-details/X000004",
+        "urlPattern": "/delius/tier-details/A000002",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
           "gender": "Male",
-          "currentTier": "UC2",
+          "currentTier": "UB0",
           "registrations": [
             {
               "code": "RMRH",
               "description": "Medium RoSH",
               "date": "2023-12-07"
+            },
+            {
+              "code": "RHRH",
+              "description": "High RoSH",
+              "date": "2023-12-06"
             }
           ],
           "convictions": [],
@@ -84,25 +89,38 @@
     },
     {
       "request": {
-        "urlPattern": "/arns/tier-assessment/sections/X000004",
-        "method": "GET"
-      },
-      "response": {
-        "status": 404,
-        "jsonBody": {
-          "status": 404
-        }
-      }
-    },
-    {
-      "request": {
-        "urlPattern": "/delius/users/.+/access/X000004",
+        "urlPattern": "/arns/tier-assessment/sections/A000002",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000004",
+          "assessment": {
+            "assessmentId": 2,
+            "completedDate": "2023-12-19T16:57:25",
+            "assessmentType": "LAYER3",
+            "status": "COMPLETE"
+          },
+          "accommodation": {
+            "linkedToReOffending": "No",
+            "linkedToHarm": "No",
+            "severity": "STANDARD"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/users/.+/access/A000002",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "A000002",
           "userRestricted": false,
           "userExcluded": false
         },

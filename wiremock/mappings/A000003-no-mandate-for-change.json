@@ -2,7 +2,7 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/tier/crn/X000003/tier/details",
+        "urlPattern": "/tier/crn/A000003/tier/details",
         "method": "GET"
       },
       "response": {
@@ -40,13 +40,13 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/person/X000003",
+        "urlPattern": "/delius/person/A000003",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000003",
+          "crn": "A000003",
           "name": {
             "forenames": "John",
             "surname": "Doe"
@@ -59,7 +59,7 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/tier-details/X000003",
+        "urlPattern": "/delius/tier-details/A000003",
         "method": "GET"
       },
       "response": {
@@ -84,7 +84,7 @@
     },
     {
       "request": {
-        "urlPattern": "/arns/tier-assessment/sections/X000003",
+        "urlPattern": "/arns/tier-assessment/sections/A000003",
         "method": "GET"
       },
       "response": {
@@ -96,13 +96,13 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/users/.+/access/X000003",
+        "urlPattern": "/delius/users/.+/access/A000003",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "X000003",
+          "crn": "A000003",
           "userRestricted": false,
           "userExcluded": false
         },

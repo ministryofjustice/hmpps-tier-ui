@@ -20,4 +20,6 @@ export default class CasePage extends Page {
   changeTable = (): PageElement => cy.get('[data-qa=change-table]')
 
   changeTableRow = (row: number): string => `[data-qa=change-table] tbody tr:nth-child(${row})`
+
+  timelineItem = (row: number): string => `.moj-timeline .moj-timeline__item:nth-child(${row})`
 }

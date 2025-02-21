@@ -2,7 +2,7 @@
 import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
-import { formatDistance, parseISO } from 'date-fns'
+import { format, formatDistance, parseISO } from 'date-fns'
 import { initialiseName } from './utils'
 import { ApplicationInfo } from '../applicationInfo'
 import config from '../config'
@@ -46,5 +46,6 @@ export default function nunjucksSetup(app: express.Express, applicationInfo: App
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('formatNumber', (num: number) => num.toLocaleString('en-GB'))
+  njkEnv.addFilter('formatDate', (date: string) => format(parseISO(date), "d MMMM yyyy' at 'h:mm a"))
   njkEnv.addFilter('ago', (date: string) => formatDistance(parseISO(date), new Date(), { addSuffix: true }))
 }
