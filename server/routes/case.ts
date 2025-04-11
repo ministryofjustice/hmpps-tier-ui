@@ -1,7 +1,6 @@
-import { type RequestHandler, Router } from 'express'
+import { Router } from 'express'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import { v4 } from 'uuid'
-import asyncMiddleware from '../middleware/asyncMiddleware'
 import type { Services } from '../services'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
 import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
@@ -11,9 +10,7 @@ import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/map
 import config from '../config'
 
 export default function caseRoutes(router: Router, { hmppsAuthClient }: Services) {
-  const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-
-  get('/case/:crn', async (req, res, _next) => {
+  router.get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
     const token = await hmppsAuthClient.getSystemClientToken(res.locals.user.username)
     const deliusClient = new DeliusIntegrationClient(token)
