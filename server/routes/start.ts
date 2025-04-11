@@ -1,12 +1,9 @@
-import { type RequestHandler, Router } from 'express'
-import asyncMiddleware from '../middleware/asyncMiddleware'
+import { Router } from 'express'
 import type { Services } from '../services'
 import TierApiClient, { TierCount } from '../data/tierApiClient'
 
 export default function startRoutes(router: Router, { hmppsAuthClient }: Services) {
-  const get = (path: string | string[], handler: RequestHandler) => router.get(path, asyncMiddleware(handler))
-
-  get('/', async (_req, res, _next) => {
+  router.get('/', async (_req, res, _next) => {
     const counts = await hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
       const tierClient = new TierApiClient(token)
       return tierClient.getTierCounts()
