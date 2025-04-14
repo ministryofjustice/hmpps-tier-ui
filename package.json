@@ -94,7 +94,7 @@
     ]
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^4.0.1",
+    "@ministryofjustice/frontend": "^5.1.2",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
     "@ministryofjustice/probation-search-frontend": "^2.3.0",
     "agentkeepalive": "^4.6.0",
