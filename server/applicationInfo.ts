@@ -1,3 +1,5 @@
+import path from 'path'
+import fs from 'fs'
 import config from './config'
 
 const { buildNumber, gitRef, productId, branchName } = config
@@ -7,17 +9,12 @@ export type ApplicationInfo = {
   buildNumber: string
   gitRef: string
   gitShortHash: string
-  productId?: string
+  productId: string
   branchName: string
 }
 
 export default (): ApplicationInfo => {
-  return {
-    applicationName: 'hmpps-tier-ui',
-    buildNumber,
-    gitRef,
-    gitShortHash: gitRef.substring(0, 7),
-    productId,
-    branchName,
-  }
+  const packageJson = path.join(__dirname, '../../package.json')
+  const { name: applicationName } = JSON.parse(fs.readFileSync(packageJson).toString())
+  return { applicationName, buildNumber, gitRef, gitShortHash: gitRef.substring(0, 7), productId, branchName }
 }

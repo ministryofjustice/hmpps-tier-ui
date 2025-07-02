@@ -4,10 +4,7 @@ import TierApiClient, { TierCount } from '../data/tierApiClient'
 
 export default function startRoutes(router: Router, { hmppsAuthClient }: Services) {
   router.get('/', async (_req, res, _next) => {
-    const counts = await hmppsAuthClient.getSystemClientToken(res.locals.user.username).then(async token => {
-      const tierClient = new TierApiClient(token)
-      return tierClient.getTierCounts()
-    })
+    const counts = await new TierApiClient(hmppsAuthClient).getTierCounts()
 
     const tierCounts = new TierCountDetail(counts)
 

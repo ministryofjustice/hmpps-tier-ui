@@ -1,13 +1,16 @@
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import RestClient from './restClient'
+import logger from '../../logger'
+import { ignore404 } from '../utils/utils'
 
 export default class ArnsApiClient extends RestClient {
-  constructor(token: string) {
-    super('Assess Risks and Needs API', config.apis.arnsApi, token)
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Assess Risks and Needs API', config.apis.arnsApi, logger, authenticationClient)
   }
 
   async getTierAssessmentInfo(crn: string): Promise<OASysTierInputs | null> {
-    return this.get({ path: `/tier-assessment/sections/${crn}`, handle404: true })
+    return this.get({ path: `/tier-assessment/sections/${crn}`, errorHandler: ignore404 }, asSystem())
   }
 }
 
