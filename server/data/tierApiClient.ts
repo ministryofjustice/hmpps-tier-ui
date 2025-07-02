@@ -10,7 +10,7 @@ export default class TierApiClient extends RestClient {
   }
 
   async getCalculationDetails(crn: string): Promise<TierCalculation> {
-    return this.get({ path: `/crn/${crn}/tier/details` })
+    return this.get({ path: `/crn/${crn}/tier/details` }, asSystem())
   }
 
   async getHistory(crn: string): Promise<TierCalculation[]> {
