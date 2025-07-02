@@ -4,12 +4,10 @@ import nunjucks from 'nunjucks'
 import express from 'express'
 import { format, formatDistance, parseISO } from 'date-fns'
 import { initialiseName } from './utils'
-import { ApplicationInfo } from '../applicationInfo'
 import config from '../config'
+import applicationInfo from '../applicationInfo'
 
-const production = process.env.NODE_ENV === 'production'
-
-export default function nunjucksSetup(app: express.Express, applicationInfo: ApplicationInfo): void {
+export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
 
   app.locals.asset_path = '/assets/'
@@ -18,9 +16,9 @@ export default function nunjucksSetup(app: express.Express, applicationInfo: App
   app.locals.environmentNameColour = config.env === 'preprod' ? 'govuk-tag--green' : ''
 
   // Cachebusting version string
-  if (production) {
+  if (config.production) {
     // Version only changes with new commits
-    app.locals.version = applicationInfo.gitShortHash
+    app.locals.version = applicationInfo().gitShortHash
   } else {
     // Version changes every request
     app.use((req, res, next) => {

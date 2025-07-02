@@ -12,16 +12,15 @@ import config from '../config'
 export default function caseRoutes(router: Router, { hmppsAuthClient }: Services) {
   router.get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
-    const token = await hmppsAuthClient.getSystemClientToken(res.locals.user.username)
-    const deliusClient = new DeliusIntegrationClient(token)
+    const deliusClient = new DeliusIntegrationClient(hmppsAuthClient)
     const limitedAccess = await deliusClient.getLimitedAccessDetails(res.locals.user.username, crn)
     if (limitedAccess.userRestricted || limitedAccess.userExcluded) {
       res.render('autherror-lao')
       return
     }
 
-    const tierClient = new TierApiClient(token)
-    const arnsClient = new ArnsApiClient(token)
+    const tierClient = new TierApiClient(hmppsAuthClient)
+    const arnsClient = new ArnsApiClient(hmppsAuthClient)
 
     if (config.audit.enabled) {
       await auditService.sendAuditMessage({

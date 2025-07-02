@@ -1,9 +1,12 @@
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import RestClient from './restClient'
+import logger from '../../logger'
+import { ignore404 } from '../utils/utils'
 
 export default class TierApiClient extends RestClient {
-  constructor(token: string) {
-    super('Tier API', config.apis.tierApi, token)
+  constructor(authenticationClient: AuthenticationClient) {
+    super('Tier API', config.apis.tierApi, logger, authenticationClient)
   }
 
   async getCalculationDetails(crn: string): Promise<TierCalculation> {
@@ -11,11 +14,11 @@ export default class TierApiClient extends RestClient {
   }
 
   async getHistory(crn: string): Promise<TierCalculation[]> {
-    return (await this.get({ path: `/crn/${crn}/tier/history`, handle404: true })) ?? []
+    return (await this.get({ path: `/crn/${crn}/tier/history`, errorHandler: ignore404 }, asSystem())) ?? []
   }
 
   async getTierCounts(): Promise<TierCount[]> {
-    return this.get({ path: '/tier-counts' })
+    return this.get({ path: '/tier-counts' }, asSystem())
   }
 }
 

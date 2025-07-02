@@ -1,21 +1,23 @@
+import { asSystem, RestClient } from '@ministryofjustice/hmpps-rest-client'
+import { AuthenticationClient } from '@ministryofjustice/hmpps-auth-clients'
 import config from '../config'
-import RestClient from './restClient'
+import logger from '../../logger'
 
 export default class DeliusIntegrationClient extends RestClient {
-  constructor(token: string) {
-    super('DeliusIntegration', config.apis.deliusIntegration, token)
+  constructor(authenticationClient: AuthenticationClient) {
+    super('DeliusIntegration', config.apis.deliusIntegration, logger, authenticationClient)
   }
 
   async getLimitedAccessDetails(username: string, crn: string): Promise<CaseAccess> {
-    return this.get({ path: `/users/${username}/access/${crn}` })
+    return this.get({ path: `/users/${username}/access/${crn}` }, asSystem())
   }
 
   async getTierDetails(crn: string): Promise<DeliusTierInputs> {
-    return this.get({ path: `/tier-details/${crn}` })
+    return this.get({ path: `/tier-details/${crn}` }, asSystem())
   }
 
   async getPersonalDetails(crn: string): Promise<PersonalDetails> {
-    return this.get({ path: `/person/${crn}` })
+    return this.get({ path: `/person/${crn}` }, asSystem())
   }
 }
 
