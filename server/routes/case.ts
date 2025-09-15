@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
-import { v4 } from 'uuid'
+import { randomUUID } from 'crypto'
 import type { Services } from '../services'
 import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
 import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
@@ -28,7 +28,7 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
         who: res.locals.user.username,
         subjectId: crn,
         subjectType: 'CRN',
-        correlationId: v4(),
+        correlationId: randomUUID(),
         service: 'hmpps-tier-ui',
       })
     }
