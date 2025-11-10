@@ -128,7 +128,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@ministryofjustice/eslint-config-hmpps": "^1.0.0",
+    "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.8.1",
@@ -145,12 +145,12 @@
     "@types/passport-oauth2": "^1.8.0",
     "@types/superagent": "^8.1.9",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.46.2",
+    "@typescript-eslint/eslint-plugin": "^8.46.3",
     "@typescript-eslint/parser": "^8.32.1",
     "audit-ci": "^7.1.0",
     "concurrently": "^9.2.1",
     "cookie-session": "^2.1.1",
-    "cypress": "^15.5.0",
+    "cypress": "^15.6.0",
     "cypress-multi-reporters": "^2.0.5",
     "dotenv": "^17.2.3",
     "husky": "^9.1.7",
