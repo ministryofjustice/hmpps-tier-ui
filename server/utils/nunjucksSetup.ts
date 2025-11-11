@@ -35,6 +35,7 @@ export default function nunjucksSetup(app: express.Express): void {
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
       'node_modules/@ministryofjustice/probation-search-frontend/components',
+      'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/',
     ],
     {
       autoescape: true,

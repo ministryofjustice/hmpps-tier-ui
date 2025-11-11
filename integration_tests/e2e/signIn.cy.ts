@@ -9,12 +9,6 @@ context('Sign In', () => {
     indexPage.headerUserName().should('contain.text', 'J. Smith')
   })
 
-  it('Phase banner visible in header', () => {
-    cy.visit('/')
-    const indexPage = Page.verifyOnPage(IndexPage)
-    indexPage.headerPhaseBanner().should('contain.text', 'local')
-  })
-
   it('User can sign out', () => {
     cy.visit('/')
     const indexPage = Page.verifyOnPage(IndexPage)
