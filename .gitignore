@@ -118,6 +118,7 @@ dist
 
 
 assets/stylesheets/*.css
+assets/stylesheets/*.css.map
 .idea
 .vscode
 dist/

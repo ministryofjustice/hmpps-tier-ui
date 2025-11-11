@@ -13,4 +13,5 @@ generic-service:
     DELIUS_INTEGRATION_URL: "https://tier-to-delius.hmpps.service.justice.gov.uk"
     TIER_API_URL: "https://hmpps-tier.hmpps.service.justice.gov.uk"
     ARNS_API_URL: "https://assess-risks-and-needs.hmpps.service.justice.gov.uk"
+    COMPONENT_API_URL: "https://probation-frontend-components.hmpps.service.justice.gov.uk"
     ENVIRONMENT: prod

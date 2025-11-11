@@ -8,6 +8,7 @@ import authorisationMiddleware from './middleware/authorisationMiddleware'
 import setUpAuthentication from './middleware/setUpAuthentication'
 import setUpCsrf from './middleware/setUpCsrf'
 import setUpCurrentUser from './middleware/setUpCurrentUser'
+import setUpFrontendComponents from './middleware/setUpFrontendComponents'
 import setUpHealthChecks from './middleware/setUpHealthChecks'
 import setUpStaticResources from './middleware/setUpStaticResources'
 import setUpWebRequestParsing from './middleware/setupRequestParsing'
@@ -36,6 +37,7 @@ export default function createApp(services: Services): express.Application {
   app.use(authorisationMiddleware(['ROLE_TIER_SERVICE_USER']))
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
+  app.use(setUpFrontendComponents())
 
   app.use(routes(services))
 
