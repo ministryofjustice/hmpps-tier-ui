@@ -3,31 +3,28 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/timeline/macro.njk" import mojTimeline %}
+{% from "../_components/probation-primary-navigation/macro.njk" import probationPrimaryNavigation %}
+{% from "../_components/probation-case-details-header/macro.njk" import probationCaseDetailsHeader %}
 
 {% set pageTitle = applicationName + " - View" %}
 {% set mainClasses = "app-container govuk-body govuk-!-padding-top-1" %}
 
 {% block banner %}
-  <section class="banner" aria-label="Case details">
-    <div class="banner-header govuk-width-container">
-      <span class="govuk-visually-hidden">Name:</span>
-      <h1 class="banner-title govuk-heading-xl govuk-!-margin-bottom-3">
-                <span class="govuk-!-margin-right-6"
-                      data-qa="name">{{ personalDetails.name.forenames }} {{ personalDetails.name.surname }}</span>
-      </h1>
-    </div>
-    <div class="banner-content govuk-width-container govuk-body">
-      <span data-qa="crn" title="Case Reference Number"><strong>{{ personalDetails.crn }}</strong></span>
-      <span class="divider"></span>
-      <span data-qa="sex" title="Sex"><strong>{{ deliusInputs.gender }}</strong></span>
-      <span class="divider"></span>
-      <span data-qa="tier"><strong>Tier: </strong> {{ tierCalculation.tierScore }}</span>
-    </div>
-  </section>
+  {{ probationPrimaryNavigation({ environment: environmentName }) }}
 {% endblock %}
 
 {% block beforeContent %}
-  {{ govukBackLink({ text: "Back", href: "/search" }) }}
+  {{ probationCaseDetailsHeader({
+    environment: environmentName,
+    name: (personalDetails.name.forenames + " " + personalDetails.name.surname),
+    crn: personalDetails.crn,
+    dateOfBirth: (personalDetails.dateOfBirth | formatDate("dd/MM/yyyy")),
+    age: personalDetails.age,
+    tierScore: tierCalculation.tierScore,
+    rosh: rosh,
+    rsr: rsr,
+    breadcrumbs: [{ text: "Tier" }]
+  }) }}
 {% endblock %}
 
 {% block content %}

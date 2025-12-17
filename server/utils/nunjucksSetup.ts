@@ -45,6 +45,8 @@ export default function nunjucksSetup(app: express.Express): void {
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('formatNumber', (num: number) => num.toLocaleString('en-GB'))
-  njkEnv.addFilter('formatDate', (date: string) => format(parseISO(date), "d MMMM yyyy' at 'h:mm a"))
+  njkEnv.addFilter('formatDate', (date?: string, formatStr?: string) =>
+    date ? format(parseISO(date), formatStr ?? "d MMMM yyyy' at 'h:mm a") : null,
+  )
   njkEnv.addFilter('ago', (date: string) => formatDistance(parseISO(date), new Date(), { addSuffix: true }))
 }

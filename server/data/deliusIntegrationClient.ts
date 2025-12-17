@@ -33,6 +33,8 @@ export interface PersonalDetails {
     forenames: string
     surname: string
   }
+  dateOfBirth: string
+  age: string
 }
 
 export interface DeliusTierInputs {

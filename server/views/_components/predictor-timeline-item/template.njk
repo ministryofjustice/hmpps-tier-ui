@@ -1,0 +1,34 @@
+{%- set level = params.level -%}
+{%- switch level -%}
+{%- case "VERY_HIGH" -%}
+  {%- set className = "predictor-timeline-item--very-high" -%}
+  {%- set level = "VERY HIGH" -%}
+{%- case "HIGH" -%}
+  {%- set className = "predictor-timeline-item--high" -%}
+  {%- set level = "HIGH" -%}
+{%- case "MEDIUM" -%}
+  {%- set className = "predictor-timeline-item--medium" -%}
+  {%- set level = "MEDIUM" -%}
+{%- case "LOW" -%}
+  {%- set className = "predictor-timeline-item--low" -%}
+  {%- set level = "LOW" -%}
+{%- default -%}
+  {%- set className = "predictor-timeline-item--unknown" -%}
+  {%- set level = "UNKNOWN" -%}
+{%- endswitch -%}
+
+{%- switch params.type -%}
+{%- case "ROSH" -%}
+  {%- set title = "Risk of Serious Harm" -%}
+{%- case "RSR" -%}
+  {%- set title = "Risk of Serious Recidivism / Combined Serious Reoffending Score" -%}
+{%- endswitch -%}
+
+<div data-qa="predictor-timeline-item__{{ params.type | lower }}" title="{{ title }}" class="predictor-timeline-item {{ className }}">
+  <span class="predictor-timeline-item__level">
+      <strong>{{ params.type }}</strong> {{ level }}
+  </span>
+  {%- if params.score -%}
+    <span class="predictor-timeline-item__score">{{ params.score }}</span>
+  {%- endif -%}
+</div>

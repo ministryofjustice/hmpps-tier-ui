@@ -50,7 +50,9 @@
           "name": {
             "forenames": "John",
             "surname": "Doe"
-          }
+          },
+          "dateOfBirth": "2000-01-01",
+          "age": "26"
         },
         "headers": {
           "Content-Type": "application/json"

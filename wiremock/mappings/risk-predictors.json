@@ -1,0 +1,51 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPattern": "/arns/risks/crn/.*/summary",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "overallRiskLevel": "MEDIUM"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/risks/predictors/rsr/CRN/.*",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "completedDate": "2025-01-01",
+            "outputVersion": "1",
+            "output": {
+              "rsrPercentageScore": 1.23,
+              "rsrScoreLevel": "LOW"
+            }
+          },
+          {
+            "completedDate": "2025-02-01",
+            "outputVersion": "2",
+            "output": {
+              "combinedSeriousReoffendingPredictor": {
+                "band": "HIGH",
+                "score": 12.3
+              }
+            }
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}
