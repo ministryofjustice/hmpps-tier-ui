@@ -5,9 +5,9 @@ context('Case view screen', () => {
   it('displays case details header', () => {
     cy.visit('/case/A000001')
     const page = Page.verifyOnPage(CasePage)
-    page.headerCrn().should('contain.text', 'A000001')
-    page.headerDob().should('contain.text', '01/01/2000')
-    page.headerTier().should('contain.text', 'B2')
+    page.headerCrn().should('have.text', 'A000001')
+    page.headerDob().should('have.text', '1 January 2000')
+    page.headerTier().should('have.text', 'B2')
     page.headerRosh().should('contain.text', 'ROSH').should('contain.text', 'MEDIUM')
     page.headerRsr().should('contain.text', 'RSR').should('contain.text', 'HIGH').should('contain.text', '12.3')
     page.warnings().should('not.exist')
