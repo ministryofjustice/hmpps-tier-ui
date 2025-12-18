@@ -18,7 +18,7 @@
     environment: environmentName,
     name: (personalDetails.name.forenames + " " + personalDetails.name.surname),
     crn: personalDetails.crn,
-    dateOfBirth: (personalDetails.dateOfBirth | formatDate("dd/MM/yyyy")),
+    dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
     age: personalDetails.age,
     tierScore: tierCalculation.tierScore,
     rosh: rosh,
