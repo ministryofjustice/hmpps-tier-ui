@@ -1,0 +1,52 @@
+{%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
+{%- from "../predictor-timeline-item/macro.njk" import predictorTimelineItem -%}
+{%- if params.url and params.url | length > 0 -%}
+  {%- set url = params.url -%}
+{%- else -%}
+  {%- switch params.environment | lower -%}
+  {%- case "dev" -%}{%- case "development" -%}
+    {%- set url = "https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk" -%}
+  {%- case "preprod" -%}{%- case "pre-production" -%}{%- case "preproduction" -%}
+    {%- set url = "https://manage-people-on-probation-preprod.hmpps.service.justice.gov.uk" -%}
+  {%- case "prod" -%}{%- case "production" -%}{%- default -%}
+    {%- set url = "https://manage-people-on-probation.hmpps.service.justice.gov.uk" -%}
+  {%- endswitch -%}
+{%- endif -%}
+{{ govukBreadcrumbs({
+  items: [
+    { text: "Cases", href: url + "/case" },
+    { text: params.name, href: url + "/case/" + params.crn }
+  ].concat(params.breadcrumbs | default([]))
+}) }}
+<div class="case-details-header">
+  <div class="case-details-header__row">
+    <ul class="govuk-list govuk-caption-m">
+      <li>
+        CRN: <span data-qa="case-details-header-crn">{{ params.crn }}</span>
+      </li>
+      <li>
+        Date of birth:
+        <span data-qa="case-details-header-dob">{{ params.dateOfBirth }}</span>
+        (age <span data-qa="case-details-header-age">{{ params.age }}</span>)
+      </li>
+      <li>
+        Tier: <span data-qa="case-details-header-tier">{{ params.tierScore }}</span>
+      </li>
+    </ul>
+    <div class="case-details-header__predictors">
+      {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}
+        <div data-qa="case-details-header-rosh">
+          {{ predictorTimelineItem({ type: "ROSH", level: params.rosh }) }}
+        </div>
+      {%- endif -%}
+      {%- if params.rsr -%}
+        <div data-qa="case-details-header-rsr">
+          {{ predictorTimelineItem({ type: "RSR", level: params.rsr.band, score: params.rsr.score }) }}
+        </div>
+      {%- endif -%}
+    </div>
+  </div>
+  <div class="case-details-header__row case-details-header__name">
+    <h1 class="govuk-heading-xl">{{ params.name }}</h1>
+  </div>
+</div>

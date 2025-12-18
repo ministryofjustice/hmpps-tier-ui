@@ -33,10 +33,12 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       })
     }
 
-    const [personalDetails, deliusInputs, oasysInputs, tierCalculation, history] = await Promise.all([
+    const [personalDetails, deliusInputs, oasysInputs, rosh, rsr, tierCalculation, history] = await Promise.all([
       deliusClient.getPersonalDetails(crn),
       deliusClient.getTierDetails(crn),
       arnsClient.getTierAssessmentInfo(crn),
+      arnsClient.getOverallRiskOfSeriousHarm(crn, res.locals.user.token),
+      arnsClient.getCombinedSeriousReoffendingPredictor(crn, res.locals.user.token),
       tierClient.getCalculationDetails(crn),
       tierClient.getHistory(crn),
     ])
@@ -52,6 +54,8 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       tierCalculation,
       protectTable,
       changeTable,
+      rosh,
+      rsr,
       history: history.filter(
         (item, index) => index === history.length - 1 || item.tierScore !== history[index + 1].tierScore,
       ),

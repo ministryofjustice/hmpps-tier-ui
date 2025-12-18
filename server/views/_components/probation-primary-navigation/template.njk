@@ -1,0 +1,21 @@
+{%- from "moj/components/primary-navigation/macro.njk" import mojPrimaryNavigation -%}
+{%- if params.url -%}
+  {%- set url = params.url -%}
+{%- else -%}
+  {%- switch params.environment | lower -%}
+  {%- case "dev" -%}{%- case "development" -%}
+    {%- set url = "https://manage-people-on-probation-dev.hmpps.service.justice.gov.uk" -%}
+  {%- case "preprod" -%}{%- case "pre-production" -%}{%- case "preproduction" -%}
+    {%- set url = "https://manage-people-on-probation-preprod.hmpps.service.justice.gov.uk" -%}
+  {%- case "prod" -%}{%- case "production" -%}{%- default -%}
+    {%- set url = "https://manage-people-on-probation.hmpps.service.justice.gov.uk" -%}
+  {%- endswitch -%}
+{%- endif -%}
+{{ mojPrimaryNavigation({
+  label: "Primary navigation",
+  items: [
+    { text: "Home", href: url },
+    { text: "Cases", href: url + "/case", active: true },
+    { text: "Search", href: url + "/search" }
+  ]
+}) }}
