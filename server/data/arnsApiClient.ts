@@ -15,24 +15,24 @@ export default class ArnsApiClient extends RestClient {
   }
 
   async getOverallRiskOfSeriousHarm(crn: string, token: string): Promise<RiskLevel | null> {
-    return (
-      await this.get<RiskOfSeriousHarmSummary>(
-        { path: `/risks/crn/${crn}/summary`, errorHandler: ignore404 },
-        asUser(token),
-      )
-    )?.overallRiskLevel
+    const summary = await this.get<RiskOfSeriousHarmSummary>(
+      { path: `/risks/crn/${crn}/summary`, errorHandler: ignore404 },
+      asUser(token),
+    )
+    return summary?.overallRiskLevel
   }
 
   async getCombinedSeriousReoffendingPredictor(crn: string, token: string): Promise<BandedScore | null> {
-    const rsr = (
-      await this.get<PredictorScores[]>(
-        { path: `/risks/predictors/rsr/CRN/${crn}`, errorHandler: ignore404 },
-        asUser(token),
-      )
+    const timeline = await this.get<PredictorScores[] | null>(
+      { path: `/risks/predictors/rsr/CRN/${crn}`, errorHandler: ignore404 },
+      asUser(token),
     )
+    if (!timeline) return null
+
+    const rsr = timeline
       .sort((a, b) => parseISO(b.completedDate).getTime() - parseISO(a.completedDate).getTime())
       .find(() => true)
-    if (!rsr) return null
+
     return rsr.outputVersion === '1'
       ? {
           score: rsr.output.rsrPercentageScore,
