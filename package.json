@@ -94,13 +94,13 @@
     ]
   },
   "dependencies": {
-    "@ministryofjustice/frontend": "^7.1.0",
+    "@ministryofjustice/frontend": "^8.0.0",
     "@ministryofjustice/hmpps-audit-client": "^1.1.1",
-    "@ministryofjustice/hmpps-auth-clients": "^1.0.0",
+    "@ministryofjustice/hmpps-auth-clients": "^1.0.1",
     "@ministryofjustice/hmpps-monitoring": "^1.0.0",
     "@ministryofjustice/hmpps-probation-frontend-components": "^1.0.1",
     "@ministryofjustice/hmpps-rest-client": "^1.0.0",
-    "@ministryofjustice/probation-search-frontend": "^4.0.0",
+    "@ministryofjustice/probation-search-frontend": "^4.0.1",
     "agentkeepalive": "^4.6.0",
     "applicationinsights": "^2.9.8",
     "body-parser": "^2.2.1",
@@ -117,7 +117,7 @@
     "govuk-frontend": "^5.13.0",
     "helmet": "^8.1.0",
     "http-errors": "^2.0.1",
-    "jsonwebtoken": "^9.0.2",
+    "jsonwebtoken": "^9.0.3",
     "jwt-decode": "^4.0.0",
     "nocache": "^4.0.0",
     "nunjucks": "^3.2.4",
@@ -129,7 +129,7 @@
     "url-value-parser": "^2.2.0"
   },
   "devDependencies": {
-    "@ministryofjustice/eslint-config-hmpps": "^1.0.1",
+    "@ministryofjustice/eslint-config-hmpps": "^1.0.2",
     "@types/bunyan": "^1.8.11",
     "@types/bunyan-format": "^0.2.9",
     "@types/compression": "^1.8.1",
@@ -140,18 +140,18 @@
     "@types/http-errors": "^2.0.5",
     "@types/jest": "^30.0.0",
     "@types/jsonwebtoken": "^9.0.10",
-    "@types/node": "^20.14.12",
+    "@types/node": "^22.19.3",
     "@types/nunjucks": "^3.2.6",
     "@types/passport": "^1.0.17",
     "@types/passport-oauth2": "^1.8.0",
     "@types/superagent": "^8.1.9",
     "@types/supertest": "^6.0.3",
-    "@typescript-eslint/eslint-plugin": "^8.48.0",
-    "@typescript-eslint/parser": "^8.32.1",
+    "@typescript-eslint/eslint-plugin": "^8.51.0",
+    "@typescript-eslint/parser": "^8.51.0",
     "audit-ci": "^7.1.0",
     "concurrently": "^9.2.1",
     "cookie-session": "^2.1.1",
-    "cypress": "^15.7.0",
+    "cypress": "^15.8.1",
     "cypress-multi-reporters": "^2.0.5",
     "dotenv": "^17.2.3",
     "husky": "^9.1.7",
@@ -162,17 +162,20 @@
     "mocha-junit-reporter": "^2.2.1",
     "nock": "^14.0.10",
     "nodemon": "^3.1.11",
-    "prettier": "^3.7.3",
+    "prettier": "^3.7.4",
     "prettier-plugin-jinja-template": "^2.1.0",
-    "sass": "^1.94.2",
+    "sass": "^1.97.1",
     "supertest": "^7.1.4",
-    "ts-jest": "^29.4.5",
+    "ts-jest": "^29.4.6",
     "typescript": "^5.9.3",
     "wiremock": "^3.13.2"
   },
   "overrides": {
     "csurf": {
       "cookie": "0.7.2"
+    },
+    "cypress": {
+      "qs": "^6.14.1"
     }
   }
 }
