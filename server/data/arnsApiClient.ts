@@ -27,7 +27,7 @@ export default class ArnsApiClient extends RestClient {
       { path: `/risks/predictors/rsr/CRN/${crn}`, errorHandler: ignore404 },
       asUser(token),
     )
-    if (!timeline) return null
+    if (!timeline || timeline.length === 0) return null
 
     const rsr = timeline
       .sort((a, b) => parseISO(b.completedDate).getTime() - parseISO(a.completedDate).getTime())
