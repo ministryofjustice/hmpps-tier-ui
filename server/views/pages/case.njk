@@ -16,7 +16,7 @@
 {% block beforeContent %}
   {{ probationCaseDetailsHeader({
     environment: environmentName,
-    name: (personalDetails.name.forenames + " " + personalDetails.name.surname),
+    name: (personalDetails.name.forename + " " + personalDetails.name.surname),
     crn: personalDetails.crn,
     dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
     age: personalDetails.age,
@@ -35,7 +35,7 @@
   <section>
     <h2 class="govuk-heading-l">Summary</h2>
     <p>
-      {{ personalDetails.name.forenames }} {{ personalDetails.name.surname }} has a tier of
+      {{ personalDetails.name.forename }} {{ personalDetails.name.surname }} has a tier of
       <strong>{{ tierCalculation.tierScore }}</strong>,
       based on a total of
       <a href="#assess-protect" class="govuk-link--no-visited-state">
