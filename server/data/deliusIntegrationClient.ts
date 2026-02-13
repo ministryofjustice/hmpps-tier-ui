@@ -30,7 +30,8 @@ interface CaseAccess {
 export interface PersonalDetails {
   crn: string
   name: {
-    forenames: string
+    forename: string
+    middleName?: string
     surname: string
   }
   dateOfBirth: string

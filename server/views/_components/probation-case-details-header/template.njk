@@ -27,10 +27,10 @@
       <li>
         Date of birth:
         <span data-qa="case-details-header-dob">{{ params.dateOfBirth }}</span>
-        (age <span data-qa="case-details-header-age">{{ params.age }}</span>)
+        (<span data-qa="case-details-header-age">{{ params.age }}</span> years old)
       </li>
       <li>
-        Tier: <span data-qa="case-details-header-tier">{{ params.tierScore }}</span>
+        Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore }}</a>
       </li>
     </ul>
     <div class="case-details-header__predictors">
