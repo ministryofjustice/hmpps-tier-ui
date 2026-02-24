@@ -1,0 +1,3 @@
+#package: minimatch
+#reason: All transitive dependencies are pinned at a fixed version
+CVE-2026-26996
