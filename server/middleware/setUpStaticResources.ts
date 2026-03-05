@@ -11,9 +11,10 @@ export default function setUpStaticResources(): Router {
   router.use(compression())
 
   //  Static Resources Configuration
-  const cacheControl = { maxAge: config.staticResourceCacheDuration }
+  const staticResourcesConfig = { maxAge: config.staticResourceCacheDuration, redirect: false }
 
   Array.of(
+    '/dist/assets',
     '/assets',
     '/assets/stylesheets',
     '/assets/js',
@@ -22,11 +23,11 @@ export default function setUpStaticResources(): Router {
     '/node_modules/@ministryofjustice/frontend/moj/assets',
     '/node_modules/@ministryofjustice/frontend',
   ).forEach(dir => {
-    router.use('/assets', express.static(path.join(process.cwd(), dir), cacheControl))
+    router.use('/assets', express.static(path.join(process.cwd(), dir), staticResourcesConfig))
   })
 
   Array.of('/node_modules/govuk_frontend_toolkit/images').forEach(dir => {
-    router.use('/assets/images/icons', express.static(path.join(process.cwd(), dir), cacheControl))
+    router.use('/assets/images/icons', express.static(path.join(process.cwd(), dir), staticResourcesConfig))
   })
 
   // Don't cache dynamic resources

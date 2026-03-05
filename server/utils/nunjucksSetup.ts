@@ -2,10 +2,11 @@
 import path from 'path'
 import nunjucks from 'nunjucks'
 import express from 'express'
+import fs from 'fs'
 import { format, formatDistance, parseISO } from 'date-fns'
 import { initialiseName } from './utils'
 import config from '../config'
-import applicationInfo from '../applicationInfo'
+import logger from '../../logger'
 
 export default function nunjucksSetup(app: express.Express): void {
   app.set('view engine', 'njk')
@@ -14,23 +15,21 @@ export default function nunjucksSetup(app: express.Express): void {
   app.locals.applicationName = 'Tier'
   app.locals.environmentName = config.env
   app.locals.environmentNameColour = config.env === 'preprod' ? 'govuk-tag--green' : ''
+  let assetManifest: Record<string, string> = {}
 
-  // Cachebusting version string
-  if (config.production) {
-    // Version only changes with new commits
-    app.locals.version = applicationInfo().gitShortHash
-  } else {
-    // Version changes every request
-    app.use((req, res, next) => {
-      res.locals.version = Date.now().toString()
-      return next()
-    })
+  try {
+    const assetMetadataPath = path.resolve(__dirname, '../../assets/manifest.json')
+    assetManifest = JSON.parse(fs.readFileSync(assetMetadataPath, 'utf8'))
+  } catch (e) {
+    if (process.env.NODE_ENV !== 'test') {
+      logger.error(e, 'Could not read asset manifest file')
+    }
   }
 
   const njkEnv = nunjucks.configure(
     [
       path.join(__dirname, '../../server/views'),
-      'node_modules/govuk-frontend/dist',
+      'node_modules/govuk-frontend/dist/',
       'node_modules/govuk-frontend/dist/components/',
       'node_modules/@ministryofjustice/frontend/',
       'node_modules/@ministryofjustice/frontend/moj/components/',
@@ -40,6 +39,7 @@ export default function nunjucksSetup(app: express.Express): void {
     {
       autoescape: true,
       express: app,
+      noCache: process.env.NODE_ENV !== 'production',
     },
   )
 
@@ -49,4 +49,5 @@ export default function nunjucksSetup(app: express.Express): void {
     date ? format(parseISO(date), formatStr ?? "d MMMM yyyy' at 'h:mm a") : null,
   )
   njkEnv.addFilter('ago', (date: string) => formatDistance(parseISO(date), new Date(), { addSuffix: true }))
+  njkEnv.addFilter('assetMap', (url: string) => assetManifest[url] || url)
 }

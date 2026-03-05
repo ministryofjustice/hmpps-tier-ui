@@ -1,4 +1,5 @@
 import { Router } from 'express'
+
 import type { Services } from '../services'
 import startRoutes from './start'
 import searchRoutes from './search'
