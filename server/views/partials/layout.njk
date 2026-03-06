@@ -1,7 +1,7 @@
 {% extends "govuk/template.njk" %}
 
 {% block head %}
-  <link href="/assets/stylesheets/application.css?{{ version }}" rel="stylesheet"/>
+  <link href="{{ '/assets/css/application.css' | assetMap }}" rel="stylesheet"/>
   {% for css in feComponents.cssIncludes %}
     <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
   {% endfor %}
@@ -25,7 +25,7 @@
   {# Run JavaScript at end of the
   <body>, to avoid blocking the initial render. #}
   <script src="/assets/govuk/all.bundle.js"></script>
-  <script type=module src="/assets/govukFrontendInit.js"></script>
+  <script type=module src="{{ '/assets/js/index.js' | assetMap }}"></script>
   {% for js in feComponents.jsIncludes %}
     <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
   {% endfor %}
