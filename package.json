@@ -16,7 +16,7 @@
     "start": "node $NODE_OPTIONS dist/server.js | bunyan -o short",
     "start:dev": "node esbuild/esbuild --watch",
     "start-feature": " node $NODE_DEBUG_OPTION --env-file=feature.env dist/server.js | bunyan -o short",
-    "start-feature:dev": "node esbuild/esbuild --watch --env feature.env",
+    "start-feature:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,WireMock\" -c \"magenta.bold,cyan.bold\" \"node esbuild/esbuild --watch --env feature.env\" \"npm run wiremock\"",
     "start-node-feature": "export $(cat feature.env) && node $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
     "watch-node-feature": "export $(cat feature.env) && nodemon --inspect --watch dist/ $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
     "wiremock": "npx wiremock --port 9091 --root-dir wiremock --local-response-templating",
@@ -35,45 +35,6 @@
   "engines": {
     "node": "^24",
     "npm": "^11"
-  },
-  "jest": {
-    "transform": {
-      "^.+\\.tsx?$": [
-        "ts-jest",
-        {
-          "isolatedModules": true
-        }
-      ]
-    },
-    "collectCoverageFrom": [
-      "server/**/*.{ts,js,jsx,mjs}"
-    ],
-    "testMatch": [
-      "<rootDir>/(server|job)/**/?(*.)(cy|test).{ts,js,jsx,mjs}"
-    ],
-    "testEnvironment": "node",
-    "reporters": [
-      "default",
-      [
-        "jest-junit",
-        {
-          "outputDirectory": "test_results/jest/"
-        }
-      ],
-      [
-        "./node_modules/jest-html-reporter",
-        {
-          "outputPath": "test_results/unit-test-reports.html"
-        }
-      ]
-    ],
-    "moduleFileExtensions": [
-      "web.js",
-      "js",
-      "json",
-      "node",
-      "ts"
-    ]
   },
   "nodemonConfig": {
     "ignore": [
