@@ -15,7 +15,6 @@
     "build": "node esbuild/esbuild",
     "start": "node $NODE_OPTIONS dist/server.js | bunyan -o short",
     "start:dev": "node esbuild/esbuild --watch",
-    "start-feature": " node $NODE_DEBUG_OPTION --env-file=feature.env dist/server.js | bunyan -o short",
     "start-feature:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,WireMock\" -c \"magenta.bold,cyan.bold\" \"node esbuild/esbuild --watch --env feature.env\" \"npm run wiremock\"",
     "start-node-feature": "export $(cat feature.env) && node $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
     "watch-node-feature": "export $(cat feature.env) && nodemon --inspect --watch dist/ $NODE_DEBUG_OPTION dist/server.js | bunyan -o short",
