@@ -115,20 +115,20 @@
     "audit-ci": "^7.1.0",
     "concurrently": "^9.2.1",
     "cookie-session": "^2.1.1",
-    "cypress": "^15.10.0",
+    "cypress": "^15.11.0",
     "cypress-multi-reporters": "^2.0.5",
     "del": "8.0.1",
     "dotenv": "^17.3.1",
     "esbuild": "^0.27.3",
     "esbuild-plugin-copy": "^2.1.1",
     "esbuild-plugin-manifest": "^1.0.5",
-    "esbuild-sass-plugin": "^3.6.0",
+    "esbuild-sass-plugin": "^3.7.0",
     "husky": "^9.1.7",
     "jest": "^30.2.0",
     "jest-html-reporter": "^4.3.0",
     "jest-junit": "^16.0.0",
     "jsonwebtoken": "^9.0.3",
-    "lint-staged": "^16.2.7",
+    "lint-staged": "^16.3.2",
     "mocha-junit-reporter": "^2.2.1",
     "nock": "^14.0.11",
     "nodemon": "^3.1.11",
@@ -141,14 +141,9 @@
     "wiremock": "^3.13.2"
   },
   "overrides": {
-    "cypress": {
-      "qs": "^6.14.1"
-    },
     "cypress-multi-reporters": {
-      "diff": "^8.0.3"
-    },
-    "@ministryofjustice/hmpps-audit-client": {
-      "fast-xml-parser": "^5.4.1"
+      "diff": "^8.0.3",
+      "serialize-javascript": "^7.0.3"
     }
   }
 }
