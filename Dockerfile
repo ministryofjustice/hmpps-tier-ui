@@ -15,11 +15,6 @@ ENV BUILD_NUMBER=${BUILD_NUMBER}
 ENV GIT_REF=${GIT_REF}
 ENV GIT_BRANCH=${GIT_BRANCH}
 
-RUN apt-get update && \
-        apt-get upgrade -y && \
-        apt-get autoremove -y && \
-        rm -rf /var/lib/apt/lists/*
-
 # Stage: build assets
 FROM base AS build
 
@@ -28,7 +23,7 @@ ARG GIT_REF
 ARG GIT_BRANCH
 
 COPY package*.json .allowed-scripts.mjs ./
-RUN CYPRESS_INSTALL_BINARY=0 NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
+RUN NPM_CONFIG_AUDIT=false NPM_CONFIG_FUND=false npm run setup
 ENV NODE_ENV='production'
 
 COPY . .
@@ -53,7 +48,7 @@ COPY --from=build --chown=appuser:appgroup \
 COPY --from=build --chown=appuser:appgroup \
         /app/node_modules ./node_modules
 
-EXPOSE 3000 3001
+EXPOSE 3000
 ENV NODE_ENV='production'
 USER 2000
 
