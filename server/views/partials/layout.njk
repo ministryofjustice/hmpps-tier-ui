@@ -2,9 +2,6 @@
 
 {% block head %}
   <link href="{{ '/assets/css/application.css' | assetMap }}" rel="stylesheet"/>
-  {% for css in feComponents.cssIncludes %}
-    <link href="{{ css }}" nonce="{{ cspNonce }}" rel="stylesheet" />
-  {% endfor %}
 {% endblock %}
 
 {% block pageTitle %}{{pageTitle | default(applicationName)}}{% endblock %}
@@ -26,7 +23,4 @@
   <body>, to avoid blocking the initial render. #}
   <script src="/assets/govuk/all.bundle.js"></script>
   <script type=module src="{{ '/assets/js/index.js' | assetMap }}"></script>
-  {% for js in feComponents.jsIncludes %}
-    <script src="{{ js }}" nonce="{{ cspNonce }}"></script>
-  {% endfor %}
 {% endblock %}
