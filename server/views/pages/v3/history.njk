@@ -1,0 +1,81 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "moj/components/timeline/macro.njk" import mojTimeline %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "arns/components/predictor-scale/macro.njk" import predictorScale %}
+{% from "../../_components/probation-primary-navigation/macro.njk" import probationPrimaryNavigation %}
+{% from "../../_components/probation-case-details-header/macro.njk" import probationCaseDetailsHeader %}
+
+{% set pageTitle = applicationName + " - View" %}
+{% set mainClasses = "app-container govuk-body govuk-!-padding-top-1" %}
+
+{% block banner %}
+  {{ probationPrimaryNavigation({ environment: environmentName }) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ probationCaseDetailsHeader({
+    environment: environmentName,
+    name: (personalDetails.name.forename + " " + personalDetails.name.surname),
+    crn: personalDetails.crn,
+    dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
+    age: personalDetails.age,
+    tierScore: tierCalculation.tierScore,
+    rosh: rosh,
+    rsr: rsr,
+    breadcrumbs: [{ text: "Tier" }]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  {% if warnings.length %}
+    {{ govukErrorSummary({ titleText: "There is a problem", errorList: warnings }) }}
+  {% endif %}
+
+  {{ mojSubNavigation({
+    label: "Sub navigation",
+    items: [{
+      text: "Summary",
+      href: "/v3/case/" + personalDetails.crn
+    }, {
+      text: "Calculation",
+      href: "/v3/case/" + personalDetails.crn + "/calculation"
+    }, {
+      text: "History",
+      href: "/v3/case/" + personalDetails.crn + "/history",
+      active: true
+    }]
+  }) }}
+
+  <h2 class="govuk-heading-l govuk-!-margin-top-7" id="history">History</h2>
+  {% if history and history | length > 0 %}
+    <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-full">
+        <div class="moj-timeline">
+          {% for item in history %}
+            <div class="moj-timeline__item">
+              <div class="moj-timeline__header">
+                <h2 class="moj-timeline__title">{{ item.tierScore }}</h2>
+              </div>
+              <p class="moj-timeline__date">
+                <time datetime="{{ item.calculationDate }}"
+                      title="{{ item.calculationDate }}">{{ item.calculationDate | formatDate }}</time>
+              </p>
+              {% if item.changeReason %}
+                <div class="moj-timeline__description">{{ item.changeReason }}</div>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  {% else %}
+    This person has no tier history.
+  {% endif %}
+  </section>
+{% endblock %}

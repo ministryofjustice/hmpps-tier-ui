@@ -1,0 +1,144 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "url": "/tier/v3/crn/A000006/tier/details",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "tierScore": "B",
+          "calculationId": "8d8f1b08-3e58-4f19-9ec9-9d7baf8e8f51",
+          "calculationDate": "2026-03-04T14:15:00",
+          "data": {
+            "tier": "B",
+            "deliusInputs": {
+              "isFemale": false,
+              "rsrScore": 12.3,
+              "ogrsScore": 56,
+              "hasNoMandate": false,
+              "registrations": {
+                "hasIomNominal": false,
+                "hasLiferIpp": false,
+                "hasDomesticAbuse": true,
+                "hasStalking": false,
+                "hasChildProtection": true,
+                "complexityFactors": [
+                  "RCPR"
+                ],
+                "rosh": "MEDIUM",
+                "mappaLevel": "M1",
+                "mappaCategory": "M1",
+                "unsupervised": false
+              },
+              "previousEnforcementActivity": false,
+              "latestReleaseDate": null
+            },
+            "riskPredictors": {
+              "completedDate": "2026-03-01T09:00:00",
+              "status": "COMPLETE",
+              "assessmentType": "LAYER3",
+              "outputVersion": "2",
+              "output": {
+                "allReoffendingPredictor": {
+                  "score": 90,
+                  "band": "VERY_HIGH",
+                  "staticOrDynamic": "DYNAMIC"
+                },
+                "combinedSeriousReoffendingPredictor": {
+                  "score": 1,
+                  "band": "MEDIUM",
+                  "staticOrDynamic": "DYNAMIC",
+                  "algorithmVersion": "2.0"
+                },
+                "directContactSexualReoffendingPredictor": {
+                  "score": 0.02,
+                  "band": "LOW"
+                },
+                "indirectImageContactSexualReoffendingPredictor": {
+                  "score": 0.01,
+                  "band": "LOW"
+                }
+              }
+            },
+            "calculationVersion": "3"
+          }
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/tier/v3/crn/A000006/tier/history",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "tierScore": "B",
+            "calculationId": "8d8f1b08-3e58-4f19-9ec9-9d7baf8e8f51",
+            "calculationDate": "2026-03-04T14:15:00",
+            "changeReason": "Tier recalculated after review"
+          },
+          {
+            "tierScore": "C",
+            "calculationId": "df85fc0f-27f6-4b70-a8d0-5dcb1bf9db3f",
+            "calculationDate": "2026-01-20T10:30:00",
+            "changeReason": "MAPPA registration added"
+          },
+          {
+            "tierScore": "E",
+            "calculationId": "976089b0-91bb-4984-8e4f-5af5615344be",
+            "calculationDate": "2025-11-01T08:00:00",
+            "changeReason": "Case created"
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "url": "/delius/person/A000006",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "A000006",
+          "name": {
+            "forename": "Alex",
+            "surname": "Rivera"
+          },
+          "dateOfBirth": "1990-05-15",
+          "age": "35"
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    {
+      "request": {
+        "urlPattern": "/delius/users/.+/access/A000006",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "crn": "A000006",
+          "userRestricted": false,
+          "userExcluded": false
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}

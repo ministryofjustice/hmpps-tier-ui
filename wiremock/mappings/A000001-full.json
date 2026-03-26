@@ -2,7 +2,7 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/tier/crn/A000001/tier/details",
+        "urlPattern": "/tier(/v2)?/crn/A000001/tier/details",
         "method": "GET"
       },
       "response": {
@@ -42,7 +42,7 @@
     },
     {
       "request": {
-        "urlPattern": "/tier/crn/A000001/tier/history",
+        "urlPattern": "/tier(/v2)?/crn/A000001/tier/history",
         "method": "GET"
       },
       "response": {

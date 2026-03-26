@@ -1,4 +1,7 @@
 import { SanitisedError } from '@ministryofjustice/hmpps-rest-client'
+import { auditService } from '@ministryofjustice/hmpps-audit-client'
+import { randomUUID } from 'crypto'
+import config from '../config'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -27,4 +30,23 @@ export const initialiseName = (fullName?: string): string | null => {
 export const ignore404 = <E>(path: string, verb: string, error: SanitisedError<E>): null => {
   if (error.responseStatus === 404) return null
   throw error
+}
+
+export const joinWithAnd = (values: string[]): string => {
+  if (values.length <= 1) return values[0] ?? ''
+  if (values.length === 2) return `${values[0]} and ${values[1]}`
+  return `${values.slice(0, -1).join(', ')} and ${values.at(-1)}`
+}
+
+export const audit = async (action: string, crn: string, username: string) => {
+  if (config.audit.enabled) {
+    await auditService.sendAuditMessage({
+      action,
+      who: username,
+      subjectId: crn,
+      subjectType: 'CRN',
+      correlationId: randomUUID(),
+      service: 'hmpps-tier-ui',
+    })
+  }
 }

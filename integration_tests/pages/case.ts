@@ -17,6 +17,10 @@ export default class CasePage extends Page {
 
   warnings = (): PageElement => cy.get('.govuk-error-summary')
 
+  subNavigation = (): PageElement => cy.get('.moj-sub-navigation')
+
+  subNavigationLink = (label: string) => this.subNavigation().contains('a', label)
+
   protectTable = (): PageElement => cy.get('[data-qa=protect-table]')
 
   protectTableRow = (row: number): string => `[data-qa=protect-table] tbody tr:nth-child(${row})`

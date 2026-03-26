@@ -1,0 +1,518 @@
+{% extends "../../partials/layout.njk" %}
+{% from "govuk/components/back-link/macro.njk" import govukBackLink %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "moj/components/timeline/macro.njk" import mojTimeline %}
+{%- from "moj/components/sub-navigation/macro.njk" import mojSubNavigation -%}
+{% from "arns/components/predictor-scale/macro.njk" import predictorScale %}
+{% from "../../_components/probation-primary-navigation/macro.njk" import probationPrimaryNavigation %}
+{% from "../../_components/probation-case-details-header/macro.njk" import probationCaseDetailsHeader %}
+
+{% set pageTitle = applicationName + " - View" %}
+{% set mainClasses = "app-container govuk-body govuk-!-padding-top-1" %}
+
+{% block banner %}
+  {{ probationPrimaryNavigation({ environment: environmentName }) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {{ probationCaseDetailsHeader({
+    environment: environmentName,
+    name: (personalDetails.name.forename + " " + personalDetails.name.surname),
+    crn: personalDetails.crn,
+    dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
+    age: personalDetails.age,
+    tierScore: tierCalculation.tierScore,
+    rosh: rosh,
+    rsr: rsr,
+    breadcrumbs: [{ text: "Tier" }]
+  }) }}
+{% endblock %}
+
+{% block content %}
+  {% if warnings.length %}
+    {{ govukErrorSummary({ titleText: "There is a problem", errorList: warnings }) }}
+  {% endif %}
+
+  {{ mojSubNavigation({
+    label: "Sub navigation",
+    items: [{
+      text: "Summary",
+      href: "/v3/case/" + personalDetails.crn
+    }, {
+      text: "Calculation",
+      href: "/v3/case/" + personalDetails.crn + "/calculation",
+      active: true
+    }, {
+      text: "History",
+      href: "/v3/case/" + personalDetails.crn + "/history"
+    }]
+  }) }}
+
+  <h2 class="govuk-heading-l govuk-!-margin-top-7">Calculation</h2>
+
+  {% set explainerHtml %}
+    <div class="govuk-grid-row" id="tier-calculation-explainer">
+      <div class="govuk-grid-column-two-thirds">
+        <p>
+          A <strong>tier</strong> reflects the level of risk and complexity involved in managing a probation case. It
+          informs case allocation and supervision package decisions, as well as planning and resourcing at a strategic
+          management level.
+        </p>
+        <p>The result is calculated by looking at the highest level of risk or complexity shown in the case information
+          we hold and is made up of various factors, including:
+        </p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>reoffending predictor scores such as {{ 'CSRP' | abbr }} and {{ 'ARP' | abbr }}</li>
+          <li>risk registrations such as {{ 'ROSH' | abbr }} and {{ 'MAPPA' | abbr }},</li>
+          <li>additional factors such as domestic abuse history and child protection.</li>
+        </ul>
+        <p>
+          Each factor can raise the tier, and the final tier is based on whichever gives the highest result.
+        </p>
+      </div>
+
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap tier-counts-heatmap">
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">Tier</th>
+            <th scope="col" class="govuk-table__header">Distribution</th>
+          </tr>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-100">{{ tierCounts['A'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-90">{{ tierCounts['B'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-80">{{ tierCounts['C'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-60">{{ tierCounts['D'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-40">E</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-40">{{ tierCounts['E'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-20">F</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-20">{{ tierCounts['F'] | formatNumber }}</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row" class="govuk-table__header heatmap-10">G</th>
+            <td
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-10">{{ tierCounts['G'] | formatNumber }}</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  {% endset %}
+  {{ govukDetails({ summaryText: "How is the tier calculated?", html: explainerHtml }) }}
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="reoffending" class="govuk-heading-l">Reoffending</h2>
+        {% if stepResults.reoffending.tier %}
+          <p>
+            The All Reoffending Predictor (ARP) is
+            {{ (riskPredictors.allReoffendingPredictor.score + "%") if riskPredictors.allReoffendingPredictor.score
+            else "not present" }}
+            and the Combined Serious Reoffending Predictor (CSRP) is
+            {{ "ignored due to sexual reoffending risk" if stepResults.reoffending.data.suppressCsrp
+            else ((riskPredictors.combinedSeriousReoffendingPredictor.score + "%") if riskPredictors.combinedSeriousReoffendingPredictor.score
+            else "not present") }},
+            resulting in a tier of <strong>{{ stepResults.reoffending.tier }}</strong>.
+          </p>
+          {% if stepResults.reoffending.data.suppressCsrp %}
+            <p>
+              Note: The {{ 'IICSRP' | abbr }} score is higher than the {{ 'DCSRP' | abbr }} score, so the
+              {{ 'CSRP' | abbr }} is treated as 0% to avoid double-counting sexual reoffending in the next section.
+            </p>
+          {% endif %}
+
+          {{ predictorScale({ data: riskData, predictor: "allReoffendingPredictor" }) }}
+          {{ predictorScale({ data: riskData, predictor: "combinedSeriousReoffendingPredictor" }) }}
+        {% else %}
+          <p>No assessment available.</p>
+          <p>Complete an assessment to generate All Reoffending Predictor (ARP) and Combined Serious Reoffending
+            Predictor (CSRP) scores.</p>
+        {% endif %}
+      </div>
+
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap mw-300">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead class="govuk-table__head">
+          <tr class="govuk-table__row">
+            <th scope="col"></th>
+            <th scope="col" colspan="6" class="govuk-table__header">{{ 'ARP' | abbr }}</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">{{ 'CSRP' | abbr }}</th>
+            <th scope="col">90+</th>
+            <th scope="col">75+</th>
+            <th scope="col">50+</th>
+            <th scope="col">25+</th>
+            <th scope="col">15+</th>
+            <th scope="col">0+</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <th scope="row">6.9+</th>
+            <td class="govuk-table__cell heatmap-100 govuk-!-text-align-centre">A</td>
+            <td class="govuk-table__cell heatmap-100 govuk-!-text-align-centre">A</td>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row">3.0+</th>
+            <td class="govuk-table__cell heatmap-100 govuk-!-text-align-centre">A</td>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row">1.0+</th>
+            <td class="govuk-table__cell heatmap-80 govuk-!-text-align-centre">B</td>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+            <td class="govuk-table__cell heatmap-40 govuk-!-text-align-centre">D</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row">0.5+</th>
+            <td class="govuk-table__cell heatmap-60 govuk-!-text-align-centre">C</td>
+            <td class="govuk-table__cell heatmap-40 govuk-!-text-align-centre">D</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+            <td class="govuk-table__cell heatmap-20 govuk-!-text-align-centre">F</td>
+            <td class="govuk-table__cell heatmap-10 govuk-!-text-align-centre">F</td>
+          </tr>
+          <tr class="govuk-table__row">
+            <th scope="row">0.0+</th>
+            <td class="govuk-table__cell heatmap-40 govuk-!-text-align-centre">D</td>
+            <td class="govuk-table__cell heatmap-40 govuk-!-text-align-centre">D</td>
+            <td class="govuk-table__cell heatmap-30 govuk-!-text-align-centre">E</td>
+            <td class="govuk-table__cell heatmap-20 govuk-!-text-align-centre">F</td>
+            <td class="govuk-table__cell heatmap-10 govuk-!-text-align-centre">F</td>
+            <td class="govuk-table__cell heatmap-10 govuk-!-text-align-centre">G</td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="sexualReoffending" class="govuk-heading-l">Sexual reoffending</h2>
+        {% if riskPredictors %}
+          {% if stepResults.sexualReoffending.tier %}
+            <p>
+              {% if stepResults.sexualReoffending.data.dcGreaterThanIic %}
+                The Direct Contact Sexual Reoffending Predictor (DC-SRP) is the governing predictor for this step,
+                {% if stepResults.sexualReoffending.data.riskReduction %}
+                  and the risk is reduced following five offence-free years,
+                {% endif %}
+              {% else %}
+                The Images and Indirect Contact Sexual Reoffending Predictor (IIC-SRP) is the governing predictor for this step,
+              {% endif %}
+              resulting in a tier of <strong>{{ stepResults.sexualReoffending.tier }}</strong>.
+            </p>
+          {% else %}
+            <p>This person does not have an assessed sexual reoffending risk.</p>
+          {% endif %}
+          {{ predictorScale({ data: riskData, predictor: "directContactSexualReoffendingPredictor" }) }}
+          {{ predictorScale({ data: riskData, predictor: "indirectImageContactSexualReoffendingPredictor" }) }}
+        {% else %}
+          <p>No assessment available.</p>
+          <p>Complete an assessment to generate Direct Contact Sexual Reoffending Predictor (DC-SRP) and Images and
+            Indirect Contact Sexual Reoffending Predictor (IIC-SRP) scores.</p>
+        {% endif %}
+      </div>
+
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead>
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">{{ 'DCSRP' | abbr }}</th>
+            <th scope="col" class="govuk-table__header">{{ 'IICSRP' | abbr }}</th>
+            <th scope="col" class="govuk-table__header">Tier</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-100">Very high</td>
+            <td class="govuk-table__cell heatmap-100"></td>
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-90">High</td>
+            <td class="govuk-table__cell heatmap-90"></td>
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-80" rowspan="2">Medium</td>
+            <td class="govuk-table__cell heatmap-80">High</td>
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-60">Medium</td>
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-40">Low</td>
+            <td class="govuk-table__cell heatmap-40">Low</td>
+            <th scope="row" class="govuk-table__header heatmap-40">E</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="mappaRosh" class="govuk-heading-l">Risk of serious harm</h2>
+        {% if stepResults.mappaRosh.tier %}
+          <p>
+            {% if stepResults.mappaRosh.data.rosh %}
+              This person is assessed as
+              {{ stepResults.mappaRosh.data.rosh | replace("_", " ") | lower }} Risk of Serious Harm (ROSH)
+            {% else %}
+              This person has no Risk of Serious Harm (ROSH) registration
+            {% endif %}
+            {% if stepResults.mappaRosh.data.mappaCategory %}
+              and is subject to Multi-Agency Public Protection Arrangements (MAPPA),
+            {% else %}
+              and is not subject to Multi-Agency Public Protection Arrangements (MAPPA),
+            {% endif %}
+            resulting in a tier of <strong>{{ stepResults.mappaRosh.tier }}</strong>.
+          </p>
+          {{ govukTable({
+            firstCellIsHeader: true,
+            head: [{ text: "Register type" }, { text: "Value" }],
+            rows: [
+              [
+                { html: "Multi-Agency Public Protection Arrangements (MAPPA)" },
+                { text: ("Category " + stepResults.mappaRosh.data.mappaCategory | replace("M", "")) if stepResults.mappaRosh.data.mappaCategory else "None" }
+              ],
+              [
+                { html: "Risk of Serious Harm (ROSH)" },
+                { text: (stepResults.mappaRosh.data.rosh | replace("_", " ")) if stepResults.mappaRosh.data.rosh else "None" }
+              ]
+            ]
+          }) }}
+        {% else %}
+          <p>This person has no Risk of Serious Harm (ROSH) or Multi-Agency Public Protection Arrangements (MAPPA)
+            registrations.</p>
+        {% endif %}
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead>
+          <tr class="govuk-table__row">
+            <th scope="col" class="govuk-table__header">{{ 'ROSH' | abbr }}
+              <br /><small>With {{ 'MAPPA' | abbr }}</small></th>
+            <th scope="col" class="govuk-table__header">{{ 'ROSH' | abbr }}
+              <br /><small>Without {{ 'MAPPA' | abbr }}</small></th>
+            <th scope="col" class="govuk-table__header"><br />Tier</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-100">Very high</td>
+            <td class="govuk-table__cell heatmap-100"></td>
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-90"></td>
+            <td class="govuk-table__cell heatmap-90"></td>
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-80">High</td>
+            <td class="govuk-table__cell heatmap-80">Very high</td>
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-60">Medium</td>
+            <td class="govuk-table__cell heatmap-60">High</td>
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-40">Low</td>
+            <td class="govuk-table__cell heatmap-40"></td>
+            <th scope="row" class="govuk-table__header heatmap-40">E</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 id="liferIpp" class="govuk-heading-l">Lifer/{{ 'IPP' | abbr }}</h2>
+        {% if stepResults.liferIpp.tier %}
+          <p>
+            A lifer registration is present
+            {% if stepResults.liferIpp.data.inFirstYearOfRelease %}
+              and the latest release date is within the last year,
+            {% else %}
+              and the latest release date is not within the last year,
+            {% endif %}
+            resulting in a tier of <strong>{{ stepResults.liferIpp.tier }}</strong>.
+          </p>
+        {% else %}
+          <p>This person is not a lifer and has not been imprisoned for public protection.</p>
+        {% endif %}
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [{ text: "Factor" }, { text: "Value" }, { text: "Tier" }],
+          rows: [
+            [
+              { html: '<span id="lifer">Lifer</span>' },
+              { text: "Yes" if stepResults.liferIpp.tier else "No" },
+              { text: (("<s>F</s>" | safe) if stepResults.liferIpp.data.inFirstYearOfRelease else "F") if stepResults.liferIpp.tier else "Not applicable" }
+            ],
+            [
+              { html: '<span id="release-date">Latest release date</span>' },
+              { text: (deliusInputs.latestReleaseDate | formatDate("dd/MM/yyyy")) if deliusInputs.latestReleaseDate else "None" },
+              { text: "B" if stepResults.liferIpp.tier and stepResults.liferIpp.data.inFirstYearOfRelease else "Not applicable" }
+            ]
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead>
+          <tr class="govuk-table__row">
+            <td></td>
+            <th scope="col" class="govuk-table__header">Tier</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-100"></td>
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-90">Lifer in first year of release</td>
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-80"></td>
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-60"></td>
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-40"></td>
+            <th scope="row" class="govuk-table__header heatmap-40">E</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-30">Lifer</td>
+            <th scope="row" class="govuk-table__header heatmap-30">F</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Other complexity factors</h2>
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [{ text: "Register type" }, { text: "Value" }, { text: "Tier" }],
+          rows: [
+            [
+              { html: '<span id="domesticAbuse">Domestic abuse</span>' },
+              { text: "Yes" if stepResults.domesticAbuse.tier else "No" },
+              { text: stepResults.domesticAbuse.tier if stepResults.domesticAbuse.tier else "Not applicable" }
+            ],
+            [
+              { html: '<span id="stalking">Stalking</span>' },
+              { text: "Yes" if stepResults.stalking.tier else "No" },
+              { text: stepResults.stalking.tier if stepResults.stalking.tier else "Not applicable" }
+            ],
+            [
+              { html: '<span id="childProtection">Child protection</span>' },
+              { text: "Yes" if stepResults.childProtection.tier else "No" },
+              { text: stepResults.childProtection.tier if stepResults.childProtection.tier else "Not applicable" }
+            ]
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead>
+          <tr class="govuk-table__row">
+            <td></td>
+            <th scope="col" class="govuk-table__header">Tier</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-100"></td>
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-90"></td>
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-80"></td>
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-60"></td>
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-40">Domestic abuse</td>
+            <th scope="row" class="govuk-table__header heatmap-40">E</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-30">Stalking or Child protection</td>
+            <th scope="row" class="govuk-table__header heatmap-30">F</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -1,7 +1,10 @@
-import { OASysSections, OASysTierInputs } from '../data/arnsApiClient'
-import { Abbreviation, NeedsDescriptions, NeedsWeighting } from './mappings'
+import { Abbreviation, NeedsDescriptions, NeedsWeighting, StepTitles } from './mappings'
+import { Tier } from '../data/models/tier'
+import { StepResultEntry, StepResults } from './calculation'
+import { OASysSections, OASysTierInputs } from '../data/models/arns'
 
-export type Table = { text?: string; html?: string; colspan?: number; format?: string }[][]
+export type TableCell = { text?: string; html?: string; colspan?: number; format?: string }
+export type Table = TableCell[][]
 
 const SevereTag = '<span class="govuk-tag govuk-tag--red" title="Severe need">SEVERE</span>'
 
@@ -28,4 +31,16 @@ export function needsRow(oasysInputs: OASysTierInputs, key: keyof OASysSections,
   const score = NeedsWeighting[key] * (isSevere ? 2 : 1)
   table.push(row('', label, `+${score}`))
   return score
+}
+
+export function buildSummaryTable(crn: string, calculationSteps: StepResults, derivedTier: Tier): Table {
+  return [
+    ...Object.entries(calculationSteps).map(([key, result]: StepResultEntry) => [
+      {
+        html: `<a href="/v3/case/${crn}/calculation/#${key}" class="govuk-link govuk-link--no-visited-state">${StepTitles[key]}</a>`,
+      },
+      { html: result.tier === derivedTier ? `<strong>${result.tier}</strong>` : (result.tier ?? 'Not applicable') },
+    ]),
+    [{ text: 'Highest tier' }, { html: `<strong>${derivedTier}</strong>` }],
+  ]
 }

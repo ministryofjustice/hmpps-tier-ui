@@ -1,4 +1,4 @@
-import { OASysSections } from '../data/arnsApiClient'
+import { OASysSections } from '../data/models/arns'
 
 export type Abbreviation = {
   abbreviation: string
@@ -6,7 +6,13 @@ export type Abbreviation = {
 }
 
 export const Abbreviations = {
-  ROSH: { abbreviation: 'RoSH', text: 'Risk of Serious Harm' },
+  ARP: { abbreviation: 'ARP', text: 'All Reoffending Predictor' },
+  CSRP: { abbreviation: 'CSRP', text: 'Combined Serious Reoffending Predictor' },
+  DCSRP: { abbreviation: 'DC-SRP', text: 'Direct Contact Sexual Reoffending Predictor' },
+  IICSRP: { abbreviation: 'IIC-SRP', text: 'Images and Indirect Contact Sexual Reoffending Predictor' },
+  IPP: { abbreviation: 'IPP', text: 'Imprisonment for Public Protection' },
+  ROSH: { abbreviation: 'ROSH', text: 'Risk of Serious Harm' },
+  RoSH: { abbreviation: 'ROSH', text: 'Risk of Serious Harm' },
   RSR: { abbreviation: 'RSR', text: 'Risk of Serious Recidivism' },
   MAPPA: { abbreviation: 'MAPPA', text: 'Multi-Agency Public Protection Arrangements' },
   IOM: { abbreviation: 'IOM', text: 'Integrated Offender Management' },
@@ -55,4 +61,14 @@ export const NeedsWeighting: Record<keyof OASysSections, number> = {
   lifestyleAndAssociates: 1,
   relationships: 1,
   thinkingAndBehaviour: 2,
+}
+
+export const StepTitles = {
+  reoffending: 'Reoffending',
+  sexualReoffending: 'Sexual reoffending',
+  mappaRosh: 'Risk of serious harm',
+  liferIpp: 'Lifer/IPP',
+  domesticAbuse: 'Domestic abuse',
+  stalking: 'Stalking',
+  childProtection: 'Child protection',
 }

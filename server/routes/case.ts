@@ -2,12 +2,15 @@ import { Router } from 'express'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import { randomUUID } from 'crypto'
 import type { Services } from '../services'
-import DeliusIntegrationClient, { DeliusTierInputs } from '../data/deliusIntegrationClient'
-import ArnsApiClient, { OASysTierInputs } from '../data/arnsApiClient'
-import TierApiClient, { TierLevel } from '../data/tierApiClient'
+import DeliusIntegrationClient from '../data/deliusIntegrationClient'
+import ArnsApiClient from '../data/arnsApiClient'
+import TierV2ApiClient from '../data/tierV2ApiClient'
 import { needsRow, row, Table } from '../utils/table'
 import { Abbreviations, ComplexityFactors, mappaDescription } from '../utils/mappings'
 import config from '../config'
+import { TierLevel } from '../data/models/tier'
+import { DeliusResponse } from '../data/models/delius'
+import { OASysTierInputs } from '../data/models/arns'
 
 export default function caseRoutes(router: Router, { hmppsAuthClient }: Services) {
   router.get('/case/:crn', async (req, res, _next) => {
@@ -19,7 +22,7 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       return
     }
 
-    const tierClient = new TierApiClient(hmppsAuthClient)
+    const tierClient = new TierV2ApiClient(hmppsAuthClient)
     const arnsClient = new ArnsApiClient(hmppsAuthClient)
 
     if (config.audit.enabled) {
@@ -65,7 +68,7 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
 }
 
 function calculateProtectLevel(
-  deliusInputs: DeliusTierInputs,
+  deliusInputs: DeliusResponse,
   oasysInputs: OASysTierInputs | null,
   tierLevel: TierLevel,
   warnings: string[],
@@ -151,7 +154,7 @@ function calculateProtectLevel(
 }
 
 function calculateChangeLevel(
-  deliusInputs: DeliusTierInputs,
+  deliusInputs: DeliusResponse,
   oasysInputs: OASysTierInputs | null,
   tierLevel: TierLevel,
   warnings: string[],

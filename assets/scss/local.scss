@@ -1,3 +1,8 @@
+@import "govuk-frontend/dist/govuk/settings/colours-applied";
+@import "govuk-frontend/dist/govuk/settings/spacing";
+@import "govuk-frontend/dist/govuk/helpers/spacing";
+@import "govuk-frontend/dist/govuk/settings/media-queries";
+
 .govuk-main-wrapper {
   min-height: 600px;
 }
@@ -5,19 +10,33 @@
 table.heatmap {
   caption, th {
     text-align: center;
+
     & small {
       font-weight: normal;
     }
   }
+
   td, td:last-child {
     padding: govuk-spacing(2) govuk-spacing(3);
     vertical-align: middle;
   }
+
   @for $i from 1 through 10 {
     td.heatmap-#{$i * 10}, th.heatmap-#{$i * 10} {
       background-color: lighten(rgb(113, 48, 122), 20 - $i * 2);
       border: 1px solid govuk-colour('white');
       color: govuk-colour('white');
+    }
+  }
+}
+
+#tier-calculation-explainer {
+  & .heatmap {
+    margin-top: govuk-spacing(-8)
+  }
+  & .govuk-grid-column-two-thirds {
+    @include govuk-media-query($until: tablet) {
+      padding-bottom: govuk-spacing(8)
     }
   }
 }
