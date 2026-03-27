@@ -1,6 +1,7 @@
 import { Handler, Router } from 'express'
 import { ArnsComponents } from '@ministryofjustice/hmpps-arns-frontend-components-lib'
 import { asUser } from '@ministryofjustice/hmpps-rest-client'
+import { defaultClient } from 'applicationinsights'
 import type { Services } from '../services'
 import DeliusIntegrationClient from '../data/deliusIntegrationClient'
 import TierV3ApiClient from '../data/tierV3ApiClient'
@@ -73,6 +74,10 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         warnings.push(
           `Calculation mismatch. The calculated tier is ${tierCalculation.data.tier}, but the factors indicate this person's tier should be ${derivedTier}.`,
         )
+        defaultClient.trackEvent({
+          name: 'CalculationMismatch',
+          properties: { crn, storedTier: tierCalculation.data.tier, derivedTier },
+        })
       }
 
       const primarySources = Object.entries(stepResults)
