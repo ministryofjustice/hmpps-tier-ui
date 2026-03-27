@@ -2,7 +2,7 @@
   "mappings": [
     {
       "request": {
-        "urlPattern": "/tier/tier-counts",
+        "urlPattern": "/tier(/v2)?/tier-counts",
         "method": "GET"
       },
       "response": {

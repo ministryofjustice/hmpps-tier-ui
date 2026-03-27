@@ -1,0 +1,25 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "url": "/tier/v3/tier-counts",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "A": 178,
+          "B": 1323,
+          "C": 4079,
+          "D": 13038,
+          "E": 22295,
+          "F": 9174,
+          "G": 84663
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    }
+  ]
+}

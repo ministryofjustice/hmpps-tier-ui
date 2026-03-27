@@ -1,10 +1,11 @@
 import { Router } from 'express'
 import type { Services } from '../services'
-import TierApiClient, { TierCount } from '../data/tierApiClient'
+import TierV2ApiClient from '../data/tierV2ApiClient'
+import { TierCount } from '../data/models/tier'
 
 export default function startRoutes(router: Router, { hmppsAuthClient }: Services) {
   router.get('/', async (_req, res, _next) => {
-    const counts = await new TierApiClient(hmppsAuthClient).getTierCounts()
+    const counts = await new TierV2ApiClient(hmppsAuthClient).getTierCounts()
 
     const tierCounts = new TierCountDetail(counts)
 

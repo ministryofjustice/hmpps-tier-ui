@@ -1,5 +1,6 @@
-import { row, needsRow, Table } from './table'
-import { OASysTierInputs } from '../data/arnsApiClient'
+import { buildSummaryTable, needsRow, row, Table } from './table'
+import { StepResults } from './calculation'
+import { OASysTierInputs } from '../data/models/arns'
 
 describe('row', () => {
   it('handles a single column', () => {
@@ -48,6 +49,66 @@ describe('needsRow', () => {
         { html: 'Relationships <span class="govuk-tag govuk-tag--red" title="Severe need">SEVERE</span>' },
         { html: '+2', format: 'numeric' },
       ],
+    ])
+  })
+})
+
+describe('buildSummaryTable', () => {
+  it('builds summary rows and highlights the highest tier', () => {
+    const calculationSteps: StepResults = {
+      reoffending: { tier: 'C' },
+      sexualReoffending: { tier: null },
+      mappaRosh: { tier: 'A' },
+      liferIpp: { tier: 'F' },
+      domesticAbuse: { tier: 'E' },
+      stalking: { tier: null },
+      childProtection: { tier: 'F' },
+    }
+
+    expect(buildSummaryTable('X12345', calculationSteps, 'A')).toEqual([
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#reoffending" class="govuk-link govuk-link--no-visited-state">Reoffending</a>',
+        },
+        { html: 'C' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#sexualReoffending" class="govuk-link govuk-link--no-visited-state">Sexual reoffending</a>',
+        },
+        { html: 'Not applicable' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#mappaRosh" class="govuk-link govuk-link--no-visited-state">Risk of serious harm</a>',
+        },
+        { html: '<strong>A</strong>' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#liferIpp" class="govuk-link govuk-link--no-visited-state">Lifer/IPP</a>',
+        },
+        { html: 'F' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#domesticAbuse" class="govuk-link govuk-link--no-visited-state">Domestic abuse</a>',
+        },
+        { html: 'E' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#stalking" class="govuk-link govuk-link--no-visited-state">Stalking</a>',
+        },
+        { html: 'Not applicable' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#childProtection" class="govuk-link govuk-link--no-visited-state">Child protection</a>',
+        },
+        { html: 'F' },
+      ],
+      [{ text: 'Highest tier' }, { html: '<strong>A</strong>' }],
     ])
   })
 })
