@@ -58,7 +58,7 @@
         <p>
           {{ personalDetails.name.forename }} {{ personalDetails.name.surname }} has a{% if indicative %}n
           <abbr title="A tier is indicative if it is not based on a dynamic assessment.">indicative</abbr>{% endif %}
-          tier of <strong>{{ tierCalculation.tierScore }}</strong>, based on {{ primarySourceText }}.
+          tier of <strong>{{ tierCalculation.tierScore }}</strong>{% if primarySourceText %}, based on {{ primarySourceText }}{% endif %}.
         </p>
 
         {{ govukTable({

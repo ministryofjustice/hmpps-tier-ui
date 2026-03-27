@@ -68,8 +68,6 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         !dynamicAssessmentUsed && stepResults.mappaRosh.tier !== 'A' && stepResults.sexualReoffending.tier !== 'A'
 
       const derivedTier = maxTier(Object.values(stepResults).map(result => result.tier))
-      const summaryTable = buildSummaryTable(crn, stepResults, derivedTier)
-
       if (derivedTier !== tierCalculation.data.tier) {
         warnings.push(
           `Calculation mismatch. The calculated tier is ${tierCalculation.data.tier}, but the factors indicate this person's tier should be ${derivedTier}.`,
@@ -80,10 +78,12 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         })
       }
 
-      const primarySources = Object.entries(stepResults)
-        .filter(([_, result]) => result.tier === derivedTier)
-        .map(([key, _]: StepResultEntry) => StepTitles[key])
-      const primarySourceText = primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'
+      const summaryTable = buildSummaryTable(crn, stepResults, derivedTier)
+      const primarySourceText = joinWithAnd(
+        Object.entries(stepResults)
+          .filter(([_, result]) => result.tier === derivedTier)
+          .map(([key, _]: StepResultEntry) => StepTitles[key]),
+      )
 
       res.render(page, {
         personalDetails,
