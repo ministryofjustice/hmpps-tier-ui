@@ -100,6 +100,9 @@ export default {
       agent: new AgentConfig(Number(get('COMPONENT_API_TIMEOUT_RESPONSE', 5000))),
     },
   },
+  oasys: {
+    url: get('OASYS_URL', 'http://localhost/oasys', requiredInProduction),
+  },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),

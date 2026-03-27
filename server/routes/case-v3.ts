@@ -93,6 +93,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         summaryTable,
         primarySourceText,
         tierCounts,
+        oasysUrl: config.oasys.url,
         warnings: warnings.map(warning => ({ text: warning })),
       })
     }

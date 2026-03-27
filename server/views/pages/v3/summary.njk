@@ -70,8 +70,7 @@
         {% if indicative %}
           {% set insetTextHtml %}
             <strong>This tier is indicative</strong>, meaning the calculation was not based on a dynamic assessment.
-            <a class="govuk-link govuk-link--no-visited-state"
-               href="https://t2.oasys.service.justice.gov.uk/eor/f?p=100:101" target="_blank">
+            <a class="govuk-link govuk-link--no-visited-state" href="{{ oasysUrl }}" target="_blank">
               Complete a dynamic assessment</a> to get a more accurate tier.
           {% endset %}
           {{ govukInsetText({ html: insetTextHtml }) }}
