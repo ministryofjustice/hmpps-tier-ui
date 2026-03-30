@@ -48,23 +48,6 @@ describe('Tier calculation', () => {
     expect(calculateTier(deliusInputs(), predictors({ arp, csrp }))).toBe(expectedTier)
   })
 
-  it.each(csrpSuppressionCases())(
-    'uses combined serious reoffending predictor only when sexual predictors do not suppress it: %s',
-    (_description, directSrp, indirectSrp, expectedTier) => {
-      expect(
-        calculateTier(
-          deliusInputs(),
-          predictors({
-            arp: 90,
-            csrp: 6.9,
-            directSrp,
-            indirectSrp,
-          }),
-        ),
-      ).toBe(expectedTier)
-    },
-  )
-
   it.each(ignoredSexualPredictorCases())(
     'ignores sexual predictors without a usable validated band: %s',
     (_description, directSrp, indirectSrp) => {
@@ -301,15 +284,6 @@ function arpAndCsrpMatrixCases(): Array<[number, number, Tier]> {
     [25, 0, 'F'],
     [15, 0, 'F'],
     [0, 0, 'G'],
-  ]
-}
-
-function csrpSuppressionCases(): Array<[string, BasePredictorDto, BasePredictorDto, Tier]> {
-  return [
-    ['higher valid indirect score suppresses combined CSRP', { score: 1, band: 'LOW' }, { score: 2, band: 'LOW' }, 'D'],
-    ['lower valid indirect score keeps combined CSRP', { score: 2, band: 'LOW' }, { score: 1, band: 'LOW' }, 'A'],
-    ['equal valid indirect score keeps combined CSRP', { score: 2, band: 'LOW' }, { score: 2, band: 'LOW' }, 'A'],
-    ['higher indirect score without band keeps combined CSRP', { score: 1, band: 'LOW' }, sexualPredictor(2), 'A'],
   ]
 }
 

@@ -133,17 +133,10 @@
             {{ (riskPredictors.allReoffendingPredictor.score + "%") if riskPredictors.allReoffendingPredictor.score
             else "not present" }}
             and the Combined Serious Reoffending Predictor (CSRP) is
-            {{ "ignored due to sexual reoffending risk" if stepResults.reoffending.data.suppressCsrp
-            else ((riskPredictors.combinedSeriousReoffendingPredictor.score + "%") if riskPredictors.combinedSeriousReoffendingPredictor.score
-            else "not present") }},
+            {{ (riskPredictors.combinedSeriousReoffendingPredictor.score + "%") if riskPredictors.combinedSeriousReoffendingPredictor.score
+            else "not present" }},
             resulting in a tier of <strong>{{ stepResults.reoffending.tier }}</strong>.
           </p>
-          {% if stepResults.reoffending.data.suppressCsrp %}
-            <p>
-              Note: The {{ 'IICSRP' | abbr }} score is higher than the {{ 'DCSRP' | abbr }} score, so the
-              {{ 'CSRP' | abbr }} is treated as 0% to avoid double-counting sexual reoffending in the next section.
-            </p>
-          {% endif %}
 
           {{ predictorScale({ data: riskData, predictor: "allReoffendingPredictor" }) }}
           {{ predictorScale({ data: riskData, predictor: "combinedSeriousReoffendingPredictor" }) }}
