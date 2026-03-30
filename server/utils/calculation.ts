@@ -26,13 +26,7 @@ export function maxTier(tiers: Array<Tier | null>): Tier {
 export function calculateNonSexualReoffending(riskPredictors?: AllPredictorDto): StepResult {
   if (!riskPredictors) return { tier: null }
   const arpScore = riskPredictors.allReoffendingPredictor?.score ?? 0
-  const dcSrp = validatePredictor(riskPredictors.directContactSexualReoffendingPredictor)
-  const iicSrp = validatePredictor(riskPredictors.indirectImageContactSexualReoffendingPredictor)
-  // The Combined Serious Reoffending Predictor (CSRP) is a combination of multiple scores, including the
-  // sexual reoffending predictors (DC-SRP and IIC-SRP), so should not be used if DC-SRP and IIC-SRP are both
-  // valid and IIC-SRP is greater than DC-SRP. Otherwise, we would double-count sexual reoffending in step 2.
-  const suppressCsrp = iicSrp !== null && dcSrp !== null && iicSrp.score > dcSrp.score
-  const csrpScore = suppressCsrp ? 0 : (riskPredictors.combinedSeriousReoffendingPredictor?.score ?? 0)
+  const csrpScore = riskPredictors.combinedSeriousReoffendingPredictor?.score ?? 0
   const row = findThresholdIndex(csrpScore, [6.9, 3, 1, 0.5, 0])
   const col = findThresholdIndex(arpScore, [90, 75, 50, 25, 15, 0])
   const lookupTable: Tier[][] = [
@@ -42,7 +36,7 @@ export function calculateNonSexualReoffending(riskPredictors?: AllPredictorDto):
     ['C', 'D', 'E', 'E', 'F', 'F'],
     ['D', 'D', 'E', 'F', 'F', 'G'],
   ]
-  return { tier: lookupTable[row][col], data: { suppressCsrp } }
+  return { tier: lookupTable[row][col] }
 }
 
 export function calculateSexualReoffending(warnings: string[], riskPredictors?: AllPredictorDto): StepResult {
