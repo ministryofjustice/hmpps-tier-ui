@@ -50,7 +50,7 @@ describe('Tier calculation', () => {
 
   it.each(ignoredSexualPredictorCases())(
     'ignores sexual predictors without a usable validated band: %s',
-    (_description, directSrp, indirectSrp) => {
+    (_description, directSrp) => {
       expect(
         calculateTier(
           deliusInputs(),
@@ -58,7 +58,6 @@ describe('Tier calculation', () => {
             arp: 75,
             csrp: 1,
             directSrp,
-            indirectSrp,
           }),
         ),
       ).toBe('C')
@@ -71,34 +70,6 @@ describe('Tier calculation', () => {
       expect(calculateTier(deliusInputs(), predictors({ directSrp: { score, band } }))).toBe(expectedTier)
     },
   )
-
-  it.each(indirectSexualReoffendingCases())('indirect band %p maps to tier %p', (band, expectedTier) => {
-    expect(calculateTier(deliusInputs(), predictors({ indirectSrp: { score: 1, band } }))).toBe(expectedTier)
-  })
-
-  it('prefers direct-contact sexual predictor when its score is higher than indirect image predictor', () => {
-    expect(
-      calculateTier(
-        deliusInputs(),
-        predictors({
-          directSrp: { score: 2.11, band: 'HIGH' },
-          indirectSrp: { score: 2.1, band: 'HIGH' },
-        }),
-      ),
-    ).toBe('B')
-  })
-
-  it('uses direct-contact predictor when the scores tie', () => {
-    expect(
-      calculateTier(
-        deliusInputs(),
-        predictors({
-          directSrp: { score: 2.11, band: 'HIGH' },
-          indirectSrp: { score: 2.11, band: 'LOW' },
-        }),
-      ),
-    ).toBe('B')
-  })
 
   it('logs when a direct-contact medium-band predictor is below the supported thresholds', () => {
     calculateTier(deliusInputs(), predictors({ directSrp: { score: 0.59, band: 'MEDIUM' } }))
@@ -218,12 +189,10 @@ function predictors({
   arp,
   csrp,
   directSrp,
-  indirectSrp,
 }: {
   arp?: number
   csrp?: number
   directSrp?: BasePredictorDto | null
-  indirectSrp?: BasePredictorDto | null
 } = {}): AllPredictorDto {
   return {
     allReoffendingPredictor:
@@ -244,12 +213,7 @@ function predictors({
           }
         : undefined,
     directContactSexualReoffendingPredictor: directSrp ?? undefined,
-    indirectImageContactSexualReoffendingPredictor: indirectSrp ?? undefined,
   }
-}
-
-function sexualPredictor(score: number, band?: ScoreLevel | null): BasePredictorDto {
-  return { score, band }
 }
 
 function arpAndCsrpMatrixCases(): Array<[number, number, Tier]> {
@@ -287,12 +251,10 @@ function arpAndCsrpMatrixCases(): Array<[number, number, Tier]> {
   ]
 }
 
-function ignoredSexualPredictorCases(): Array<[string, BasePredictorDto | null, BasePredictorDto | null]> {
+function ignoredSexualPredictorCases(): Array<[string, BasePredictorDto | null]> {
   return [
-    ['direct predictor without a band is ignored', sexualPredictor(2.11), null],
-    ['direct predictor with NOT_APPLICABLE band is ignored', { score: 2.11, band: 'NOT_APPLICABLE' }, null],
-    ['indirect predictor without a band is ignored', null, sexualPredictor(1)],
-    ['indirect predictor with NOT_APPLICABLE band is ignored', null, { score: 1, band: 'NOT_APPLICABLE' }],
+    ['direct predictor without a band is ignored', { score: 2.11, band: null }],
+    ['direct predictor with NOT_APPLICABLE band is ignored', { score: 2.11, band: 'NOT_APPLICABLE' }],
   ]
 }
 
@@ -308,15 +270,6 @@ function directSexualReoffendingCases(): Array<[number, ScoreLevel, Tier]> {
     [2.11, 'MEDIUM', 'D'],
     [0.6, 'MEDIUM', 'D'],
     [0.02, 'LOW', 'E'],
-  ]
-}
-
-function indirectSexualReoffendingCases(): Array<[ScoreLevel, Tier]> {
-  return [
-    ['VERY_HIGH', 'C'],
-    ['HIGH', 'C'],
-    ['MEDIUM', 'D'],
-    ['LOW', 'E'],
   ]
 }
 

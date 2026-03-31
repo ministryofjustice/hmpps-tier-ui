@@ -224,13 +224,10 @@
         {% if riskPredictors %}
           {% if stepResults.sexualReoffending.tier %}
             <p>
-              {% if stepResults.sexualReoffending.data.dcGreaterThanIic %}
-                The Direct Contact Sexual Reoffending Predictor (DC-SRP) is the governing predictor for this step,
-                {% if stepResults.sexualReoffending.data.riskReduction %}
-                  and the risk is reduced following five offence-free years,
-                {% endif %}
-              {% else %}
-                The Images and Indirect Contact Sexual Reoffending Predictor (IIC-SRP) is the governing predictor for this step,
+              The Direct Contact Sexual Reoffending Predictor (DC-SRP) is
+              {{ riskPredictors.directContactSexualReoffendingPredictor.band }},
+              {% if stepResults.sexualReoffending.data.riskReduction %}
+                and the risk has been reduced following five offence-free years,
               {% endif %}
               resulting in a tier of <strong>{{ stepResults.sexualReoffending.tier }}</strong>.
             </p>
@@ -238,11 +235,9 @@
             <p>This person does not have an assessed sexual reoffending risk.</p>
           {% endif %}
           {{ predictorScale({ data: riskData, predictor: "directContactSexualReoffendingPredictor" }) }}
-          {{ predictorScale({ data: riskData, predictor: "indirectImageContactSexualReoffendingPredictor" }) }}
         {% else %}
           <p>No assessment available.</p>
-          <p>Complete an assessment to generate Direct Contact Sexual Reoffending Predictor (DC-SRP) and Images and
-            Indirect Contact Sexual Reoffending Predictor (IIC-SRP) scores.</p>
+          <p>Complete an assessment to generate a Direct Contact Sexual Reoffending Predictor (DC-SRP) score.</p>
         {% endif %}
       </div>
 
@@ -252,32 +247,27 @@
           <thead>
           <tr class="govuk-table__row">
             <th scope="col" class="govuk-table__header">{{ 'DCSRP' | abbr }}</th>
-            <th scope="col" class="govuk-table__header">{{ 'IICSRP' | abbr }}</th>
             <th scope="col" class="govuk-table__header">Tier</th>
           </tr>
           </thead>
           <tbody class="govuk-table__body">
           <tr class="govuk-table__row">
             <td class="govuk-table__cell heatmap-100">Very high</td>
-            <td class="govuk-table__cell heatmap-100"></td>
             <th scope="row" class="govuk-table__header heatmap-100">A</th>
           </tr>
           <tr class="govuk-table__row">
             <td class="govuk-table__cell heatmap-90">High</td>
-            <td class="govuk-table__cell heatmap-90"></td>
             <th scope="row" class="govuk-table__header heatmap-90">B</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-80" rowspan="2">Medium</td>
-            <td class="govuk-table__cell heatmap-80">High</td>
+            <td class="govuk-table__cell heatmap-80">Medium</td>
             <th scope="row" class="govuk-table__header heatmap-80">C</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-60">Medium</td>
+            <td class="govuk-table__cell heatmap-60">Medium <small>(with risk reduction)</small></td>
             <th scope="row" class="govuk-table__header heatmap-60">D</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-40">Low</td>
             <td class="govuk-table__cell heatmap-40">Low</td>
             <th scope="row" class="govuk-table__header heatmap-40">E</th>
           </tr>
@@ -446,7 +436,7 @@
   <section>
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
-        <h2 class="govuk-heading-l">Other complexity factors</h2>
+        <h2 class="govuk-heading-l">Other factors</h2>
         {{ govukTable({
           firstCellIsHeader: true,
           head: [{ text: "Register type" }, { text: "Value" }, { text: "Tier" }],
