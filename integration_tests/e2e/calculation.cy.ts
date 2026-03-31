@@ -18,7 +18,7 @@ context('Calculation page', () => {
     )
     expectNormalisedText(
       page.sexualReoffendingSummary(),
-      'The Direct Contact Sexual Reoffending Predictor (DC-SRP) is the governing predictor for this step, resulting in a tier of E.',
+      'The Direct Contact Sexual Reoffending Predictor (DC-SRP) is LOW, resulting in a tier of E.',
     )
     expectNormalisedText(
       page.mappaRoshSummary(),

@@ -41,13 +41,9 @@ export function calculateNonSexualReoffending(riskPredictors?: AllPredictorDto):
 
 export function calculateSexualReoffending(warnings: string[], riskPredictors?: AllPredictorDto): StepResult {
   const dcSrp = validatePredictor(riskPredictors?.directContactSexualReoffendingPredictor)
-  const iicSrp = validatePredictor(riskPredictors?.indirectImageContactSexualReoffendingPredictor)
 
-  const data = {
-    dcGreaterThanIic: dcSrp && (!iicSrp || dcSrp.score >= iicSrp.score),
-    riskReduction: false,
-  }
-  if (dcSrp && (!iicSrp || dcSrp.score >= iicSrp.score)) {
+  const data = { riskReduction: false }
+  if (dcSrp) {
     if (dcSrp.band === 'VERY_HIGH') return { tier: 'A', data }
     if (dcSrp.band === 'HIGH') return { tier: 'B', data }
     if (dcSrp.band === 'MEDIUM') {
@@ -59,11 +55,6 @@ export function calculateSexualReoffending(warnings: string[], riskPredictors?: 
       warnings.push(`Unexpected combination of DC-SRP score (${dcSrp.score}) and DC-SRP band (${dcSrp.band})`)
       return { tier: null, data }
     }
-    return { tier: 'E', data }
-  }
-  if (iicSrp) {
-    if (iicSrp.band === 'VERY_HIGH' || iicSrp.band === 'HIGH') return { tier: 'C', data }
-    if (iicSrp.band === 'MEDIUM') return { tier: 'D', data }
     return { tier: 'E', data }
   }
   return { tier: null, data }

@@ -1,6 +1,6 @@
 import { Abbreviation, NeedsDescriptions, NeedsWeighting, StepTitles } from './mappings'
 import { Tier } from '../data/models/tier'
-import { StepResultEntry, StepResults } from './calculation'
+import { StepKey, StepResultEntry, StepResults } from './calculation'
 import { OASysSections, OASysTierInputs } from '../data/models/arns'
 
 export type TableCell = { text?: string; html?: string; colspan?: number; format?: string }
@@ -39,8 +39,14 @@ export function buildSummaryTable(crn: string, calculationSteps: StepResults, de
       {
         html: `<a href="/v3/case/${crn}/calculation/#${key}" class="govuk-link govuk-link--no-visited-state">${StepTitles[key]}</a>`,
       },
-      { html: result.tier === derivedTier ? `<strong>${result.tier}</strong>` : (result.tier ?? 'Not applicable') },
+      {
+        html: result.tier === derivedTier ? `<strong>${result.tier}</strong>` : (result.tier ?? noTierText(key)),
+      },
     ]),
     [{ text: 'Highest tier' }, { html: `<strong>${derivedTier}</strong>` }],
   ]
+}
+
+function noTierText(key: StepKey) {
+  return ['reoffending'].includes(key) ? 'Not assessed' : 'Not applicable'
 }
