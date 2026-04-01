@@ -1,7 +1,7 @@
 import { Abbreviation, NeedsDescriptions, NeedsWeighting, StepTitles } from './mappings'
 import { Tier } from '../data/models/tier'
 import { StepKey, StepResultEntry, StepResults } from './calculation'
-import { OASysSections, OASysTierInputs } from '../data/models/arns'
+import { AllPredictorDto, OASysSections, OASysTierInputs } from '../data/models/arns'
 
 export type TableCell = { text?: string; html?: string; colspan?: number; format?: string }
 export type Table = TableCell[][]
@@ -33,20 +33,28 @@ export function needsRow(oasysInputs: OASysTierInputs, key: keyof OASysSections,
   return score
 }
 
-export function buildSummaryTable(crn: string, calculationSteps: StepResults, derivedTier: Tier): Table {
+export function buildSummaryTable(
+  crn: string,
+  assessment: AllPredictorDto | null,
+  calculationSteps: StepResults,
+  derivedTier: Tier,
+): Table {
   return [
     ...Object.entries(calculationSteps).map(([key, result]: StepResultEntry) => [
       {
         html: `<a href="/v3/case/${crn}/calculation/#${key}" class="govuk-link govuk-link--no-visited-state">${StepTitles[key]}</a>`,
       },
       {
-        html: result.tier === derivedTier ? `<strong>${result.tier}</strong>` : (result.tier ?? noTierText(key)),
+        html:
+          result.tier === derivedTier
+            ? `<strong>${result.tier}</strong>`
+            : (result.tier ?? noTierText(key, assessment)),
       },
     ]),
     [{ text: 'Highest tier' }, { html: `<strong>${derivedTier}</strong>` }],
   ]
 }
 
-function noTierText(key: StepKey) {
-  return ['reoffending'].includes(key) ? 'Not assessed' : 'Not applicable'
+function noTierText(key: StepKey, assessment: AllPredictorDto) {
+  return !assessment && ['reoffending', 'sexualReoffending'].includes(key) ? 'Not assessed' : 'Not applicable'
 }
