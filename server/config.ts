@@ -103,6 +103,9 @@ export default {
   oasys: {
     url: get('OASYS_URL', 'http://localhost/oasys', requiredInProduction),
   },
+  featureFlags: {
+    url: get('FEATURE_FLAGS_URL', 'http://localhost:9091/flags', requiredInProduction),
+  },
   domain: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   ingressUrl: get('INGRESS_URL', 'http://localhost:3000', requiredInProduction),
   environmentName: get('ENVIRONMENT_NAME', ''),

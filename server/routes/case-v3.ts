@@ -104,8 +104,25 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
     }
   }
 
+  router.all('/v3/*splat', async (_req, res, next) => {
+    const result = res.locals.fliptClient.evaluateBoolean({
+      flagKey: 'tier-v3-ui',
+      entityId: res.locals.user.username,
+      context: { username: res.locals.user.username },
+    })
+    if (!result.enabled) {
+      defaultClient.trackEvent({
+        name: 'UserNotAuthorisedToAccessV3',
+        properties: { username: res.locals.user.username },
+      })
+      res.redirect('/authError')
+    } else next()
+  })
+
   router.get('/v3/case/:crn', loadCase('pages/v3/summary'))
+
   router.get('/v3/case/:crn/calculation', loadCase('pages/v3/calculation'))
+
   router.get('/v3/case/:crn/history', async (req, res, _next) => {
     const crn = req.params.crn as string
     const deliusClient = new DeliusIntegrationClient(hmppsAuthClient)

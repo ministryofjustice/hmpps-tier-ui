@@ -15,4 +15,5 @@ generic-service:
     ARNS_API_URL: "https://assess-risks-and-needs.hmpps.service.justice.gov.uk"
     COMPONENT_API_URL: "https://probation-frontend-components.hmpps.service.justice.gov.uk"
     OASYS_URL: "https://oasys.service.justice.gov.uk/eor/f?p=100:101"
+    FEATURE_FLAGS_URL: "https://feature-toggles.hmpps.service.justice.gov.uk"
     ENVIRONMENT: prod
