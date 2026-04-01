@@ -18,8 +18,9 @@ import setUpWebSession from './middleware/setUpWebSession'
 import routes from './routes'
 import type { Services } from './services'
 import { appInsightsMiddleware } from './utils/azureAppInsights'
+import setUpFliptClient from './middleware/setUpFliptClient'
 
-export default function createApp(services: Services): express.Application {
+export default async function createApp(services: Services): Promise<express.Application> {
   const app = express()
 
   app.set('json spaces', 2)
@@ -38,6 +39,7 @@ export default function createApp(services: Services): express.Application {
   app.use(setUpCsrf())
   app.use(setUpCurrentUser())
   app.use(setUpFrontendComponents())
+  app.use(await setUpFliptClient())
 
   app.use(routes(services))
 

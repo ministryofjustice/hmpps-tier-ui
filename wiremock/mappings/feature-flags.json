@@ -1,0 +1,32 @@
+{
+  "mappings": [
+    {
+      "request": {
+        "urlPath": "/flags/internal/v1/evaluation/snapshot/namespace/probation-integration",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "namespace": {
+            "key": "probation-integration",
+            "name": "Probation Integration"
+          },
+          "flags": [
+            {
+              "key": "tier-v3-ui",
+              "name": "Tier V3 UI",
+              "enabled": true,
+              "type": "BOOLEAN_FLAG_TYPE",
+              "description": ""
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json",
+          "ETag": "\"tier-v3-ui-enabled\""
+        }
+      }
+    }
+  ]
+}
