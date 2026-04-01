@@ -68,7 +68,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         !dynamicAssessmentUsed && stepResults.mappaRosh.tier !== 'A' && stepResults.sexualReoffending.tier !== 'A'
 
       const derivedTier = maxTier(Object.values(stepResults).map(result => result.tier))
-      const summaryTable = buildSummaryTable(crn, stepResults, derivedTier)
+      const summaryTable = buildSummaryTable(crn, riskPredictors, stepResults, derivedTier)
 
       if (derivedTier !== tierCalculation.data.tier) {
         warnings.push(

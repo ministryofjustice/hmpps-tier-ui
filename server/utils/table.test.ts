@@ -1,6 +1,6 @@
 import { buildSummaryTable, needsRow, row, Table } from './table'
 import { StepResults } from './calculation'
-import { OASysTierInputs } from '../data/models/arns'
+import { AllPredictorDto, OASysTierInputs } from '../data/models/arns'
 
 describe('row', () => {
   it('handles a single column', () => {
@@ -64,8 +64,9 @@ describe('buildSummaryTable', () => {
       stalking: { tier: null },
       childProtection: { tier: 'F' },
     }
+    const assessment: AllPredictorDto = {}
 
-    expect(buildSummaryTable('X12345', calculationSteps, 'A')).toEqual([
+    expect(buildSummaryTable('X12345', assessment, calculationSteps, 'A')).toEqual([
       [
         {
           html: '<a href="/v3/case/X12345/calculation/#reoffending" class="govuk-link govuk-link--no-visited-state">Reoffending</a>',
@@ -109,6 +110,33 @@ describe('buildSummaryTable', () => {
         { html: 'F' },
       ],
       [{ text: 'Highest tier' }, { html: '<strong>A</strong>' }],
+    ])
+  })
+
+  it('displays "Not assessed" when there is no assessment', () => {
+    const calculationSteps: StepResults = {
+      reoffending: { tier: null },
+      sexualReoffending: { tier: null },
+      mappaRosh: { tier: 'A' },
+      liferIpp: { tier: 'F' },
+      domesticAbuse: { tier: 'E' },
+      stalking: { tier: null },
+      childProtection: { tier: 'F' },
+    }
+    const assessment: AllPredictorDto = null
+
+    const table = buildSummaryTable('X12345', assessment, calculationSteps, 'A')
+    expect(table[0]).toEqual([
+      {
+        html: '<a href="/v3/case/X12345/calculation/#reoffending" class="govuk-link govuk-link--no-visited-state">Reoffending</a>',
+      },
+      { html: 'Not assessed' },
+    ])
+    expect(table[1]).toEqual([
+      {
+        html: '<a href="/v3/case/X12345/calculation/#sexualReoffending" class="govuk-link govuk-link--no-visited-state">Sexual reoffending</a>',
+      },
+      { html: 'Not assessed' },
     ])
   })
 })
