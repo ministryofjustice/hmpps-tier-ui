@@ -84,37 +84,37 @@
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-100">A</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-100">{{ tierCounts['A'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-100">{{ tierCounts['A'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-90">B</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-90">{{ tierCounts['B'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-90">{{ tierCounts['B'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-80">C</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-80">{{ tierCounts['C'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-80">{{ tierCounts['C'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-60">D</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-60">{{ tierCounts['D'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-60">{{ tierCounts['D'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-40">E</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-40">{{ tierCounts['E'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-40">{{ tierCounts['E'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-20">F</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-20">{{ tierCounts['F'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-20">{{ tierCounts['F'] | default(0) | formatNumber }}</td>
           </tr>
           <tr class="govuk-table__row">
             <th scope="row" class="govuk-table__header heatmap-10">G</th>
             <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-10">{{ tierCounts['G'] | formatNumber }}</td>
+              class="govuk-table__cell govuk-table__cell--numeric heatmap-10">{{ tierCounts['G'] | default(0) | formatNumber }}</td>
           </tr>
           </tbody>
         </table>
