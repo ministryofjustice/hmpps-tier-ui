@@ -2,17 +2,17 @@
   "mappings": [
     {
       "request": {
-        "url": "/tier/v3/crn/A000006/tier/details",
+        "url": "/tier/v3/crn/A000007/tier/details",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "tierScore": "B",
-          "calculationId": "8d8f1b08-3e58-4f19-9ec9-9d7baf8e8f51",
-          "calculationDate": "2026-03-04T14:15:00",
+          "tierScore": "NA",
+          "calculationId": "7cc1129b-bf1e-4e90-b7da-31d7fe8ea52a",
+          "calculationDate": "2026-03-10T09:15:00",
           "data": {
-            "tier": "B",
+            "tier": "NA",
             "deliusInputs": {
               "isFemale": false,
               "rsrScore": 12.3,
@@ -21,20 +21,18 @@
               "registrations": {
                 "hasIomNominal": false,
                 "hasLiferIpp": false,
-                "hasDomesticAbuse": true,
+                "hasDomesticAbuse": false,
                 "hasStalking": false,
-                "hasChildProtection": true,
-                "complexityFactors": [
-                  "RCPR"
-                ],
+                "hasChildProtection": false,
+                "complexityFactors": [],
                 "rosh": "MEDIUM",
-                "mappaLevel": "M1",
-                "mappaCategory": "M1",
-                "unsupervised": false
+                "mappaLevel": null,
+                "mappaCategory": null,
+                "unsupervised": true
               },
               "previousEnforcementActivity": false,
               "latestReleaseDate": null,
-              "hasActiveEvent": true
+              "hasActiveEvent": false
             },
             "riskPredictors": {
               "completedDate": "2026-03-01T09:00:00",
@@ -73,51 +71,19 @@
     },
     {
       "request": {
-        "url": "/tier/v3/crn/A000006/tier/history",
-        "method": "GET"
-      },
-      "response": {
-        "status": 200,
-        "jsonBody": [
-          {
-            "tierScore": "B",
-            "calculationId": "8d8f1b08-3e58-4f19-9ec9-9d7baf8e8f51",
-            "calculationDate": "2026-03-04T14:15:00",
-            "changeReason": "Tier recalculated after review"
-          },
-          {
-            "tierScore": "C",
-            "calculationId": "df85fc0f-27f6-4b70-a8d0-5dcb1bf9db3f",
-            "calculationDate": "2026-01-20T10:30:00",
-            "changeReason": "MAPPA registration added"
-          },
-          {
-            "tierScore": "E",
-            "calculationId": "976089b0-91bb-4984-8e4f-5af5615344be",
-            "calculationDate": "2025-11-01T08:00:00",
-            "changeReason": "Case created"
-          }
-        ],
-        "headers": {
-          "Content-Type": "application/json"
-        }
-      }
-    },
-    {
-      "request": {
-        "url": "/delius/person/A000006",
+        "url": "/delius/person/A000007",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "A000006",
+          "crn": "A000007",
           "name": {
-            "forename": "Alex",
-            "surname": "Rivera"
+            "forename": "Sam",
+            "surname": "Taylor"
           },
-          "dateOfBirth": "1990-05-15",
-          "age": "35"
+          "dateOfBirth": "1987-07-20",
+          "age": "38"
         },
         "headers": {
           "Content-Type": "application/json"
@@ -126,13 +92,13 @@
     },
     {
       "request": {
-        "urlPattern": "/delius/users/.+/access/A000006",
+        "urlPattern": "/delius/users/.+/access/A000007",
         "method": "GET"
       },
       "response": {
         "status": 200,
         "jsonBody": {
-          "crn": "A000006",
+          "crn": "A000007",
           "userRestricted": false,
           "userExcluded": false
         },

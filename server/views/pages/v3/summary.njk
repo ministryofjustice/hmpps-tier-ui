@@ -55,11 +55,7 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 class="govuk-heading-l">Summary</h2>
-        <p>
-          {{ personalDetails.name.forename }} {{ personalDetails.name.surname }} has a{% if indicative %}n
-          <abbr title="A tier is indicative if it is not based on a dynamic assessment.">indicative</abbr>{% endif %}
-          tier of <strong>{{ tierCalculation.tierScore }}</strong>, based on {{ primarySourceText }}.
-        </p>
+        <p>{{ tierSummary | safe }}</p>
 
         {{ govukTable({
           firstCellIsHeader: true,

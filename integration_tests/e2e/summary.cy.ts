@@ -67,4 +67,21 @@ context('Summary page', () => {
     cy.visit('/v3/case/A000005')
     cy.get('body').should('contain.text', 'You are not authorised to view this case')
   })
+
+  it('displays the NA summary when the case has no active event', () => {
+    cy.visit('/v3/case/A000007')
+    const page = Page.verifyOnPage(SummaryPage)
+
+    page.headerCrn().should('have.text', 'A000007')
+    page.headerDob().should('have.text', '20 July 1987')
+    page.headerTier().should('have.text', 'NA')
+    page.warnings().should('not.exist')
+
+    expectNormalisedText(
+      page.summaryText(),
+      'Sam Taylor has no applicable tier, as the case is not currently supervised.',
+    )
+    page.summaryRow('Highest tier').should('contain.text', 'NA')
+    cy.contains('This tier is indicative').should('not.exist')
+  })
 })

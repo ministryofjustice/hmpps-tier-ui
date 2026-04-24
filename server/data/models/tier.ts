@@ -1,6 +1,6 @@
 import { OGRS4Predictors } from './arns'
 
-export type Tier = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
+export type Tier = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'NA'
 export type Rosh = 'VERY_HIGH' | 'HIGH' | 'MEDIUM' | 'LOW'
 export type MappaLevel = 'M1' | 'M2' | 'M3'
 export type MappaCategory = 'M1' | 'M2' | 'M3' | 'M4'
@@ -62,6 +62,7 @@ export interface DeliusInputs {
   registrations: Registrations
   previousEnforcementActivity: boolean
   latestReleaseDate?: string | null
+  hasActiveEvent?: boolean | null
 }
 
 export interface Registrations {
