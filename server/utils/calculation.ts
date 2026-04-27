@@ -4,7 +4,7 @@ import { DeliusInputs, Tier } from '../data/models/tier'
 import { AllPredictorDto, BasePredictorDto, ValidPredictor } from '../data/models/arns'
 import { StepTitles } from './mappings'
 
-const TIER_PRIORITY: Tier[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G']
+const TIER_PRIORITY: Tier[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'NA']
 const TIER_RANK = Object.fromEntries(TIER_PRIORITY.map((tier, index) => [tier, index])) as Record<Tier, number>
 
 export type StepKey = keyof typeof StepTitles

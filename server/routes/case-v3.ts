@@ -67,7 +67,9 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       const indicative =
         !dynamicAssessmentUsed && stepResults.mappaRosh.tier !== 'A' && stepResults.sexualReoffending.tier !== 'A'
 
-      const derivedTier = maxTier(Object.values(stepResults).map(result => result.tier))
+      const derivedTier = deliusInputs.hasActiveEvent
+        ? maxTier(Object.values(stepResults).map(result => result.tier))
+        : 'NA'
       const summaryTable = buildSummaryTable(crn, riskPredictors, stepResults, derivedTier)
 
       if (derivedTier !== tierCalculation.data.tier) {
@@ -83,7 +85,10 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       const primarySources = Object.entries(stepResults)
         .filter(([_, result]) => result.tier === derivedTier)
         .map(([key, _]: StepResultEntry) => StepTitles[key])
-      const primarySourceText = primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'
+      const tierSummary =
+        derivedTier === 'NA'
+          ? `${personalDetails.name.forename} ${personalDetails.name.surname} has <strong>no applicable tier</strong>, as the case is not currently supervised.`
+          : `${personalDetails.name.forename} ${personalDetails.name.surname} has a${indicative ? 'n <abbr title="A tier is indicative if it is not based on a dynamic assessment.">indicative</abbr>' : ''} tier of <strong>${tierCalculation.tierScore}</strong>, based on ${primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'}.`
 
       res.render(page, {
         personalDetails,
@@ -96,7 +101,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         riskData,
         stepResults,
         summaryTable,
-        primarySourceText,
+        tierSummary,
         tierCounts,
         oasysUrl: config.oasys.url,
         warnings: warnings.map(warning => ({ text: warning })),
