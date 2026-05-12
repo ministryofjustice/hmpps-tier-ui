@@ -1,5 +1,6 @@
 {%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "../predictor-timeline-item/macro.njk" import predictorTimelineItem -%}
+{%- from "arns/components/predictor-badge/macro.njk" import predictorBadge -%}
 {%- if params.url and params.url | length > 0 -%}
   {%- set url = params.url -%}
 {%- else -%}
@@ -33,20 +34,48 @@
         Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore }}</a>
       </li>
     </ul>
+    {%- if not params.riskData -%}
     <div class="case-details-header__predictors">
+          {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}
+            <div data-qa="case-details-header-rosh">
+              {{ predictorTimelineItem({ type: "ROSH", level: params.rosh }) }}
+            </div>
+          {%- endif -%}
+          {%- if params.rsr -%}
+            <div data-qa="case-details-header-rsr">
+              {{ predictorTimelineItem({ type: "RSR", level: params.rsr.band, score: params.rsr.score }) }}
+            </div>
+          {%- endif -%}
+    </div>
+    {%- endif -%}
+  </div>
+  <div class="case-details-header__row case-details-header__name">
+    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ params.name }}</h1>
+  </div>
+  {%- if params.riskData -%}
+  <div class="case-details-header__row">
+    <div class="case-details-header__predictors_ogrs4">
+      <div data-qa="case-details-header-rsr">
+        {{ predictorBadge({ data: params.riskData, predictor: "combinedSeriousReoffendingPredictor" }) }}
+      </div>
+
       {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}
+          {%- set roshBand = 'VERY HIGH' if params.rosh == 'VERY_HIGH' else params.rosh -%}
+          {%- set riskDataRosh = {
+                          assessments: [
+                              {
+                                  rosh: {
+                                      name: 'RISK OF SERIOUS HARM',
+                                      band: roshBand
+                                  }
+                              }
+                          ]
+                      } -%}
         <div data-qa="case-details-header-rosh">
-          {{ predictorTimelineItem({ type: "ROSH", level: params.rosh }) }}
-        </div>
-      {%- endif -%}
-      {%- if params.rsr -%}
-        <div data-qa="case-details-header-rsr">
-          {{ predictorTimelineItem({ type: "RSR", level: params.rsr.band, score: params.rsr.score }) }}
+          {{ predictorBadge({ data: riskDataRosh, predictor: "rosh", showScore: false }) }}
         </div>
       {%- endif -%}
     </div>
   </div>
-  <div class="case-details-header__row case-details-header__name">
-    <h1 class="govuk-heading-xl">{{ params.name }}</h1>
-  </div>
+  {%- endif -%}
 </div>
