@@ -52,11 +52,17 @@
   <div class="case-details-header__row case-details-header__name">
     <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ params.name }}</h1>
   </div>
-  {%- if params.riskData -%}
+  {%- if params.riskData and params.riskData.assessments | length -%}
   <div class="case-details-header__row">
     <div class="case-details-header__predictors_ogrs4">
       <div data-qa="case-details-header-rsr">
-        {{ predictorBadge({ data: params.riskData, predictor: "combinedSeriousReoffendingPredictor" }) }}
+        {%- if params.riskData.assessments[0].combinedSeriousReoffendingPredictor.band != "NOT APPLICABLE" -%}
+          {{ predictorBadge({ data: params.riskData, predictor: "combinedSeriousReoffendingPredictor" }) }}
+        {%- endif -%}
+
+        {%- if params.riskData.assessments[0].combinedSeriousReoffendingPredictor.band -%}
+          {{ predictorBadge({ data: params.riskData, predictor: "rsr" }) }}
+        {%- endif -%}
       </div>
 
       {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}

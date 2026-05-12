@@ -15,7 +15,7 @@ context('Summary page', () => {
     page.headerRosh().should('contain.text', 'RISK OF SERIOUS HARM').should('contain.text', 'MEDIUM')
     page
       .headerRsr()
-      .should('contain.text', 'Combined serious reoffending predictor ')
+      .should('contain.text', 'Combined serious reoffending predictor')
       .should('contain.text', 'HIGH')
       .should('contain.text', '12.3')
     page.warnings().should('not.exist')

@@ -140,6 +140,31 @@
           "Content-Type": "application/json"
         }
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/risks/predictors/all/CRN/A000006",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": {
+          "assessments": [
+            {
+              "combinedSeriousReoffendingPredictor": {
+                "name": "Combined serious reoffending predictor",
+                "score": 1,
+                "band": "MEDIUM",
+                "staticOrDynamic": "DYNAMIC",
+                "completedDate": "04 March 2026"
+              }
+            }
+          ]
+        },
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
     }
   ]
 }
