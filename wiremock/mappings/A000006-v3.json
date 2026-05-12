@@ -143,7 +143,7 @@
     },
     {
       "request": {
-        "urlPattern": "/risks/predictors/all/CRN/A000006",
+        "urlPattern": "/arns/risks/predictors/all/crn/A000006",
         "method": "GET"
       },
       "response": {
