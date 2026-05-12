@@ -12,8 +12,12 @@ context('Summary page', () => {
     page.headerCrn().should('have.text', 'A000006')
     page.headerDob().should('have.text', '15 May 1990')
     page.headerTier().should('have.text', 'B')
-    page.headerRosh().should('contain.text', 'ROSH').should('contain.text', 'MEDIUM')
-    page.headerRsr().should('contain.text', 'RSR').should('contain.text', 'HIGH').should('contain.text', '12.3')
+    page.headerRosh().should('contain.text', 'RISK OF SERIOUS HARM').should('contain.text', 'MEDIUM')
+    page
+      .headerRsr()
+      .should('contain.text', 'Combined serious reoffending predictor ')
+      .should('contain.text', 'HIGH')
+      .should('contain.text', '12.3')
     page.warnings().should('not.exist')
 
     expectNormalisedText(page.summaryText(), 'Alex Rivera has a tier of B, based on Reoffending.')
