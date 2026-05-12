@@ -151,6 +151,9 @@
         "jsonBody": {
           "assessments": [
             {
+              "completedDate": "01 March 2026",
+              "completedDateTime": "01 March 2026 at 09:00",
+              "assessmentType": "layer 3",
               "combinedSeriousReoffendingPredictor": {
                 "name": "Combined serious reoffending predictor",
                 "score": 1,
