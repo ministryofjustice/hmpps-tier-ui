@@ -64,7 +64,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       const dynamicAssessmentUsed =
         riskPredictors?.combinedSeriousReoffendingPredictor?.staticOrDynamic === 'DYNAMIC' &&
         riskPredictors?.allReoffendingPredictor?.staticOrDynamic === 'DYNAMIC'
-      const indicative =
+      const provisional =
         !dynamicAssessmentUsed && stepResults.mappaRosh.tier !== 'A' && stepResults.sexualReoffending.tier !== 'A'
 
       const derivedTier = deliusInputs.hasActiveEvent
@@ -88,14 +88,14 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       const tierSummary =
         derivedTier === 'NA'
           ? `${personalDetails.name.forename} ${personalDetails.name.surname} has <strong>no applicable tier</strong>, as the case is not currently supervised.`
-          : `${personalDetails.name.forename} ${personalDetails.name.surname} has a${indicative ? 'n <abbr title="A tier is indicative if it is not based on a dynamic assessment.">indicative</abbr>' : ''} tier of <strong>${tierCalculation.tierScore}</strong>, based on ${primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'}.`
+          : `${personalDetails.name.forename} ${personalDetails.name.surname} has a${provisional ? ' <abbr title="A tier is provisional if it is not based on a dynamic assessment.">provisional</abbr>' : ''} tier of <strong>${tierCalculation.tierScore}</strong>, based on ${primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'}.`
 
       res.render(page, {
         personalDetails,
         rosh,
         rsr,
         tierCalculation,
-        indicative,
+        provisional,
         deliusInputs,
         riskPredictors,
         riskData,

@@ -82,6 +82,6 @@ context('Summary page', () => {
       'Sam Taylor has no applicable tier, as the case is not currently supervised.',
     )
     page.summaryRow('Highest tier').should('contain.text', 'NA')
-    cy.contains('This tier is indicative').should('not.exist')
+    cy.contains('This tier is provisional').should('not.exist')
   })
 })
