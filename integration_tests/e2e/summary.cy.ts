@@ -16,8 +16,9 @@ context('Summary page', () => {
     page
       .headerRsr()
       .should('contain.text', 'Combined serious reoffending predictor')
-      .should('contain.text', 'HIGH')
-      .should('contain.text', '12.3')
+      .should('contain.text', 'MEDIUM')
+      .should('contain.text', '1%')
+      .should('contain.text', 'Dynamic')
     page.warnings().should('not.exist')
 
     expectNormalisedText(page.summaryText(), 'Alex Rivera has a tier of B, based on Reoffending.')
