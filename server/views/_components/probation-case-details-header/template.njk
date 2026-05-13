@@ -34,7 +34,7 @@
         Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore }}</a>
       </li>
     </ul>
-    {%- if not params.riskData -%}
+    {%- if not params.riskData or params.riskData.assessments | length == 0 -%}
     <div class="case-details-header__predictors">
           {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}
             <div data-qa="case-details-header-rosh">
