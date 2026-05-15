@@ -140,6 +140,47 @@
           "Content-Type": "application/json"
         }
       }
+    },
+    {
+      "request": {
+        "urlPattern": "/arns/risks/predictors/all/crn/A000006",
+        "method": "GET"
+      },
+      "response": {
+        "status": 200,
+        "jsonBody": [
+          {
+            "completedDate": "2026-03-01T09:00:00",
+            "status": "COMPLETE",
+            "assessmentType": "LAYER3",
+            "outputVersion": "2",
+            "output": {
+              "allReoffendingPredictor": {
+                "score": 90,
+                "band": "VERY_HIGH",
+                "staticOrDynamic": "DYNAMIC"
+              },
+              "combinedSeriousReoffendingPredictor": {
+                "score": 1,
+                "band": "MEDIUM",
+                "staticOrDynamic": "DYNAMIC",
+                "algorithmVersion": "2.0"
+              },
+              "directContactSexualReoffendingPredictor": {
+                "score": 0.02,
+                "band": "LOW"
+              },
+              "indirectImageContactSexualReoffendingPredictor": {
+                "score": 0.01,
+                "band": "LOW"
+              }
+            }
+          }
+        ],
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
     }
   ]
 }

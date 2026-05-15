@@ -25,6 +25,12 @@
     display: inline-block;
   }
 
+  .case-details-header__predictors_ogrs4 > div {
+    margin-right: map-get($govuk-spacing-points, 4);
+    margin-bottom: map-get($govuk-spacing-points, 2);
+    display: inline-block;
+  }
+
   .case-details-header__name {
     & h1 {
       margin-bottom: 0;

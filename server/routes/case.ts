@@ -1,4 +1,6 @@
 import { Router } from 'express'
+import { asUser } from '@ministryofjustice/hmpps-rest-client'
+import { ArnsComponents } from '@ministryofjustice/hmpps-arns-frontend-components-lib'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import { randomUUID } from 'crypto'
 import type { Services } from '../services'
@@ -12,6 +14,8 @@ import { TierLevel } from '../data/models/tier'
 import { DeliusResponse } from '../data/models/delius'
 import { OASysTierInputs } from '../data/models/arns'
 
+import logger from '../../logger'
+
 export default function caseRoutes(router: Router, { hmppsAuthClient }: Services) {
   router.get('/case/:crn', async (req, res, _next) => {
     const { crn } = req.params
@@ -24,6 +28,7 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
 
     const tierClient = new TierV2ApiClient(hmppsAuthClient)
     const arnsClient = new ArnsApiClient(hmppsAuthClient)
+    const arnsComponentsClient = new ArnsComponents(hmppsAuthClient, config.apis.arnsApi, logger)
 
     if (config.audit.enabled) {
       await auditService.sendAuditMessage({
@@ -36,15 +41,17 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       })
     }
 
-    const [personalDetails, deliusInputs, oasysInputs, rosh, rsr, tierCalculation, history] = await Promise.all([
-      deliusClient.getPersonalDetails(crn),
-      deliusClient.getTierDetails(crn),
-      arnsClient.getTierAssessmentInfo(crn),
-      arnsClient.getOverallRiskOfSeriousHarm(crn, res.locals.user.token),
-      arnsClient.getCombinedSeriousReoffendingPredictor(crn, res.locals.user.token),
-      tierClient.getCalculationDetails(crn),
-      tierClient.getHistory(crn),
-    ])
+    const [personalDetails, deliusInputs, oasysInputs, rosh, rsr, tierCalculation, history, riskData] =
+      await Promise.all([
+        deliusClient.getPersonalDetails(crn),
+        deliusClient.getTierDetails(crn),
+        arnsClient.getTierAssessmentInfo(crn),
+        arnsClient.getOverallRiskOfSeriousHarm(crn, res.locals.user.token),
+        arnsClient.getCombinedSeriousReoffendingPredictor(crn, res.locals.user.token),
+        tierClient.getCalculationDetails(crn),
+        tierClient.getHistory(crn),
+        arnsComponentsClient.getRiskData(asUser(res.locals.user.token), 'crn', crn),
+      ])
 
     const warnings: string[] = []
     const protectTable = calculateProtectLevel(deliusInputs, oasysInputs, tierCalculation.data.protect, warnings)
@@ -59,6 +66,7 @@ export default function caseRoutes(router: Router, { hmppsAuthClient }: Services
       changeTable,
       rosh,
       rsr,
+      riskData,
       history: history.filter(
         (item, index) => index === history.length - 1 || item.tierScore !== history[index + 1].tierScore,
       ),
