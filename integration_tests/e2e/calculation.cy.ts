@@ -13,7 +13,6 @@ context('Calculation page', () => {
     page.warnings().should('not.exist')
 
     cy.contains('summary', 'How is the tier calculated?').click()
-    cy.get('.tier-counts-heatmap').contains('th', /^F$/).parent().find('td').should('have.text', '0')
 
     expectNormalisedText(
       page.reoffendingSummary(),

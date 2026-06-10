@@ -1,10 +1,10 @@
 import { isAfter, parseISO, subYears } from 'date-fns'
 import { defaultClient } from 'applicationinsights'
-import { DeliusInputs, Tier } from '../data/models/tier'
+import { DeliusInputs, OASysInputs, Tier } from '../data/models/tier'
 import { AllPredictorDto, BasePredictorDto, ValidPredictor } from '../data/models/arns'
 import { StepTitles } from './mappings'
 
-const TIER_PRIORITY: Tier[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'NA']
+const TIER_PRIORITY: Tier[] = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'MISSING', 'NOT_SUPERVISED']
 const TIER_RANK = Object.fromEntries(TIER_PRIORITY.map((tier, index) => [tier, index])) as Record<Tier, number>
 
 export type StepKey = keyof typeof StepTitles
@@ -14,13 +14,35 @@ export interface StepResult {
 }
 export type StepResults = Record<StepKey, StepResult>
 export type StepResultEntry = [StepKey, StepResult]
-
-export function compareTiers(left: Tier, right: Tier): number {
-  return TIER_RANK[left] - TIER_RANK[right]
+export interface TierCalculationResult {
+  tier: Tier
+  stepResults: StepResults
 }
 
-export function maxTier(tiers: Array<Tier | null>): Tier {
-  return tiers.filter(t => t).sort(compareTiers)[0] ?? 'G'
+export function calculate(
+  warnings: string[],
+  deliusInputs: DeliusInputs,
+  oasysInputs: OASysInputs,
+): TierCalculationResult {
+  const { predictors, everCommittedSexualOffence } = oasysInputs
+  const { hasDomesticAbuse, hasStalking, hasChildProtection } = deliusInputs.registrations
+  const stepResults: Record<StepKey, StepResult> = {
+    reoffending: calculateNonSexualReoffending(predictors?.output),
+    sexualReoffending: calculateSexualReoffending(warnings, predictors?.output),
+    mappaRosh: calculateMappaAndRiskOfSeriousHarm(deliusInputs),
+    liferIpp: calculateLiferAndImprisonmentForPublicProtection(deliusInputs),
+    domesticAbuse: calculateTierIfPresent(hasDomesticAbuse, 'E'),
+    stalking: calculateTierIfPresent(hasStalking, 'F'),
+    childProtection: calculateTierIfPresent(hasChildProtection, 'F'),
+    sexualOffences: calculateTierIfPresent(everCommittedSexualOffence, 'E'),
+  }
+
+  if (stepResults.reoffending.tier == null) return { tier: 'MISSING', stepResults }
+  if (!deliusInputs.hasActiveEvent) return { tier: 'NOT_SUPERVISED', stepResults }
+  return {
+    tier: maxTier(Object.values(stepResults).map(({ tier }) => tier)),
+    stepResults,
+  }
 }
 
 export function calculateNonSexualReoffending(riskPredictors?: AllPredictorDto): StepResult {
@@ -74,17 +96,20 @@ export function calculateMappaAndRiskOfSeriousHarm(deliusInputs: DeliusInputs): 
   return { tier: null, data }
 }
 
-export function calculateLiferAndImprisonmentForPublicProtection(deliusInputs: DeliusInputs): StepResult {
-  const { hasLiferIpp } = deliusInputs.registrations
-  const inFirstYearOfRelease =
-    deliusInputs.latestReleaseDate && isAfter(parseISO(deliusInputs.latestReleaseDate), subYears(new Date(), 1))
-  const data = { hasLiferIpp, inFirstYearOfRelease }
-  if (hasLiferIpp && inFirstYearOfRelease) return { tier: 'B', data }
-  if (hasLiferIpp) return { tier: 'F', data }
-  return { tier: null, data }
+export function calculateLiferAndImprisonmentForPublicProtection({
+  latestReleaseDate,
+  registrations,
+}: DeliusInputs): StepResult {
+  const { hasLiferIpp } = registrations
+  const data = { hasLiferIpp, latestReleaseDate }
+  const today = new Date()
+  if (!latestReleaseDate || !hasLiferIpp) return { tier: null, data }
+  if (isAfter(parseISO(latestReleaseDate), subYears(today, 1))) return { tier: 'B', data }
+  if (isAfter(parseISO(latestReleaseDate), subYears(today, 5))) return { tier: 'D', data }
+  return { tier: 'E', data }
 }
 
-export function calculateRegistrationTier(present: boolean, tier: Tier): StepResult {
+export function calculateTierIfPresent(present: boolean, tier: Tier): StepResult {
   return present ? { tier } : { tier: null }
 }
 
@@ -100,4 +125,12 @@ function validatePredictor(predictor?: BasePredictorDto | null): ValidPredictor 
 function findThresholdIndex(score: number, thresholds: number[]): number {
   const index = thresholds.findIndex(threshold => score >= threshold)
   return index === -1 ? thresholds.length - 1 : index
+}
+
+function compareTiers(left: Tier, right: Tier): number {
+  return TIER_RANK[left] - TIER_RANK[right]
+}
+
+function maxTier(tiers: Array<Tier | null>): Tier {
+  return tiers.filter(t => t).sort(compareTiers)[0] ?? 'G'
 }

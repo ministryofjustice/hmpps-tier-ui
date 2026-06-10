@@ -1,15 +1,15 @@
 import { defaultClient } from 'applicationinsights'
 import { format, startOfDay, subDays, subYears } from 'date-fns'
-import { AllPredictorDto, BasePredictorDto, ScoreLevel } from '../data/models/arns'
-import { DeliusInputs, Rosh, Tier } from '../data/models/tier'
+import { AllPredictorDto, BasePredictorDto, OGRS4Predictors, ScoreLevel } from '../data/models/arns'
+import { DeliusInputs, OASysInputs, Rosh, Tier } from '../data/models/tier'
 import {
+  calculate,
   calculateLiferAndImprisonmentForPublicProtection,
   calculateMappaAndRiskOfSeriousHarm,
   calculateNonSexualReoffending,
-  calculateRegistrationTier,
   calculateSexualReoffending,
-  compareTiers,
-  maxTier,
+  calculateTierIfPresent,
+  StepResults,
 } from './calculation'
 
 jest.mock('applicationinsights', () => ({
@@ -25,90 +25,168 @@ describe('Tier calculation', () => {
     jest.clearAllMocks()
   })
 
-  it('orders tiers from highest to lowest severity', () => {
-    expect(compareTiers('A', 'C')).toBeLessThan(0)
-    expect(compareTiers('F', 'D')).toBeGreaterThan(0)
-    expect(compareTiers('B', 'B')).toBe(0)
+  it('returns MISSING when no reoffending predictors are available', () => {
+    const result = calculateTier(deliusInputs(), oasysInputs({ predictorsOutput: undefined }))
+
+    expect(result.tier).toBe('MISSING')
+    expect(result.stepResults.reoffending).toEqual({ tier: null })
   })
 
-  it('returns the highest tier from a mixed list and defaults to G when all tiers are null', () => {
-    expect(maxTier(['D', null, 'B', 'F'])).toBe('B')
-    expect(maxTier([null, null])).toBe('G')
+  it('returns NOT_SUPERVISED when there is no active event', () => {
+    const result = calculateTier(deliusInputs({ hasActiveEvent: false }), oasysInputs({ arp: 90, csrp: 6.9 }))
+
+    expect(result.tier).toBe('NOT_SUPERVISED')
+    expect(result.stepResults.reoffending).toEqual({ tier: 'A' })
   })
 
   it('defaults missing CSRP score to zero for ARP to tier mapping', () => {
-    expect(calculateTier(deliusInputs(), predictors({ arp: 90 }))).toBe('D')
+    expect(calculateTier(deliusInputs(), oasysInputs({ arp: 90 })).tier).toBe('D')
   })
 
   it('defaults missing ARP score to zero for CSRP to tier mapping', () => {
-    expect(calculateTier(deliusInputs(), predictors({ csrp: 3.2 }))).toBe('C')
+    expect(calculateTier(deliusInputs(), oasysInputs({ csrp: 3.2 })).tier).toBe('C')
   })
 
   it.each(arpAndCsrpMatrixCases())('ARP %p and CSRP %p map to tier %p', (arp, csrp, expectedTier) => {
-    expect(calculateTier(deliusInputs(), predictors({ arp, csrp }))).toBe(expectedTier)
+    const result = calculateTier(deliusInputs(), oasysInputs({ arp, csrp }))
+
+    expect(result.tier).toBe(expectedTier)
+    expect(result.stepResults.reoffending).toEqual({ tier: expectedTier })
   })
 
   it.each(ignoredSexualPredictorCases())(
     'ignores sexual predictors without a usable validated band: %s',
     (_description, directSrp) => {
-      expect(
-        calculateTier(
-          deliusInputs(),
-          predictors({
-            arp: 75,
-            csrp: 1,
-            directSrp,
-          }),
-        ),
-      ).toBe('C')
+      const result = calculateTier(
+        deliusInputs(),
+        oasysInputs({
+          arp: 75,
+          csrp: 1,
+          directSrp,
+        }),
+      )
+
+      expect(result.tier).toBe('C')
+      expect(result.stepResults.sexualReoffending).toEqual({ tier: null, data: { riskReduction: false } })
     },
   )
 
   it.each(directSexualReoffendingCases())(
     'direct score %p with band %p maps to tier %p',
-    (score, band, expectedTier) => {
-      expect(calculateTier(deliusInputs(), predictors({ directSrp: { score, band } }))).toBe(expectedTier)
+    (score, band, expectedTier, riskReduction) => {
+      const result = calculateTier(deliusInputs(), oasysInputs({ directSrp: { score, band } }))
+
+      expect(result.tier).toBe(expectedTier)
+      expect(result.stepResults.sexualReoffending).toEqual({
+        tier: expectedTier,
+        data: { riskReduction },
+      })
     },
   )
 
-  it('logs when a direct-contact medium-band predictor is below the supported thresholds', () => {
-    calculateTier(deliusInputs(), predictors({ directSrp: { score: 0.59, band: 'MEDIUM' } }))
+  it('logs and warns when a direct-contact medium-band predictor is below the supported thresholds', () => {
+    const warnings: string[] = []
+
+    const result = calculate(warnings, deliusInputs(), oasysInputs({ directSrp: { score: 0.59, band: 'MEDIUM' } }))
+
+    expect(result.tier).toBe('G')
+    expect(result.stepResults.sexualReoffending).toEqual({ tier: null, data: { riskReduction: false } })
     expect(mockTrackEvent).toHaveBeenCalledWith({
       name: 'Unexpected DC-SRP',
       properties: { score: 0.59, band: 'MEDIUM' },
     })
+    expect(warnings).toEqual(['Unexpected combination of DC-SRP score (0.59) and DC-SRP band (MEDIUM)'])
   })
 
   it.each(mappaAndRoshCases())('mappaPresent=%p and rosh=%p map to tier %p', (hasMappa, rosh, expectedTier) => {
-    expect(calculateTier(deliusInputs({ hasMappa, rosh }), predictors())).toBe(expectedTier)
+    const result = calculateTier(deliusInputs({ hasMappa, rosh }), oasysInputs())
+
+    expect(result.tier).toBe(expectedTier)
+    expect(result.stepResults.mappaRosh).toEqual({
+      tier: expectedTier === 'G' ? null : expectedTier,
+      data: { rosh, mappaCategory: hasMappa ? 'M1' : null },
+    })
   })
 
   it('keeps existing tier when ROSH is medium and MAPPA is absent', () => {
-    expect(calculateTier(deliusInputs({ hasMappa: false, rosh: 'MEDIUM' }), predictors({ arp: 90, csrp: 1 }))).toBe('B')
+    expect(
+      calculateTier(deliusInputs({ hasMappa: false, rosh: 'MEDIUM' }), oasysInputs({ arp: 90, csrp: 1 })).tier,
+    ).toBe('B')
   })
 
   it.each(liferAndReleaseDateCases())(
     'hasLiferIpp=%p and latestReleaseDate=%p map to tier %p',
     (hasLiferIpp, latestReleaseDate, expectedTier) => {
-      expect(calculateTier(deliusInputs({ hasLiferIpp, latestReleaseDate }), predictors())).toBe(expectedTier)
+      const result = calculateTier(deliusInputs({ hasLiferIpp, latestReleaseDate }), oasysInputs())
+
+      expect(result.tier).toBe(expectedTier)
+      expect(result.stepResults.liferIpp).toEqual({
+        tier: expectedTier === 'G' ? null : expectedTier,
+        data: { hasLiferIpp, latestReleaseDate },
+      })
     },
   )
 
   it.each(registrationFlagCases())(
     'domesticAbuse=%p, stalking=%p, childProtection=%p map to tier %p',
     (hasDomesticAbuse, hasStalking, hasChildProtection, expectedTier) => {
-      expect(
-        calculateTier(
-          deliusInputs({
-            hasDomesticAbuse,
-            hasStalking,
-            hasChildProtection,
-          }),
-          predictors(),
-        ),
-      ).toBe(expectedTier)
+      const result = calculateTier(
+        deliusInputs({
+          hasDomesticAbuse,
+          hasStalking,
+          hasChildProtection,
+        }),
+        oasysInputs(),
+      )
+
+      expect(result.tier).toBe(expectedTier)
+      expect(result.stepResults.domesticAbuse).toEqual({ tier: hasDomesticAbuse ? 'E' : null })
+      expect(result.stepResults.stalking).toEqual({ tier: hasStalking ? 'F' : null })
+      expect(result.stepResults.childProtection).toEqual({ tier: hasChildProtection ? 'F' : null })
     },
   )
+
+  it.each(sexualOffenceCases())(
+    'everCommittedSexualOffence=%p maps to tier %p',
+    (everCommittedSexualOffence, expectedTier) => {
+      const result = calculateTier(deliusInputs(), oasysInputs({ everCommittedSexualOffence }))
+
+      expect(result.tier).toBe(expectedTier)
+      expect(result.stepResults.sexualOffences).toEqual({ tier: everCommittedSexualOffence ? 'E' : null })
+    },
+  )
+
+  it('returns step results for every factor used by the V3 case routes', () => {
+    const result = calculateTier(
+      deliusInputs({
+        hasMappa: true,
+        rosh: 'HIGH',
+        hasLiferIpp: true,
+        latestReleaseDate: format(startOfDay(subDays(new Date(), 1)), 'yyyy-MM-dd'),
+        hasDomesticAbuse: true,
+        hasStalking: true,
+        hasChildProtection: true,
+      }),
+      oasysInputs({
+        arp: 50,
+        csrp: 1,
+        directSrp: { score: 2.11, band: 'MEDIUM' },
+        everCommittedSexualOffence: true,
+      }),
+    )
+
+    expect(result.stepResults).toEqual<StepResults>({
+      reoffending: { tier: 'D' },
+      sexualReoffending: { tier: 'D', data: { riskReduction: true } },
+      mappaRosh: { tier: 'C', data: { rosh: 'HIGH', mappaCategory: 'M1' } },
+      liferIpp: { tier: 'B', data: { hasLiferIpp: true, latestReleaseDate: expect.any(String) } },
+      domesticAbuse: { tier: 'E' },
+      stalking: { tier: 'F' },
+      childProtection: { tier: 'F' },
+      sexualOffences: { tier: 'E' },
+    })
+    expect(result.tier).toBe('B')
+  })
 
   it('higher tier from earlier rules is not downgraded by later registration logic', () => {
     expect(
@@ -122,28 +200,59 @@ describe('Tier calculation', () => {
           hasStalking: true,
           hasChildProtection: true,
         }),
-        predictors({
+        oasysInputs({
           arp: 95,
           csrp: 6.9,
           directSrp: { score: 5.31, band: 'VERY_HIGH' },
+          everCommittedSexualOffence: true,
         }),
-      ),
+      ).tier,
     ).toBe('A')
   })
 })
 
-function calculateTier(deliusData: DeliusInputs, riskPredictors: AllPredictorDto = predictors()): Tier {
-  const warnings: string[] = []
+describe('Tier calculation steps', () => {
+  it('calculates non-sexual reoffending from predictor output', () => {
+    expect(calculateNonSexualReoffending(predictors({ arp: 90, csrp: 6.9 }))).toEqual({ tier: 'A' })
+  })
 
-  return maxTier([
-    calculateNonSexualReoffending(riskPredictors).tier,
-    calculateSexualReoffending(warnings, riskPredictors).tier,
-    calculateMappaAndRiskOfSeriousHarm(deliusData).tier,
-    calculateLiferAndImprisonmentForPublicProtection(deliusData).tier,
-    calculateRegistrationTier(deliusData.registrations.hasDomesticAbuse, 'E').tier,
-    calculateRegistrationTier(deliusData.registrations.hasStalking, 'F').tier,
-    calculateRegistrationTier(deliusData.registrations.hasChildProtection, 'F').tier,
-  ])
+  it('returns null non-sexual reoffending tier when predictor output is missing', () => {
+    expect(calculateNonSexualReoffending(undefined)).toEqual({ tier: null })
+  })
+
+  it('calculates sexual reoffending from direct-contact predictor output', () => {
+    expect(calculateSexualReoffending([], predictors({ directSrp: { score: 3.36, band: 'MEDIUM' } }))).toEqual({
+      tier: 'C',
+      data: { riskReduction: true },
+    })
+  })
+
+  it('calculates MAPPA and risk of serious harm', () => {
+    expect(calculateMappaAndRiskOfSeriousHarm(deliusInputs({ hasMappa: true, rosh: 'VERY_HIGH' }))).toEqual({
+      tier: 'A',
+      data: { rosh: 'VERY_HIGH', mappaCategory: 'M1' },
+    })
+  })
+
+  it('calculates lifer and imprisonment for public protection', () => {
+    const latestReleaseDate = format(startOfDay(subDays(new Date(), 1)), 'yyyy-MM-dd')
+
+    expect(
+      calculateLiferAndImprisonmentForPublicProtection(deliusInputs({ hasLiferIpp: true, latestReleaseDate })),
+    ).toEqual({
+      tier: 'B',
+      data: { hasLiferIpp: true, latestReleaseDate },
+    })
+  })
+
+  it('calculates registration tier when a factor is present', () => {
+    expect(calculateTierIfPresent(true, 'E')).toEqual({ tier: 'E' })
+    expect(calculateTierIfPresent(false, 'E')).toEqual({ tier: null })
+  })
+})
+
+function calculateTier(deliusData: DeliusInputs, oasysData: OASysInputs = oasysInputs()) {
+  return calculate([], deliusData, oasysData)
 }
 
 function deliusInputs({
@@ -154,6 +263,7 @@ function deliusInputs({
   hasDomesticAbuse = false,
   hasStalking = false,
   hasChildProtection = false,
+  hasActiveEvent = true,
 }: {
   hasMappa?: boolean
   rosh?: Rosh | null
@@ -162,6 +272,7 @@ function deliusInputs({
   hasDomesticAbuse?: boolean
   hasStalking?: boolean
   hasChildProtection?: boolean
+  hasActiveEvent?: boolean | null
 } = {}): DeliusInputs {
   return {
     isFemale: false,
@@ -170,6 +281,7 @@ function deliusInputs({
     hasNoMandate: false,
     previousEnforcementActivity: false,
     latestReleaseDate,
+    hasActiveEvent,
     registrations: {
       hasIomNominal: false,
       hasLiferIpp,
@@ -183,6 +295,34 @@ function deliusInputs({
       unsupervised: null,
     },
   }
+}
+
+function oasysInputs(
+  options: {
+    arp?: number
+    csrp?: number
+    directSrp?: BasePredictorDto | null
+    predictorsOutput?: AllPredictorDto
+    everCommittedSexualOffence?: boolean
+  } = {},
+): OASysInputs {
+  const { arp, csrp, directSrp, predictorsOutput, everCommittedSexualOffence = false } = options
+  const output = 'predictorsOutput' in options ? predictorsOutput : predictors({ arp, csrp, directSrp })
+
+  return {
+    predictors: predictorScores(output),
+    everCommittedSexualOffence,
+  }
+}
+
+function predictorScores(output?: AllPredictorDto): OGRS4Predictors {
+  return {
+    completedDate: '2026-01-01',
+    status: 'COMPLETE',
+    assessmentType: 'LAYER3',
+    outputVersion: '2',
+    output,
+  } as OGRS4Predictors
 }
 
 function predictors({
@@ -207,8 +347,8 @@ function predictors({
       csrp !== undefined
         ? {
             score: csrp,
-            band: 'LOW' as const,
-            staticOrDynamic: 'STATIC' as const,
+            band: 'LOW',
+            staticOrDynamic: 'STATIC',
             algorithmVersion: '2',
           }
         : undefined,
@@ -253,23 +393,23 @@ function arpAndCsrpMatrixCases(): Array<[number, number, Tier]> {
 
 function ignoredSexualPredictorCases(): Array<[string, BasePredictorDto | null]> {
   return [
-    ['direct predictor without a band is ignored', { score: 2.11, band: null }],
+    ['direct predictor without a band is ignored', { score: 2.11, band: null as unknown as ScoreLevel }],
     ['direct predictor with NOT_APPLICABLE band is ignored', { score: 2.11, band: 'NOT_APPLICABLE' }],
   ]
 }
 
-function directSexualReoffendingCases(): Array<[number, ScoreLevel, Tier]> {
+function directSexualReoffendingCases(): Array<[number, ScoreLevel, Tier, boolean]> {
   return [
-    [5.31, 'VERY_HIGH', 'A'],
-    [0.01, 'VERY_HIGH', 'A'],
-    [2.11, 'HIGH', 'B'],
-    [1.5, 'HIGH', 'B'],
-    [5.31, 'HIGH', 'B'],
-    [1.12, 'MEDIUM', 'C'],
-    [3.36, 'MEDIUM', 'C'],
-    [2.11, 'MEDIUM', 'D'],
-    [0.6, 'MEDIUM', 'D'],
-    [0.02, 'LOW', 'E'],
+    [5.31, 'VERY_HIGH', 'A', false],
+    [0.01, 'VERY_HIGH', 'A', false],
+    [2.11, 'HIGH', 'B', false],
+    [1.5, 'HIGH', 'B', false],
+    [5.31, 'HIGH', 'B', false],
+    [1.12, 'MEDIUM', 'C', false],
+    [3.36, 'MEDIUM', 'C', true],
+    [2.11, 'MEDIUM', 'D', true],
+    [0.6, 'MEDIUM', 'D', false],
+    [0.02, 'LOW', 'E', false],
   ]
 }
 
@@ -291,8 +431,8 @@ function liferAndReleaseDateCases(): Array<[boolean, string | null, Tier]> {
   const lastYear = format(startOfDay(subYears(new Date(), 1)), 'yyyy-MM-dd')
   return [
     [true, yesterday, 'B'],
-    [true, lastYear, 'F'],
-    [true, null, 'F'],
+    [true, lastYear, 'D'],
+    [true, null, 'G'],
     [false, null, 'G'],
     [false, yesterday, 'G'],
   ]
@@ -308,5 +448,12 @@ function registrationFlagCases(): Array<[boolean, boolean, boolean, Tier]> {
     [true, false, true, 'E'],
     [false, true, true, 'F'],
     [true, true, true, 'E'],
+  ]
+}
+
+function sexualOffenceCases(): Array<[boolean, Tier]> {
+  return [
+    [false, 'G'],
+    [true, 'E'],
   ]
 }

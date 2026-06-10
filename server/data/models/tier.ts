@@ -1,6 +1,6 @@
 import { OGRS4Predictors } from './arns'
 
-export type Tier = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'NA'
+export type Tier = 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'MISSING' | 'NOT_SUPERVISED'
 export type Rosh = 'VERY_HIGH' | 'HIGH' | 'MEDIUM' | 'LOW'
 export type MappaLevel = 'M1' | 'M2' | 'M3'
 export type MappaCategory = 'M1' | 'M2' | 'M3' | 'M4'
@@ -11,8 +11,9 @@ export interface TierCalculationV3 {
   calculationDate: string
   data: {
     tier: Tier
+    provisional: boolean
     deliusInputs: DeliusInputs
-    riskPredictors: OGRS4Predictors
+    oasysInputs: OASysInputs
     calculationVersion: string
   }
   changeReason?: string
@@ -63,6 +64,11 @@ export interface DeliusInputs {
   previousEnforcementActivity: boolean
   latestReleaseDate?: string | null
   hasActiveEvent?: boolean | null
+}
+
+export interface OASysInputs {
+  predictors: OGRS4Predictors
+  everCommittedSexualOffence: boolean
 }
 
 export interface Registrations {

@@ -74,52 +74,6 @@
           Each factor can raise the tier, and the final tier is based on whichever gives the highest result.
         </p>
       </div>
-
-      <div class="govuk-grid-column-one-third">
-        <table class="govuk-table heatmap tier-counts-heatmap">
-          <tr class="govuk-table__row">
-            <th scope="col" class="govuk-table__header">Tier</th>
-            <th scope="col" class="govuk-table__header">Distribution</th>
-          </tr>
-          <tbody class="govuk-table__body">
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-100">A</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-100">{{ tierCounts['A'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-90">B</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-90">{{ tierCounts['B'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-80">C</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-80">{{ tierCounts['C'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-60">D</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-60">{{ tierCounts['D'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-40">E</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-40">{{ tierCounts['E'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-20">F</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-20">{{ tierCounts['F'] | default(0) | formatNumber }}</td>
-          </tr>
-          <tr class="govuk-table__row">
-            <th scope="row" class="govuk-table__header heatmap-10">G</th>
-            <td
-              class="govuk-table__cell govuk-table__cell--numeric heatmap-10">{{ tierCounts['G'] | default(0) | formatNumber }}</td>
-          </tr>
-          </tbody>
-        </table>
-      </div>
     </div>
   {% endset %}
   {{ govukDetails({ summaryText: "How is the tier calculated?", html: explainerHtml }) }}
@@ -131,10 +85,10 @@
         {% if stepResults.reoffending.tier %}
           <p>
             The All Reoffending Predictor (ARP) is
-            {{ (riskPredictors.allReoffendingPredictor.score + "%") if riskPredictors.allReoffendingPredictor.score
+            {{ (oasysInputs.predictors.output.allReoffendingPredictor.score + "%") if oasysInputs.predictors.output.allReoffendingPredictor.score
             else "not present" }}
             and the Combined Serious Reoffending Predictor (CSRP) is
-            {{ (riskPredictors.combinedSeriousReoffendingPredictor.score + "%") if riskPredictors.combinedSeriousReoffendingPredictor.score
+            {{ (oasysInputs.predictors.output.combinedSeriousReoffendingPredictor.score + "%") if oasysInputs.predictors.output.combinedSeriousReoffendingPredictor.score
             else "not present" }},
             resulting in a tier of <strong>{{ stepResults.reoffending.tier }}</strong>.
           </p>
@@ -222,11 +176,11 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 id="sexualReoffending" class="govuk-heading-l">Sexual reoffending</h2>
-        {% if riskPredictors %}
+        {% if oasysInputs.predictors.output %}
           {% if stepResults.sexualReoffending.tier %}
             <p>
               The Direct Contact Sexual Reoffending Predictor (DC-SRP) is
-              {{ riskPredictors.directContactSexualReoffendingPredictor.band }},
+              {{ oasysInputs.predictors.output.directContactSexualReoffendingPredictor.band }},
               {% if stepResults.sexualReoffending.data.riskReduction %}
                 and the risk has been reduced following five offence-free years,
               {% endif %}
@@ -417,15 +371,15 @@
             <th scope="row" class="govuk-table__header heatmap-80">C</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-60"></td>
+            <td class="govuk-table__cell heatmap-60">Lifer within 5 years of release</td>
             <th scope="row" class="govuk-table__header heatmap-60">D</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-40"></td>
+            <td class="govuk-table__cell heatmap-40">Lifer</td>
             <th scope="row" class="govuk-table__header heatmap-40">E</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-30">Lifer</td>
+            <td class="govuk-table__cell heatmap-30"></td>
             <th scope="row" class="govuk-table__header heatmap-30">F</th>
           </tr>
           </tbody>
@@ -440,12 +394,17 @@
         <h2 class="govuk-heading-l">Other factors</h2>
         {{ govukTable({
           firstCellIsHeader: true,
-          head: [{ text: "Register type" }, { text: "Value" }, { text: "Tier" }],
+          head: [{ text: "Factor" }, { text: "Value" }, { text: "Tier" }],
           rows: [
             [
               { html: '<span id="domesticAbuse">Domestic abuse</span>' },
               { text: "Yes" if stepResults.domesticAbuse.tier else "No" },
               { text: stepResults.domesticAbuse.tier if stepResults.domesticAbuse.tier else "Not applicable" }
+            ],
+            [
+              { html: '<span id="sexualOffences">Ever committed a sexual offence</span>' },
+              { text: "Yes" if stepResults.sexualOffences.tier else "No" },
+              { text: stepResults.sexualOffences.tier if stepResults.sexualOffences.tier else "Not applicable" }
             ],
             [
               { html: '<span id="stalking">Stalking</span>' },
@@ -487,7 +446,7 @@
             <th scope="row" class="govuk-table__header heatmap-60">D</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-40">Domestic abuse</td>
+            <td class="govuk-table__cell heatmap-40">Domestic abuse or Sexual offence</td>
             <th scope="row" class="govuk-table__header heatmap-40">E</th>
           </tr>
           <tr class="govuk-table__row">

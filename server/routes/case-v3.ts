@@ -8,17 +8,7 @@ import TierV3ApiClient from '../data/tierV3ApiClient'
 import { StepTitles } from '../utils/mappings'
 import { buildSummaryTable } from '../utils/table'
 import { audit, joinWithAnd } from '../utils/utils'
-import {
-  calculateLiferAndImprisonmentForPublicProtection,
-  calculateMappaAndRiskOfSeriousHarm,
-  calculateNonSexualReoffending,
-  calculateRegistrationTier,
-  calculateSexualReoffending,
-  maxTier,
-  StepKey,
-  StepResult,
-  StepResultEntry,
-} from '../utils/calculation'
+import { calculate, StepResultEntry } from '../utils/calculation'
 import ArnsApiClient from '../data/arnsApiClient'
 import config from '../config'
 import logger from '../../logger'
@@ -38,57 +28,45 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       const tierClient = new TierV3ApiClient(hmppsAuthClient)
       const arnsClient = new ArnsApiClient(hmppsAuthClient)
       const arnsComponentsClient = new ArnsComponents(hmppsAuthClient, config.apis.arnsApi, logger)
-      const [personalDetails, riskData, rosh, rsr, tierCalculation, tierCounts] = await Promise.all([
+      const [personalDetails, riskData, rosh, rsr, tierCalculation] = await Promise.all([
         deliusClient.getPersonalDetails(crn),
         arnsComponentsClient.getRiskData(asUser(res.locals.user.token), 'crn', crn),
         arnsClient.getOverallRiskOfSeriousHarm(crn, res.locals.user.token),
         arnsClient.getCombinedSeriousReoffendingPredictor(crn, res.locals.user.token),
         tierClient.getCalculationDetails(crn),
-        tierClient.getTierCounts(),
       ])
 
       const warnings: string[] = []
-      const riskPredictors = tierCalculation.data.riskPredictors?.output
-      const { deliusInputs } = tierCalculation.data
-      const { hasDomesticAbuse, hasStalking, hasChildProtection } = deliusInputs.registrations
-      const stepResults: Record<StepKey, StepResult> = {
-        reoffending: calculateNonSexualReoffending(riskPredictors),
-        sexualReoffending: calculateSexualReoffending(warnings, riskPredictors),
-        mappaRosh: calculateMappaAndRiskOfSeriousHarm(deliusInputs),
-        liferIpp: calculateLiferAndImprisonmentForPublicProtection(deliusInputs),
-        domesticAbuse: calculateRegistrationTier(hasDomesticAbuse, 'E'),
-        stalking: calculateRegistrationTier(hasStalking, 'F'),
-        childProtection: calculateRegistrationTier(hasChildProtection, 'F'),
-      }
+      const { tier: storedTier, provisional, deliusInputs, oasysInputs } = tierCalculation.data
+      const { tier: derivedTier, stepResults } = calculate(warnings, deliusInputs, oasysInputs)
 
-      const dynamicAssessmentUsed =
-        riskPredictors?.combinedSeriousReoffendingPredictor?.staticOrDynamic === 'DYNAMIC' &&
-        riskPredictors?.allReoffendingPredictor?.staticOrDynamic === 'DYNAMIC'
-      const provisional =
-        !dynamicAssessmentUsed && stepResults.mappaRosh.tier !== 'A' && stepResults.sexualReoffending.tier !== 'A'
-
-      const derivedTier = deliusInputs.hasActiveEvent
-        ? maxTier(Object.values(stepResults).map(result => result.tier))
-        : 'NA'
-      const summaryTable = buildSummaryTable(crn, riskPredictors, stepResults, derivedTier)
-
-      if (derivedTier !== tierCalculation.data.tier) {
+      if (derivedTier !== storedTier) {
         warnings.push(
-          `Calculation mismatch. The calculated tier is ${tierCalculation.data.tier}, but the factors indicate this person's tier should be ${derivedTier}.`,
+          `Calculation mismatch. The current tier is ${storedTier}, but the factors indicate this person's tier should be ${derivedTier}.`,
         )
         defaultClient.trackEvent({
           name: 'CalculationMismatch',
-          properties: { crn, storedTier: tierCalculation.data.tier, derivedTier },
+          properties: { crn, storedTier, derivedTier },
         })
       }
 
-      const primarySources = Object.entries(stepResults)
-        .filter(([_, result]) => result.tier === derivedTier)
-        .map(([key, _]: StepResultEntry) => StepTitles[key])
-      const tierSummary =
-        derivedTier === 'NA'
-          ? `${personalDetails.name.forename} ${personalDetails.name.surname} has <strong>no applicable tier</strong>, as the case is not currently supervised.`
-          : `${personalDetails.name.forename} ${personalDetails.name.surname} has a${provisional ? ' <abbr title="A tier is provisional if it is not based on a dynamic assessment.">provisional</abbr>' : ''} tier of <strong>${tierCalculation.tierScore}</strong>, based on ${primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'}.`
+      const fullName = `${personalDetails.name.forename} ${personalDetails.name.surname}`
+      const tierSummaries: Record<string, () => string> = {
+        NOT_SUPERVISED: () =>
+          `${fullName} has <strong>no applicable tier</strong>, as the case is not currently supervised.`,
+        MISSING: () =>
+          `${fullName} has a <strong>missing tier</strong>, as no reoffending risk predictors are available.`,
+        DEFAULT: () => {
+          const primarySources = Object.entries(stepResults)
+            .filter(([_, result]) => result.tier === derivedTier)
+            .map(([key, _]: StepResultEntry) => StepTitles[key])
+          const provisionalTip =
+            '<abbr title="A tier is provisional if it is not based on a dynamic assessment and cannot be inferred from other factors.">provisional</abbr>'
+          return `${fullName} has a${provisional ? ` ${provisionalTip}` : ''} tier of <strong>${tierCalculation.tierScore}</strong>, based on ${primarySources.length ? joinWithAnd(primarySources) : 'the recorded calculation'}.`
+        },
+      }
+      const tierSummary = (tierSummaries[derivedTier] ?? tierSummaries.DEFAULT)()
+      const summaryTable = buildSummaryTable(crn, oasysInputs.predictors?.output, stepResults, derivedTier)
 
       res.render(page, {
         personalDetails,
@@ -97,12 +75,11 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         tierCalculation,
         provisional,
         deliusInputs,
-        riskPredictors,
+        oasysInputs,
         riskData,
         stepResults,
         summaryTable,
         tierSummary,
-        tierCounts,
         oasysUrl: config.oasys.url,
         warnings: warnings.map(warning => ({ text: warning })),
       })

@@ -31,7 +31,7 @@
         (<span data-qa="case-details-header-age">{{ params.age }}</span> years old)
       </li>
       <li>
-        Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore }}</a>
+        Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore | displayTier }}</a>
       </li>
     </ul>
     {%- if not params.riskData or params.riskData.assessments | length == 0 -%}

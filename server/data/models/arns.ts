@@ -103,3 +103,7 @@ export interface BandedScore {
   score: number
   band: ScoreLevel
 }
+
+export interface SexualOffenceDto {
+  everCommittedSexualOffence?: boolean
+}
