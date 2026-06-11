@@ -22,9 +22,9 @@ export interface TierCalculationResult {
 export function calculate(
   warnings: string[],
   deliusInputs: DeliusInputs,
-  oasysInputs: OASysInputs,
+  oasysInputs?: OASysInputs,
 ): TierCalculationResult {
-  const { predictors, everCommittedSexualOffence } = oasysInputs
+  const { predictors, everCommittedSexualOffence } = oasysInputs || {}
   const { hasDomesticAbuse, hasStalking, hasChildProtection } = deliusInputs.registrations
   const stepResults: Record<StepKey, StepResult> = {
     reoffending: calculateNonSexualReoffending(predictors?.output),
@@ -46,7 +46,11 @@ export function calculate(
 }
 
 export function calculateNonSexualReoffending(riskPredictors?: AllPredictorDto): StepResult {
-  if (!riskPredictors) return { tier: null }
+  if (
+    riskPredictors?.allReoffendingPredictor?.score == null ||
+    riskPredictors?.combinedSeriousReoffendingPredictor?.score == null
+  )
+    return { tier: null }
   const arpScore = riskPredictors.allReoffendingPredictor?.score ?? 0
   const csrpScore = riskPredictors.combinedSeriousReoffendingPredictor?.score ?? 0
   const row = findThresholdIndex(csrpScore, [6.9, 3, 1, 0.5, 0])
