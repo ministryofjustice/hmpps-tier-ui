@@ -32,19 +32,19 @@ describe('Tier calculation', () => {
     expect(result.stepResults.reoffending).toEqual({ tier: null })
   })
 
+  it('returns MISSING when no CSRP score available', () => {
+    expect(calculateTier(deliusInputs(), oasysInputs({ arp: 90 })).tier).toBe('MISSING')
+  })
+
+  it('returns MISSING when no ARP score available', () => {
+    expect(calculateTier(deliusInputs(), oasysInputs({ csrp: 3.2 })).tier).toBe('MISSING')
+  })
+
   it('returns NOT_SUPERVISED when there is no active event', () => {
     const result = calculateTier(deliusInputs({ hasActiveEvent: false }), oasysInputs({ arp: 90, csrp: 6.9 }))
 
     expect(result.tier).toBe('NOT_SUPERVISED')
     expect(result.stepResults.reoffending).toEqual({ tier: 'A' })
-  })
-
-  it('defaults missing CSRP score to zero for ARP to tier mapping', () => {
-    expect(calculateTier(deliusInputs(), oasysInputs({ arp: 90 })).tier).toBe('D')
-  })
-
-  it('defaults missing ARP score to zero for CSRP to tier mapping', () => {
-    expect(calculateTier(deliusInputs(), oasysInputs({ csrp: 3.2 })).tier).toBe('C')
   })
 
   it.each(arpAndCsrpMatrixCases())('ARP %p and CSRP %p map to tier %p', (arp, csrp, expectedTier) => {
@@ -74,7 +74,7 @@ describe('Tier calculation', () => {
   it.each(directSexualReoffendingCases())(
     'direct score %p with band %p maps to tier %p',
     (score, band, expectedTier, riskReduction) => {
-      const result = calculateTier(deliusInputs(), oasysInputs({ directSrp: { score, band } }))
+      const result = calculateTier(deliusInputs(), oasysInputs({ arp: 0, csrp: 0, directSrp: { score, band } }))
 
       expect(result.tier).toBe(expectedTier)
       expect(result.stepResults.sexualReoffending).toEqual({
@@ -87,7 +87,11 @@ describe('Tier calculation', () => {
   it('logs and warns when a direct-contact medium-band predictor is below the supported thresholds', () => {
     const warnings: string[] = []
 
-    const result = calculate(warnings, deliusInputs(), oasysInputs({ directSrp: { score: 0.59, band: 'MEDIUM' } }))
+    const result = calculate(
+      warnings,
+      deliusInputs(),
+      oasysInputs({ arp: 0, csrp: 0, directSrp: { score: 0.59, band: 'MEDIUM' } }),
+    )
 
     expect(result.tier).toBe('G')
     expect(result.stepResults.sexualReoffending).toEqual({ tier: null, data: { riskReduction: false } })
@@ -149,7 +153,7 @@ describe('Tier calculation', () => {
   it.each(sexualOffenceCases())(
     'everCommittedSexualOffence=%p maps to tier %p',
     (everCommittedSexualOffence, expectedTier) => {
-      const result = calculateTier(deliusInputs(), oasysInputs({ everCommittedSexualOffence }))
+      const result = calculateTier(deliusInputs(), oasysInputs({ arp: 0, csrp: 0, everCommittedSexualOffence }))
 
       expect(result.tier).toBe(expectedTier)
       expect(result.stepResults.sexualOffences).toEqual({ tier: everCommittedSexualOffence ? 'E' : null })
@@ -304,7 +308,7 @@ function oasysInputs(
     directSrp?: BasePredictorDto | null
     predictorsOutput?: AllPredictorDto
     everCommittedSexualOffence?: boolean
-  } = {},
+  } = { arp: 0, csrp: 0 },
 ): OASysInputs {
   const { arp, csrp, directSrp, predictorsOutput, everCommittedSexualOffence = false } = options
   const output = 'predictorsOutput' in options ? predictorsOutput : predictors({ arp, csrp, directSrp })

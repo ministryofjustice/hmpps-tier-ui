@@ -66,7 +66,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         },
       }
       const tierSummary = (tierSummaries[derivedTier] ?? tierSummaries.DEFAULT)()
-      const summaryTable = buildSummaryTable(crn, oasysInputs.predictors?.output, stepResults, derivedTier)
+      const summaryTable = buildSummaryTable(crn, oasysInputs?.predictors?.output, stepResults, derivedTier)
 
       res.render(page, {
         personalDetails,
