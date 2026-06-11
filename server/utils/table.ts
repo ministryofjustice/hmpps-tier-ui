@@ -2,6 +2,7 @@ import { Abbreviation, NeedsDescriptions, NeedsWeighting, StepTitles } from './m
 import { Tier } from '../data/models/tier'
 import { StepKey, StepResultEntry, StepResults } from './calculation'
 import { AllPredictorDto, OASysSections, OASysTierInputs } from '../data/models/arns'
+import { displayTier } from './utils'
 
 export type TableCell = { text?: string; html?: string; colspan?: number; format?: string }
 export type Table = TableCell[][]
@@ -47,11 +48,11 @@ export function buildSummaryTable(
       {
         html:
           result.tier === derivedTier
-            ? `<strong>${result.tier}</strong>`
+            ? `<strong>${displayTier(result.tier)}</strong>`
             : (result.tier ?? noTierText(key, assessment)),
       },
     ]),
-    [{ text: 'Highest tier' }, { html: `<strong>${derivedTier}</strong>` }],
+    [{ text: 'Result' }, { html: `<strong>${displayTier(derivedTier)}</strong>` }],
   ]
 }
 

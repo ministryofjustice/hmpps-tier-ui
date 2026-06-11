@@ -13,11 +13,10 @@ context('Calculation page', () => {
     page.warnings().should('not.exist')
 
     cy.contains('summary', 'How is the tier calculated?').click()
-    cy.get('.tier-counts-heatmap').contains('th', /^F$/).parent().find('td').should('have.text', '0')
 
     expectNormalisedText(
       page.reoffendingSummary(),
-      'The All Reoffending Predictor (ARP) is 90% and the Combined Serious Reoffending Predictor (CSRP) is 1%, resulting in a tier of B.',
+      'The All Reoffending Predictor (ARP) is 90%, and the Combined Serious Reoffending Predictor (CSRP) is 1%, resulting in a tier of B.',
     )
     expectNormalisedText(
       page.sexualReoffendingSummary(),

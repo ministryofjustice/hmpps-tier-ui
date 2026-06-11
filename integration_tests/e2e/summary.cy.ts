@@ -21,7 +21,7 @@ context('Summary page', () => {
       .should('contain.text', 'Dynamic')
     page.warnings().should('not.exist')
 
-    expectNormalisedText(page.summaryText(), 'Alex Rivera has a tier of B, based on Reoffending.')
+    expectNormalisedText(page.summaryText(), 'Alex Rivera has a tier of B, based on reoffending.')
     page.summaryLink('Reoffending').should('have.attr', 'href', '/v3/case/A000006/calculation/#reoffending')
     page.summaryRow('Reoffending').should('contain.text', 'B')
     page.summaryRow('Sexual reoffending').should('contain.text', 'E')
@@ -29,7 +29,8 @@ context('Summary page', () => {
     page.summaryRow('Lifer/IPP').should('contain.text', 'Not applicable')
     page.summaryRow('Domestic abuse').should('contain.text', 'E')
     page.summaryRow('Child protection').should('contain.text', 'F')
-    page.summaryRow('Highest tier').should('contain.text', 'B')
+    page.summaryRow('Sexual offences').should('contain.text', 'E')
+    page.summaryRow('Result').should('contain.text', 'B')
   })
 
   it('navigates to the calculation sections from the summary links', () => {
@@ -73,20 +74,20 @@ context('Summary page', () => {
     cy.get('body').should('contain.text', 'You are not authorised to view this case')
   })
 
-  it('displays the NA summary when the case has no active event', () => {
+  it('displays not supervised when the case has no active event', () => {
     cy.visit('/v3/case/A000007')
     const page = Page.verifyOnPage(SummaryPage)
 
     page.headerCrn().should('have.text', 'A000007')
     page.headerDob().should('have.text', '20 July 1987')
-    page.headerTier().should('have.text', 'NA')
+    page.headerTier().should('have.text', 'Not supervised')
     page.warnings().should('not.exist')
 
     expectNormalisedText(
       page.summaryText(),
       'Sam Taylor has no applicable tier, as the case is not currently supervised.',
     )
-    page.summaryRow('Highest tier').should('contain.text', 'NA')
+    page.summaryRow('Result').should('contain.text', 'Not supervised')
     cy.contains('This tier is provisional').should('not.exist')
   })
 })

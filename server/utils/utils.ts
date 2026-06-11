@@ -2,6 +2,7 @@ import { SanitisedError } from '@ministryofjustice/hmpps-rest-client'
 import { auditService } from '@ministryofjustice/hmpps-audit-client'
 import { randomUUID } from 'crypto'
 import config from '../config'
+import { Tier } from '../data/models/tier'
 
 const properCase = (word: string): string =>
   word.length >= 1 ? word[0].toUpperCase() + word.toLowerCase().slice(1) : word
@@ -33,9 +34,10 @@ export const ignore404 = <E>(path: string, verb: string, error: SanitisedError<E
 }
 
 export const joinWithAnd = (values: string[]): string => {
-  if (values.length <= 1) return values[0] ?? ''
-  if (values.length === 2) return `${values[0]} and ${values[1]}`
-  return `${values.slice(0, -1).join(', ')} and ${values.at(-1)}`
+  const lower = values.map(s => s[0].toLowerCase() + s.slice(1))
+  if (lower.length <= 1) return lower[0] ?? ''
+  if (lower.length === 2) return `${lower[0]} and ${lower[1]}`
+  return `${lower.slice(0, -1).join(', ')} and ${lower.at(-1)}`
 }
 
 export const audit = async (action: string, crn: string, username: string) => {
@@ -49,4 +51,10 @@ export const audit = async (action: string, crn: string, username: string) => {
       service: 'hmpps-tier-ui',
     })
   }
+}
+
+export const displayTier = (tier: Tier): string => {
+  if (tier === 'NOT_SUPERVISED') return 'Not supervised'
+  if (tier === 'MISSING') return 'Missing'
+  return tier
 }

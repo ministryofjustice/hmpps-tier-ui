@@ -63,6 +63,7 @@ describe('buildSummaryTable', () => {
       domesticAbuse: { tier: 'E' },
       stalking: { tier: null },
       childProtection: { tier: 'F' },
+      sexualOffences: { tier: null },
     }
     const assessment: AllPredictorDto = {}
 
@@ -109,7 +110,13 @@ describe('buildSummaryTable', () => {
         },
         { html: 'F' },
       ],
-      [{ text: 'Highest tier' }, { html: '<strong>A</strong>' }],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#sexualOffences" class="govuk-link govuk-link--no-visited-state">Sexual offences</a>',
+        },
+        { html: 'Not applicable' },
+      ],
+      [{ text: 'Result' }, { html: '<strong>A</strong>' }],
     ])
   })
 
@@ -122,6 +129,7 @@ describe('buildSummaryTable', () => {
       domesticAbuse: { tier: 'E' },
       stalking: { tier: null },
       childProtection: { tier: 'F' },
+      sexualOffences: { tier: null },
     }
     const assessment: AllPredictorDto = null
 

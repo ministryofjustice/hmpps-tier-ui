@@ -5,7 +5,7 @@ import express from 'express'
 import fs from 'fs'
 import { format, formatDistance, parseISO } from 'date-fns'
 import { arnsNunjucksSetup } from '@ministryofjustice/hmpps-arns-frontend-components-lib'
-import { initialiseName } from './utils'
+import { displayTier, initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
 import heat from './heatmap'
@@ -64,4 +64,5 @@ export default function nunjucksSetup(app: express.Express): void {
       `<abbr title="${Abbreviations[abbreviation].text}">${Abbreviations[abbreviation].abbreviation}</abbr>`,
     ),
   )
+  njkEnv.addFilter('displayTier', displayTier)
 }

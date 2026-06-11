@@ -48,9 +48,9 @@ describe('initialise name', () => {
 describe('joinWithAnd', () => {
   it.each([
     ['no values', [], ''],
-    ['one value', ['Alpha'], 'Alpha'],
-    ['two values', ['Alpha', 'Beta'], 'Alpha and Beta'],
-    ['three values', ['Alpha', 'Beta', 'Gamma'], 'Alpha, Beta and Gamma'],
+    ['one value', ['Alpha'], 'alpha'],
+    ['two values', ['Alpha', 'Beta'], 'alpha and beta'],
+    ['three values', ['Alpha', 'Beta', 'Gamma'], 'alpha, beta and gamma'],
   ])('%s', (_: string, values: string[], expected: string) => {
     expect(joinWithAnd(values)).toEqual(expected)
   })
