@@ -16,7 +16,7 @@ context('Calculation page', () => {
 
     expectNormalisedText(
       page.reoffendingSummary(),
-      'The All Reoffending Predictor (ARP) is 90% and the Combined Serious Reoffending Predictor (CSRP) is 1%, resulting in a tier of B.',
+      'The All Reoffending Predictor (ARP) is 90%, and the Combined Serious Reoffending Predictor (CSRP) is 1%, resulting in a tier of B.',
     )
     expectNormalisedText(
       page.sexualReoffendingSummary(),

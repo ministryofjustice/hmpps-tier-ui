@@ -112,7 +112,7 @@ describe('buildSummaryTable', () => {
       ],
       [
         {
-          html: '<a href="/v3/case/X12345/calculation/#sexualOffences" class="govuk-link govuk-link--no-visited-state">Convicted of sexual offences</a>',
+          html: '<a href="/v3/case/X12345/calculation/#sexualOffences" class="govuk-link govuk-link--no-visited-state">Sexual offences</a>',
         },
         { html: 'Not applicable' },
       ],

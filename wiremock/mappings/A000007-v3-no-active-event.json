@@ -13,6 +13,8 @@
           "calculationDate": "2026-03-10T09:15:00",
           "data": {
             "tier": "NOT_SUPERVISED",
+            "provisional": false,
+            "calculationVersion": "3",
             "deliusInputs": {
               "isFemale": false,
               "rsrScore": 12.3,
@@ -62,9 +64,8 @@
                   }
                 }
               },
-              "calculationVersion": "3"
-            },
-            "everCommittedSexualOffence": false
+              "everCommittedSexualOffence": false
+            }
           }
         },
         "headers": {

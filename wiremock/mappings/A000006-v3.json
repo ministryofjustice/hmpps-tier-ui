@@ -13,6 +13,8 @@
           "calculationDate": "2026-03-04T14:15:00",
           "data": {
             "tier": "B",
+            "provisional": false,
+            "calculationVersion": "3",
             "deliusInputs": {
               "isFemale": false,
               "rsrScore": 12.3,
@@ -24,9 +26,7 @@
                 "hasDomesticAbuse": true,
                 "hasStalking": false,
                 "hasChildProtection": true,
-                "complexityFactors": [
-                  "RCPR"
-                ],
+                "complexityFactors": ["RCPR"],
                 "rosh": "MEDIUM",
                 "mappaLevel": "M1",
                 "mappaCategory": "M1",
@@ -65,8 +65,7 @@
                 }
               },
               "everCommittedSexualOffence": true
-            },
-            "calculationVersion": "3"
+            }
           }
         },
         "headers": {

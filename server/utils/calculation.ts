@@ -37,8 +37,8 @@ export function calculate(
     sexualOffences: calculateTierIfPresent(everCommittedSexualOffence, 'E'),
   }
 
-  if (stepResults.reoffending.tier == null) return { tier: 'MISSING', stepResults }
   if (!deliusInputs.hasActiveEvent) return { tier: 'NOT_SUPERVISED', stepResults }
+  if (!stepResults.reoffending.tier) return { tier: 'MISSING', stepResults }
   return {
     tier: maxTier(Object.values(stepResults).map(({ tier }) => tier)),
     stepResults,

@@ -29,7 +29,7 @@ context('Summary page', () => {
     page.summaryRow('Lifer/IPP').should('contain.text', 'Not applicable')
     page.summaryRow('Domestic abuse').should('contain.text', 'E')
     page.summaryRow('Child protection').should('contain.text', 'F')
-    page.summaryRow('Convicted of sexual offences').should('contain.text', 'E')
+    page.summaryRow('Sexual offences').should('contain.text', 'E')
     page.summaryRow('Result').should('contain.text', 'B')
   })
 
@@ -74,7 +74,7 @@ context('Summary page', () => {
     cy.get('body').should('contain.text', 'You are not authorised to view this case')
   })
 
-  it('displays the NA summary when the case has no active event', () => {
+  it('displays not supervised when the case has no active event', () => {
     cy.visit('/v3/case/A000007')
     const page = Page.verifyOnPage(SummaryPage)
 

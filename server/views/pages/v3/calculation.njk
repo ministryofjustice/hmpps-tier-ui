@@ -82,14 +82,15 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 id="reoffending" class="govuk-heading-l">Reoffending</h2>
-        {% if stepResults.reoffending.tier %}
+        {% set predictorOutput = oasysInputs.predictors.output if oasysInputs.predictors else null %}
+        {% set arp = predictorOutput.allReoffendingPredictor if predictorOutput else null %}
+        {% set csrp = predictorOutput.combinedSeriousReoffendingPredictor if predictorOutput else null %}
+        {% if stepResults.reoffending.tier and predictorOutput %}
           <p>
             The All Reoffending Predictor (ARP) is
-            {{ (oasysInputs.predictors.output.allReoffendingPredictor.score + "%") if oasysInputs.predictors.output.allReoffendingPredictor.score
-            else "not present" }}
+            {{ (arp.score + "%") if arp.score is not null else "not present" }},
             and the Combined Serious Reoffending Predictor (CSRP) is
-            {{ (oasysInputs.predictors.output.combinedSeriousReoffendingPredictor.score + "%") if oasysInputs.predictors.output.combinedSeriousReoffendingPredictor.score
-            else "not present" }},
+            {{ (csrp.score + "%") if csrp.score is not null else "not present" }},
             resulting in a tier of <strong>{{ stepResults.reoffending.tier }}</strong>.
           </p>
 
@@ -176,11 +177,13 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 id="sexualReoffending" class="govuk-heading-l">Sexual reoffending</h2>
-        {% if oasysInputs.predictors.output %}
-          {% if stepResults.sexualReoffending.tier %}
+        {% set predictorOutput = oasysInputs.predictors.output if oasysInputs.predictors else null %}
+        {% set dcSrp = predictorOutput.directContactSexualReoffendingPredictor if predictorOutput else null %}
+        {% if predictorOutput %}
+          {% if stepResults.sexualReoffending.tier and dcSrp %}
             <p>
               The Direct Contact Sexual Reoffending Predictor (DC-SRP) is
-              {{ oasysInputs.predictors.output.directContactSexualReoffendingPredictor.band }},
+              {{ dcSrp.band }},
               {% if stepResults.sexualReoffending.data.riskReduction %}
                 and the risk has been reduced following five offence-free years,
               {% endif %}
