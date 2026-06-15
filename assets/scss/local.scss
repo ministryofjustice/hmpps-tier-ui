@@ -1,7 +1,6 @@
-@import "govuk-frontend/dist/govuk/settings/colours-applied";
-@import "govuk-frontend/dist/govuk/settings/spacing";
+@import "govuk-frontend/dist/govuk/helpers/colour";
 @import "govuk-frontend/dist/govuk/helpers/spacing";
-@import "govuk-frontend/dist/govuk/settings/media-queries";
+@import "govuk-frontend/dist/govuk/helpers/media-queries";
 
 .govuk-main-wrapper {
   min-height: 600px;
