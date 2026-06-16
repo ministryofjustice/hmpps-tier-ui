@@ -48,10 +48,8 @@ jobs:
       id: integration-tests
       shell: bash
       run: |
-        echo "==file structure=="
-        ls -R wiremock
         npx wiremock --port 9091 --root-dir "$PWD/wiremock" &
-        npx wait-on --timeout 30000 http://localhost:9091/__admin/mappings
+        npx wait-on --timeout 30000 tcp:9091
         npm run start-feature:dev &
         npx wait-on http://localhost:3007/health
         npm run int-test
