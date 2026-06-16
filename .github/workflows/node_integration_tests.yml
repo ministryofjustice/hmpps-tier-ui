@@ -48,7 +48,7 @@ jobs:
       id: integration-tests
       shell: bash
       run: |
-        npx wiremock --port 9091 &
+        WIREMOCK_PORT=9091 npx wiremock &
         npx wait-on --timeout 30000 http://localhost:9091/__admin
         npm run start-feature:dev &
         npx wait-on http://localhost:3007/health
