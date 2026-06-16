@@ -48,7 +48,7 @@ jobs:
       id: integration-tests
       shell: bash
       run: |
-        npx wiremock &
+        npx wiremock --port 9091 &
         npx wait-on http://localhost:9091/__admin
         nohup npm run start-feature:dev &
         npx wait-on http://localhost:3007
