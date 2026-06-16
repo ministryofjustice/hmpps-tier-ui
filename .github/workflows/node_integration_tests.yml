@@ -49,9 +49,9 @@ jobs:
       shell: bash
       run: |
         npx wiremock --port 9091 &
-        npx wait-on http://localhost:9091/__admin
-        nohup npm run start-feature:dev &
-        npx wait-on http://localhost:3007
+        npx wait-on --timeout 30000 http://localhost:9091/__admin
+        npm run start-feature:dev &
+        npx wait-on http://localhost:3007/health
         npm run int-test
       # continue-on-error: true
       # replacing the above with if: always()
