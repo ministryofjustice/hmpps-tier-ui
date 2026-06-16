@@ -48,7 +48,7 @@ jobs:
       id: integration-tests
       shell: bash
       run: |
-        npx wiremock --port 9091 --root-dir ./wiremock/mappings &
+        npx wiremock --port 9091 --root-dir ./wiremock &
         npx wait-on --timeout 30000 http://localhost:9091/__admin/mappings
         npm run start-feature:dev &
         npx wait-on http://localhost:3007/health
