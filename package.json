@@ -10,7 +10,7 @@
     "build": "node esbuild/esbuild",
     "start": "node $NODE_OPTIONS dist/server.js | bunyan -o short",
     "start:dev": "node esbuild/esbuild --watch",
-    "start-feature:dev": "concurrently -k -p \"[{name}]\" -n \"ESBuild,WireMock\" -c \"magenta.bold,cyan.bold\" \"node esbuild/esbuild --watch --env feature.env\" \"npm run wiremock\"",
+    "start-feature:dev": "npm run wiremock & npx wait-on --timeout 30000 tcp:9091 && node esbuild/esbuild --watch --env feature.env",
     "wiremock": "npx wiremock --port 9091 --root-dir wiremock --local-response-templating",
     "lint": "eslint . --cache --max-warnings 0",
     "lint-fix": "eslint . --cache --max-warnings 0 --fix",
@@ -84,7 +84,6 @@
     "@types/superagent": "^8.1.10",
     "@types/supertest": "^7.2.0",
     "audit-ci": "^7.1.0",
-    "concurrently": "^10.0.3",
     "cypress": "^15.17.0",
     "cypress-multi-reporters": "^2.0.5",
     "del": "8.0.1",
@@ -101,6 +100,7 @@
     "supertest": "^7.2.2",
     "ts-jest": "^29.4.11",
     "typescript": "^5.9.3",
+    "wait-on": "9.0.10",
     "wiremock": "^3.13.2"
   },
   "overrides": {
