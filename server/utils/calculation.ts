@@ -1,5 +1,5 @@
 import { isAfter, parseISO, subYears } from 'date-fns'
-import { defaultClient } from 'applicationinsights'
+import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import { DeliusInputs, OASysInputs, Tier } from '../data/models/tier'
 import { AllPredictorDto, BasePredictorDto, ValidPredictor } from '../data/models/arns'
 import { StepTitles } from './mappings'
@@ -77,7 +77,7 @@ export function calculateSexualReoffending(warnings: string[], riskPredictors?: 
       if (dcSrp.score >= 2.11) return { tier: 'D', data: { ...data, riskReduction: true } }
       if (dcSrp.score >= 1.12) return { tier: 'C', data }
       if (dcSrp.score >= 0.6) return { tier: 'D', data }
-      defaultClient.trackEvent({ name: 'Unexpected DC-SRP', properties: { score: dcSrp.score, band: dcSrp.band } })
+      telemetry.trackEvent('Unexpected DC-SRP', { score: dcSrp.score, band: dcSrp.band })
       warnings.push(`Unexpected combination of DC-SRP score (${dcSrp.score}) and DC-SRP band (${dcSrp.band})`)
       return { tier: null, data }
     }

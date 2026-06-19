@@ -1,7 +1,7 @@
 import { Handler, Router } from 'express'
 import { ArnsComponents } from '@ministryofjustice/hmpps-arns-frontend-components-lib'
 import { asUser } from '@ministryofjustice/hmpps-rest-client'
-import { defaultClient } from 'applicationinsights'
+import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import type { Services } from '../services'
 import DeliusIntegrationClient from '../data/deliusIntegrationClient'
 import TierV3ApiClient from '../data/tierV3ApiClient'
@@ -44,9 +44,11 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         warnings.push(
           `Calculation mismatch. The current tier is ${storedTier}, but the factors indicate this person's tier should be ${derivedTier}.`,
         )
-        defaultClient.trackEvent({
-          name: 'CalculationMismatch',
-          properties: { crn, storedTier, derivedTier },
+        telemetry.trackEvent('CalculationMismatch', {
+          crn,
+          storedTier,
+          derivedTier,
+          stepResults: JSON.stringify(stepResults),
         })
       }
 
@@ -93,10 +95,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       context: { username: res.locals.user.username },
     })
     if (!result.enabled) {
-      defaultClient.trackEvent({
-        name: 'UserNotAuthorisedToAccessV3',
-        properties: { username: res.locals.user.username },
-      })
+      telemetry.trackEvent('UserNotAuthorisedToAccessV3', { username: res.locals.user.username })
       res.redirect('/authError')
     } else next()
   })

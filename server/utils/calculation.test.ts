@@ -1,4 +1,4 @@
-import { defaultClient } from 'applicationinsights'
+import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import { format, startOfDay, subDays, subYears } from 'date-fns'
 import { AllPredictorDto, BasePredictorDto, OGRS4Predictors, ScoreLevel } from '../data/models/arns'
 import { DeliusInputs, OASysInputs, Rosh, Tier } from '../data/models/tier'
@@ -12,13 +12,13 @@ import {
   StepResults,
 } from './calculation'
 
-jest.mock('applicationinsights', () => ({
-  defaultClient: {
+jest.mock('@ministryofjustice/hmpps-azure-telemetry', () => ({
+  telemetry: {
     trackEvent: jest.fn(),
   },
 }))
 
-const mockTrackEvent = jest.mocked(defaultClient.trackEvent)
+const mockTrackEvent = jest.mocked(telemetry.trackEvent)
 
 describe('Tier calculation', () => {
   beforeEach(() => {
@@ -95,10 +95,7 @@ describe('Tier calculation', () => {
 
     expect(result.tier).toBe('G')
     expect(result.stepResults.sexualReoffending).toEqual({ tier: null, data: { riskReduction: false } })
-    expect(mockTrackEvent).toHaveBeenCalledWith({
-      name: 'Unexpected DC-SRP',
-      properties: { score: 0.59, band: 'MEDIUM' },
-    })
+    expect(mockTrackEvent).toHaveBeenCalledWith('Unexpected DC-SRP', { score: 0.59, band: 'MEDIUM' })
     expect(warnings).toEqual(['Unexpected combination of DC-SRP score (0.59) and DC-SRP band (MEDIUM)'])
   })
 

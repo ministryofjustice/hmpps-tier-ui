@@ -17,7 +17,6 @@ import setUpWebSession from './middleware/setUpWebSession'
 
 import routes from './routes'
 import type { Services } from './services'
-import { appInsightsMiddleware } from './utils/azureAppInsights'
 import setUpFliptClient from './middleware/setUpFliptClient'
 
 export default async function createApp(services: Services): Promise<express.Application> {
@@ -27,7 +26,6 @@ export default async function createApp(services: Services): Promise<express.App
   app.set('trust proxy', true)
   app.set('port', process.env.PORT || 3000)
 
-  app.use(appInsightsMiddleware())
   app.use(setUpHealthChecks(services.applicationInfo))
   app.use(setUpWebSecurity())
   app.use(setUpWebSession())
