@@ -269,8 +269,8 @@
             ]
           }) }}
         {% else %}
-          <p>This person has no Risk of Serious Harm (ROSH) or Multi-Agency Public Protection Arrangements (MAPPA)
-            registrations.</p>
+          <p>This person has no applicable Risk of Serious Harm (ROSH) or Multi-Agency Public Protection Arrangements
+            (MAPPA) registrations.</p>
         {% endif %}
       </div>
       <div class="govuk-grid-column-one-third">
@@ -345,7 +345,7 @@
             ],
             [
               { html: '<span id="release-date">Latest release date</span>' },
-              { text: (deliusInputs.latestReleaseDate | formatDate("dd/MM/yyyy")) if deliusInputs.latestReleaseDate else "None" },
+              { text: (deliusInputs.latestReleaseDate | formatDate("d MMMM yyyy")) if deliusInputs.latestReleaseDate else "None" },
               { text: "B" if stepResults.liferIpp.tier and stepResults.liferIpp.data.inFirstYearOfRelease else "Not applicable" }
             ]
           ]
@@ -366,24 +366,76 @@
             <th scope="row" class="govuk-table__header heatmap-100">A</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-90">Lifer in first year of release</td>
+            <td class="govuk-table__cell heatmap-90">First year of release</td>
             <th scope="row" class="govuk-table__header heatmap-90">B</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-80"></td>
+            <td class="govuk-table__cell heatmap-80">Within 4 years of release</td>
             <th scope="row" class="govuk-table__header heatmap-80">C</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-60">Lifer within 5 years of release</td>
+            <td class="govuk-table__cell heatmap-60">Within 5 years of release</td>
+            <th scope="row" class="govuk-table__header heatmap-60">D</th>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <div class="govuk-grid-row">
+      <div class="govuk-grid-column-two-thirds">
+        <h2 class="govuk-heading-l">Progression model exclusions</h2>
+        <p>
+          Some offences are exempt from the Sentencing Act progression model and subject to minimum tier levels based on the number of years under supervision. These include rape, serious child sex offences, grooming offences, and the offence of indecent assault.
+        </p>
+        {{ govukTable({
+          firstCellIsHeader: true,
+          head: [{ text: "Factor" }, { text: "Start date" }, { text: "Tier" }],
+          rows: [
+            [
+              { html: '<span id="rapeIndecentAssaultAndOtherOffences">Rape, indecent assault and other offences</span>' },
+              { text: (deliusInputs.latestSentencingAct2026ExcludedOffenceDate | formatDate("d MMMM yyyy")) if deliusInputs.latestSentencingAct2026ExcludedOffenceDate else "None" },
+              { text: stepResults.rapeIndecentAssaultAndOtherOffences.tier if stepResults.rapeIndecentAssaultAndOtherOffences.tier else "Not applicable" }
+            ],
+            [
+              { html: '<span id="childSexualExploitation">Child sexual exploitation<br/>(discretionary registration)</span>' },
+              { text: (deliusInputs.latestChildSexualExploitationSentenceDate | formatDate("d MMMM yyyy")) if deliusInputs.latestChildSexualExploitationSentenceDate else "None" },
+              { text: stepResults.childSexualExploitation.tier if stepResults.childSexualExploitation.tier else "Not applicable" }
+            ]
+          ]
+        }) }}
+      </div>
+      <div class="govuk-grid-column-one-third">
+        <table class="govuk-table heatmap">
+          <caption class="govuk-table__caption govuk-table__caption--m">Reference</caption>
+          <thead>
+          <tr class="govuk-table__row">
+            <td></td>
+            <th scope="col" class="govuk-table__header">Tier</th>
+          </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-100"></td>
+            <th scope="row" class="govuk-table__header heatmap-100">A</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-90"></td>
+            <th scope="row" class="govuk-table__header heatmap-90">B</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-80">Up to and including year 4</td>
+            <th scope="row" class="govuk-table__header heatmap-80">C</th>
+          </tr>
+          <tr class="govuk-table__row">
+            <td class="govuk-table__cell heatmap-60">Year 5</td>
             <th scope="row" class="govuk-table__header heatmap-60">D</th>
           </tr>
           <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-40">Lifer</td>
+            <td class="govuk-table__cell heatmap-40">Year 6 onwards</td>
             <th scope="row" class="govuk-table__header heatmap-40">E</th>
-          </tr>
-          <tr class="govuk-table__row">
-            <td class="govuk-table__cell heatmap-30"></td>
-            <th scope="row" class="govuk-table__header heatmap-30">F</th>
           </tr>
           </tbody>
         </table>

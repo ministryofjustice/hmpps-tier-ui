@@ -64,6 +64,8 @@ describe('buildSummaryTable', () => {
       stalking: { tier: null },
       childProtection: { tier: 'F' },
       sexualOffences: { tier: null },
+      rapeIndecentAssaultAndOtherOffences: { tier: 'C' },
+      childSexualExploitation: { tier: 'D' },
     }
     const assessment: AllPredictorDto = {}
 
@@ -116,6 +118,18 @@ describe('buildSummaryTable', () => {
         },
         { html: 'Not applicable' },
       ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#rapeIndecentAssaultAndOtherOffences" class="govuk-link govuk-link--no-visited-state">Rape, indecent assault and other offences</a>',
+        },
+        { html: 'C' },
+      ],
+      [
+        {
+          html: '<a href="/v3/case/X12345/calculation/#childSexualExploitation" class="govuk-link govuk-link--no-visited-state">Child sexual exploitation</a>',
+        },
+        { html: 'D' },
+      ],
       [{ text: 'Result' }, { html: '<strong>A</strong>' }],
     ])
   })
@@ -130,6 +144,8 @@ describe('buildSummaryTable', () => {
       stalking: { tier: null },
       childProtection: { tier: 'F' },
       sexualOffences: { tier: null },
+      rapeIndecentAssaultAndOtherOffences: { tier: null },
+      childSexualExploitation: { tier: null },
     }
     const assessment: AllPredictorDto = null
 
@@ -146,5 +162,7 @@ describe('buildSummaryTable', () => {
       },
       { html: 'Not assessed' },
     ])
+    expect(table[8][1]).toEqual({ html: 'Not applicable' })
+    expect(table[9][1]).toEqual({ html: 'Not applicable' })
   })
 })

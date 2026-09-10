@@ -34,6 +34,32 @@ context('Calculation page', () => {
     page.registrationRow('domesticAbuse').should('contain.text', 'Yes').should('contain.text', 'E')
     page.registrationRow('stalking').should('contain.text', 'No').should('contain.text', 'Not applicable')
     page.registrationRow('childProtection').should('contain.text', 'Yes').should('contain.text', 'F')
+    page
+      .registrationRow('rapeIndecentAssaultAndOtherOffences')
+      .should('contain.text', '1 January 2020')
+      .find('td')
+      .last()
+      .should('have.text', 'E')
+    page
+      .registrationRow('childSexualExploitation')
+      .should('contain.text', '3 February 2019')
+      .find('td')
+      .last()
+      .should('have.text', 'E')
+  })
+
+  it('displays progression model exclusions without offence dates as not applicable', () => {
+    cy.visit('/v3/case/A000007/calculation')
+    const page = Page.verifyOnPage(CalculationPage)
+
+    page
+      .registrationRow('rapeIndecentAssaultAndOtherOffences')
+      .should('contain.text', 'None')
+      .should('contain.text', 'Not applicable')
+    page
+      .registrationRow('childSexualExploitation')
+      .should('contain.text', 'None')
+      .should('contain.text', 'Not applicable')
   })
 
   it('navigates to the summary and history tabs', () => {

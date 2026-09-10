@@ -34,6 +34,8 @@
               },
               "previousEnforcementActivity": false,
               "latestReleaseDate": null,
+              "latestSentencingAct2026ExcludedOffenceDate": "2020-01-01",
+              "latestChildSexualExploitationSentenceDate": "2019-02-03",
               "hasActiveEvent": true
             },
             "oasysInputs": {

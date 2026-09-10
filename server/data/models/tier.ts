@@ -64,6 +64,8 @@ export interface DeliusInputs {
   previousEnforcementActivity: boolean
   latestReleaseDate?: string | null
   hasActiveEvent?: boolean | null
+  latestSentencingAct2026ExcludedOffenceDate?: string | null
+  latestChildSexualExploitationSentenceDate?: string | null
 }
 
 export interface OASysInputs {

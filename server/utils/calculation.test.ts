@@ -1,5 +1,5 @@
 import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
-import { format, startOfDay, subDays, subYears } from 'date-fns'
+import { addDays, format, startOfDay, subDays, subYears } from 'date-fns'
 import { AllPredictorDto, BasePredictorDto, OGRS4Predictors, ScoreLevel } from '../data/models/arns'
 import { DeliusInputs, OASysInputs, Rosh, Tier } from '../data/models/tier'
 import {
@@ -9,6 +9,7 @@ import {
   calculateNonSexualReoffending,
   calculateSexualReoffending,
   calculateTierIfPresent,
+  steppedModerator,
   StepResults,
 } from './calculation'
 
@@ -157,6 +158,26 @@ describe('Tier calculation', () => {
     },
   )
 
+  it.each(steppedModeratorCases())('excluded offence date=%p maps to tier %p', (date, expectedTier) => {
+    const result = calculateTier({ ...deliusInputs(), latestSentencingAct2026ExcludedOffenceDate: date })
+
+    expect(result.tier).toBe(expectedTier)
+    expect(result.stepResults.rapeIndecentAssaultAndOtherOffences).toEqual({
+      tier: expectedTier === 'G' ? null : expectedTier,
+      data: { date },
+    })
+  })
+
+  it.each(steppedModeratorCases())('CSE date=%p maps to tier %p', (date, expectedTier) => {
+    const result = calculateTier({ ...deliusInputs(), latestChildSexualExploitationSentenceDate: date })
+
+    expect(result.tier).toBe(expectedTier)
+    expect(result.stepResults.childSexualExploitation).toEqual({
+      tier: expectedTier === 'G' ? null : expectedTier,
+      data: { date },
+    })
+  })
+
   it('returns step results for every factor used by the V3 case routes', () => {
     const result = calculateTier(
       deliusInputs({
@@ -167,6 +188,8 @@ describe('Tier calculation', () => {
         hasDomesticAbuse: true,
         hasStalking: true,
         hasChildProtection: true,
+        latestSentencingAct2026ExcludedOffenceDate: '2020-01-01',
+        latestChildSexualExploitationSentenceDate: '2019-02-03',
       }),
       oasysInputs({
         arp: 50,
@@ -185,6 +208,8 @@ describe('Tier calculation', () => {
       stalking: { tier: 'F' },
       childProtection: { tier: 'F' },
       sexualOffences: { tier: 'E' },
+      rapeIndecentAssaultAndOtherOffences: { tier: 'E', data: { date: '2020-01-01' } },
+      childSexualExploitation: { tier: 'E', data: { date: '2019-02-03' } },
     })
     expect(result.tier).toBe('B')
   })
@@ -200,6 +225,8 @@ describe('Tier calculation', () => {
           hasDomesticAbuse: true,
           hasStalking: true,
           hasChildProtection: true,
+          latestSentencingAct2026ExcludedOffenceDate: '2020-01-01',
+          latestChildSexualExploitationSentenceDate: '2019-02-03',
         }),
         oasysInputs({
           arp: 95,
@@ -250,6 +277,10 @@ describe('Tier calculation steps', () => {
     expect(calculateTierIfPresent(true, 'E')).toEqual({ tier: 'E' })
     expect(calculateTierIfPresent(false, 'E')).toEqual({ tier: null })
   })
+
+  it('calculates a stepped moderator from an offence date', () => {
+    expect(steppedModerator('2020-01-01')).toEqual({ tier: 'E', data: { date: '2020-01-01' } })
+  })
 })
 
 function calculateTier(deliusData: DeliusInputs, oasysData: OASysInputs = oasysInputs()) {
@@ -265,6 +296,8 @@ function deliusInputs({
   hasStalking = false,
   hasChildProtection = false,
   hasActiveEvent = true,
+  latestSentencingAct2026ExcludedOffenceDate,
+  latestChildSexualExploitationSentenceDate,
 }: {
   hasMappa?: boolean
   rosh?: Rosh | null
@@ -274,6 +307,8 @@ function deliusInputs({
   hasStalking?: boolean
   hasChildProtection?: boolean
   hasActiveEvent?: boolean | null
+  latestSentencingAct2026ExcludedOffenceDate?: string | null
+  latestChildSexualExploitationSentenceDate?: string | null
 } = {}): DeliusInputs {
   return {
     isFemale: false,
@@ -283,6 +318,8 @@ function deliusInputs({
     previousEnforcementActivity: false,
     latestReleaseDate,
     hasActiveEvent,
+    latestSentencingAct2026ExcludedOffenceDate,
+    latestChildSexualExploitationSentenceDate,
     registrations: {
       hasIomNominal: false,
       hasLiferIpp,
@@ -429,13 +466,36 @@ function mappaAndRoshCases(): Array<[boolean, Rosh | null, Tier]> {
 
 function liferAndReleaseDateCases(): Array<[boolean, string | null, Tier]> {
   const yesterday = format(startOfDay(subDays(new Date(), 1)), 'yyyy-MM-dd')
-  const lastYear = format(startOfDay(subYears(new Date(), 1)), 'yyyy-MM-dd')
+  const twoYearsAgo = format(startOfDay(subYears(new Date(), 2)), 'yyyy-MM-dd')
+  const overFourYearsAgo = format(startOfDay(subDays(subYears(new Date(), 4), 1)), 'yyyy-MM-dd')
+  const overFiveYearsAgo = format(startOfDay(subDays(subYears(new Date(), 5), 1)), 'yyyy-MM-dd')
   return [
     [true, yesterday, 'B'],
-    [true, lastYear, 'D'],
+    [true, twoYearsAgo, 'C'],
+    [true, overFourYearsAgo, 'D'],
+    [true, overFiveYearsAgo, 'G'],
     [true, null, 'G'],
     [false, null, 'G'],
     [false, yesterday, 'G'],
+  ]
+}
+
+function steppedModeratorCases(): Array<[string | null | undefined, Tier]> {
+  const yesterday = format(startOfDay(subDays(new Date(), 1)), 'yyyy-MM-dd')
+  const underFourYearsAgo = format(startOfDay(addDays(subYears(new Date(), 4), 1)), 'yyyy-MM-dd')
+  const overFourYearsAgo = format(startOfDay(subDays(subYears(new Date(), 4), 1)), 'yyyy-MM-dd')
+  const underFiveYearsAgo = format(startOfDay(addDays(subYears(new Date(), 5), 1)), 'yyyy-MM-dd')
+  const overFiveYearsAgo = format(startOfDay(subDays(subYears(new Date(), 5), 1)), 'yyyy-MM-dd')
+  const tenYearsAgo = format(startOfDay(subYears(new Date(), 10)), 'yyyy-MM-dd')
+  return [
+    [undefined, 'G'],
+    [null, 'G'],
+    [yesterday, 'C'],
+    [underFourYearsAgo, 'C'],
+    [overFourYearsAgo, 'D'],
+    [underFiveYearsAgo, 'D'],
+    [overFiveYearsAgo, 'E'],
+    [tenYearsAgo, 'E'],
   ]
 }
 
