@@ -72,4 +72,6 @@ export const StepTitles = {
   stalking: 'Stalking',
   childProtection: 'Child protection',
   sexualOffences: 'Sexual offences',
+  rapeIndecentAssaultAndOtherOffences: 'Rape, indecent assault and other offences',
+  childSexualExploitation: 'Child sexual exploitation',
 }

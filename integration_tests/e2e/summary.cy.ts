@@ -30,6 +30,8 @@ context('Summary page', () => {
     page.summaryRow('Domestic abuse').should('contain.text', 'E')
     page.summaryRow('Child protection').should('contain.text', 'F')
     page.summaryRow('Sexual offences').should('contain.text', 'E')
+    page.summaryRow('Rape, indecent assault and other offences').find('td').should('have.text', 'E')
+    page.summaryRow('Child sexual exploitation').find('td').should('have.text', 'E')
     page.summaryRow('Result').should('contain.text', 'B')
   })
 

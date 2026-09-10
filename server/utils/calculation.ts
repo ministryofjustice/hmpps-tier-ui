@@ -1,4 +1,4 @@
-import { isAfter, parseISO, subYears } from 'date-fns'
+import { isBefore, parseISO, subYears } from 'date-fns'
 import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import { DeliusInputs, OASysInputs, Tier } from '../data/models/tier'
 import { AllPredictorDto, BasePredictorDto, ValidPredictor } from '../data/models/arns'
@@ -35,6 +35,8 @@ export function calculate(
     stalking: calculateTierIfPresent(hasStalking, 'F'),
     childProtection: calculateTierIfPresent(hasChildProtection, 'F'),
     sexualOffences: calculateTierIfPresent(everCommittedSexualOffence, 'E'),
+    rapeIndecentAssaultAndOtherOffences: steppedModerator(deliusInputs.latestSentencingAct2026ExcludedOffenceDate),
+    childSexualExploitation: steppedModerator(deliusInputs.latestChildSexualExploitationSentenceDate),
   }
 
   if (!deliusInputs.hasActiveEvent) return { tier: 'NOT_SUPERVISED', stepResults }
@@ -108,8 +110,18 @@ export function calculateLiferAndImprisonmentForPublicProtection({
   const data = { hasLiferIpp, latestReleaseDate }
   const today = new Date()
   if (!latestReleaseDate || !hasLiferIpp) return { tier: null, data }
-  if (isAfter(parseISO(latestReleaseDate), subYears(today, 1))) return { tier: 'B', data }
-  if (isAfter(parseISO(latestReleaseDate), subYears(today, 5))) return { tier: 'D', data }
+  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 1))) return { tier: 'B', data }
+  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 4))) return { tier: 'C', data }
+  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 5))) return { tier: 'D', data }
+  return { tier: null, data }
+}
+
+export function steppedModerator(date: string): StepResult {
+  const data = { date }
+  const today = new Date()
+  if (!date) return { tier: null, data }
+  if (!isBefore(parseISO(date), subYears(today, 4))) return { tier: 'C', data }
+  if (!isBefore(parseISO(date), subYears(today, 5))) return { tier: 'D', data }
   return { tier: 'E', data }
 }
 
