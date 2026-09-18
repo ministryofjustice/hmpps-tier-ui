@@ -21,4 +21,4 @@ generic-service:
     ENVIRONMENT: dev
 
   scheduledDowntime:
-    enabled: true
+    enabled: false
