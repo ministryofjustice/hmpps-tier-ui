@@ -6,12 +6,18 @@ import { expectNormalisedText } from '../support/utils'
 
 context('Summary page', () => {
   it('displays the summary page', () => {
-    cy.visit('/v3/case/A000006')
+    cy.visit('/case/A000006')
+    cy.location('pathname').should('eq', '/v3/case/A000006')
     const page = Page.verifyOnPage(SummaryPage)
 
     page.headerCrn().should('have.text', 'A000006')
     page.headerDob().should('have.text', '15 May 1990')
-    page.headerTier().should('have.text', 'B')
+    page
+      .headerTier()
+      .should('have.text', 'Tier: B')
+      .should('have.attr', 'href', '/case/A000006')
+      .should('have.attr', 'aria-label', 'Tier: B')
+    page.headerProvisionalTag().should('not.exist')
     page.headerRosh().should('contain.text', 'RISK OF SERIOUS HARM').should('contain.text', 'MEDIUM')
     page
       .headerRsr()
@@ -82,7 +88,11 @@ context('Summary page', () => {
 
     page.headerCrn().should('have.text', 'A000007')
     page.headerDob().should('have.text', '20 July 1987')
-    page.headerTier().should('have.text', 'Not supervised')
+    page
+      .headerTier()
+      .should('have.text', 'Tier: Not supervised')
+      .should('have.attr', 'aria-label', 'Tier: Not supervised')
+    page.headerProvisionalTag().should('not.exist')
     page.warnings().should('not.exist')
 
     expectNormalisedText(

@@ -9,5 +9,5 @@ export default class IndexPage extends Page {
 
   headerPhaseBanner = (): PageElement => cy.get('[data-qa=header-phase-banner]')
 
-  heatMapCell = (row: number, col: number): string => `tbody tr:nth-child(${row}) td:nth-child(${col})`
+  startNow = () => cy.contains('a', 'Start now')
 }

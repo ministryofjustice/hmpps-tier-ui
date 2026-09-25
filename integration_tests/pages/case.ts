@@ -11,6 +11,8 @@ export default class CasePage extends Page {
 
   headerTier = (): PageElement => cy.get('[data-qa=case-details-header-tier]')
 
+  headerProvisionalTag = (): PageElement => this.headerTier().siblings('.govuk-tag')
+
   headerRosh = (): PageElement => cy.get('[data-qa=case-details-header-rosh]')
 
   headerRsr = (): PageElement => cy.get('[data-qa=case-details-header-rsr]')

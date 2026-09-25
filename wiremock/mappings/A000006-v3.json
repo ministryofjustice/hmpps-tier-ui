@@ -9,6 +9,7 @@
         "status": 200,
         "jsonBody": {
           "tierScore": "B",
+          "provisional": false,
           "calculationId": "8d8f1b08-3e58-4f19-9ec9-9d7baf8e8f51",
           "calculationDate": "2026-03-04T14:15:00",
           "data": {

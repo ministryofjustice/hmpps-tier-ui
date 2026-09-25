@@ -1,10 +1,10 @@
-{% extends "../partials/layout.njk" %}
+{% extends "../../partials/layout.njk" %}
 {% from "govuk/components/back-link/macro.njk" import govukBackLink %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "govuk/components/table/macro.njk" import govukTable %}
 {% from "moj/components/timeline/macro.njk" import mojTimeline %}
-{% from "../_components/probation-primary-navigation/macro.njk" import probationPrimaryNavigation %}
-{% from "../_components/probation-case-details-header/macro.njk" import probationCaseDetailsHeader %}
+{% from "../../_components/probation-primary-navigation/macro.njk" import probationPrimaryNavigation %}
+{% from "../../_components/probation-case-details-header/macro.njk" import probationCaseDetailsHeader %}
 
 {% set pageTitle = applicationName + " - View" %}
 {% set mainClasses = "app-container govuk-body govuk-!-padding-top-1" %}
@@ -21,6 +21,7 @@
     dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
     age: personalDetails.age,
     tierScore: tierCalculation.tierScore,
+    tierProvisional: false,
     rosh: rosh,
     rsr: rsr,
     riskData: riskData,

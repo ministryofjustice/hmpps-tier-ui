@@ -1,20 +1,25 @@
 import CasePage from '../pages/case'
 import Page from '../pages/page'
 
-context('Case view screen', () => {
+context('V2 case view screen', () => {
   it('displays case details header', () => {
-    cy.visit('/case/A000001')
+    cy.visit('/v2/case/A000001')
     const page = Page.verifyOnPage(CasePage)
     page.headerCrn().should('have.text', 'A000001')
     page.headerDob().should('have.text', '1 January 2000')
-    page.headerTier().should('have.text', 'B2')
+    page
+      .headerTier()
+      .should('have.text', 'Tier: B2')
+      .should('have.attr', 'href', '/case/A000001')
+      .should('have.attr', 'aria-label', 'Tier: B2')
+    page.headerProvisionalTag().should('not.exist')
     page.headerRosh().should('contain.text', 'ROSH').should('contain.text', 'MEDIUM')
     page.headerRsr().should('contain.text', 'RSR').should('contain.text', 'HIGH').should('contain.text', '12.3')
     page.warnings().should('not.exist')
   })
 
   it('displays protect section', () => {
-    cy.visit('/case/A000001')
+    cy.visit('/v2/case/A000001')
     const page = Page.verifyOnPage(CasePage)
     cy.get(page.protectTableRow(1))
       .should('contain.text', 'Medium RoSH')
@@ -41,7 +46,7 @@ context('Case view screen', () => {
   })
 
   it('displays change section', () => {
-    cy.visit('/case/A000001')
+    cy.visit('/v2/case/A000001')
     const page = Page.verifyOnPage(CasePage)
     cy.get(page.changeTableRow(1))
       .should('contain.text', 'OGRS')
@@ -64,7 +69,7 @@ context('Case view screen', () => {
   })
 
   it('displays history', () => {
-    cy.visit('/case/A000001')
+    cy.visit('/v2/case/A000001')
     const page = Page.verifyOnPage(CasePage)
     cy.get(page.timelineItem(1))
       .should('contain.text', 'B2')
@@ -86,7 +91,7 @@ context('Case view screen', () => {
   })
 
   it('handles multiple rosh registrations', () => {
-    cy.visit('/case/A000002')
+    cy.visit('/v2/case/A000002')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('contain.text', 'Multiple RoSH registrations were found in Delius')
     page.protectTable().should('not.contain.text', 'High RoSH')
@@ -94,7 +99,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with no mandate for change', () => {
-    cy.visit('/case/A000003')
+    cy.visit('/v2/case/A000003')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('not.exist')
     page.changeTable().should('not.exist')
@@ -105,7 +110,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with no assessment', () => {
-    cy.visit('/case/A000004')
+    cy.visit('/v2/case/A000004')
     const page = Page.verifyOnPage(CasePage)
     page.warnings().should('not.exist')
     page.changeTable().should('not.exist')
@@ -113,7 +118,7 @@ context('Case view screen', () => {
   })
 
   it('handles case with limited access', () => {
-    cy.visit('/case/A000005')
+    cy.visit('/v2/case/A000005')
     cy.get('body').should('contain.text', 'You are not authorised to view this case')
   })
 })

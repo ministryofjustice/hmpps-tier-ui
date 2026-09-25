@@ -7,6 +7,7 @@ export type MappaCategory = 'M1' | 'M2' | 'M3' | 'M4'
 
 export interface TierCalculationV3 {
   tierScore: string
+  provisional: boolean
   calculationId: string
   calculationDate: string
   data: {
