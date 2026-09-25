@@ -18,8 +18,8 @@
         factors including:</p>
         <ul class="govuk-list govuk-list--bullet">
             <li>assessment scores such as
-                <abbr title="Risk of Serious Recidivism">RSR</abbr> and
-                <abbr title="Offender Group Re-conviction Scale">OGRS</abbr>,
+                <abbr title="Combined Serious Reoffending Predictor">CSRP</abbr> and
+                <abbr title="All Reoffending Predictor">ARP</abbr>,
             </li>
             <li>register levels such as
                 <abbr title="Risk of Serious Harm">RoSH</abbr> and
@@ -27,54 +27,8 @@
             </li>
             <li>additional factors such as risk to children, or self-harm.</li>
         </ul>
-        <p><a href="/tiering-additional-information" class="govuk-link">How is the tier calculation produced?</a></p>
 
         {%- from "govuk/components/button/macro.njk" import govukButton -%}
         {{ govukButton({ text: "Start now", href: "/search", isStartButton: true }) }}
-    </div>
-
-    <div class="govuk-grid-column-one-third">
-        <table class="govuk-table heatmap">
-            <caption class="govuk-table__caption govuk-table__caption--m">Current Tier Distribution</caption>
-            <tbody class="govuk-table__body">
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">3<br/><small>High</small></th>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('D', 3) }}">{{ tierCounts.getTierCount('D', 3) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('C', 3) }}">{{ tierCounts.getTierCount('C', 3) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('B', 3) }}">{{ tierCounts.getTierCount('B', 3) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('A', 3) }}">{{ tierCounts.getTierCount('A', 3) | formatNumber }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">2<br/><small>Medium</small></th>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('D', 2) }}">{{ tierCounts.getTierCount('D', 2) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('C', 2) }}">{{ tierCounts.getTierCount('C', 2) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('B', 2) }}">{{ tierCounts.getTierCount('B', 2) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('A', 2) }}">{{ tierCounts.getTierCount('A', 2) | formatNumber }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">1<br/><small>Low</small></th>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('D', 1) }}">{{ tierCounts.getTierCount('D', 1) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('C', 1) }}">{{ tierCounts.getTierCount('C', 1) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('B', 1) }}">{{ tierCounts.getTierCount('B', 1) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('A', 1) }}">{{ tierCounts.getTierCount('A', 1) | formatNumber }}</td>
-            </tr>
-            <tr class="govuk-table__row">
-                <th scope="row" class="govuk-table__header">0<br/><small>None</small></th>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('D', 0) }}">{{ tierCounts.getTierCount('D', 0) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('C', 0) }}">{{ tierCounts.getTierCount('C', 0) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('B', 0) }}">{{ tierCounts.getTierCount('B', 0) | formatNumber }}</td>
-                <td class="govuk-table__cell govuk-table__cell--numeric heatmap-{{ tierCounts.getHeat('A', 0) }}">{{ tierCounts.getTierCount('A', 0) | formatNumber }}</td>
-            </tr>
-            </tbody>
-            <tfoot class="govuk-table__head">
-            <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header"></th>
-                <th scope="col" class="govuk-table__header">D<br/><small>Low</small></th>
-                <th scope="col" class="govuk-table__header">C<br/><small>Medium</small></th>
-                <th scope="col" class="govuk-table__header">B<br/><small>High</small></th>
-                <th scope="col" class="govuk-table__header">A<br/><small>Very High</small></th>
-            </tr>
-            </tfoot>
-        </table>
     </div>
 {% endblock %}

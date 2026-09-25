@@ -31,7 +31,10 @@
         (<span data-qa="case-details-header-age">{{ params.age }}</span> years old)
       </li>
       <li>
-        Tier: <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}">{{ params.tierScore | displayTier }}</a>
+        <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}" aria-label="Tier: {{ params.tierScore | displayTier }}{% if params.tierProvisional %} Provisional{% endif %}">Tier: {{ params.tierScore | displayTier }}</a>
+        {% if params.tierProvisional %}
+        <strong class="govuk-tag govuk-tag--orange govuk-!-margin-left-1" aria-hidden="true">Provisional</strong>
+        {% endif %}
       </li>
     </ul>
     {%- if not params.riskData or params.riskData.assessments | length == 0 -%}
