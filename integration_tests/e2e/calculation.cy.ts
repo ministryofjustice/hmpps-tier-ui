@@ -29,7 +29,7 @@ context('Calculation page', () => {
     )
     expectNormalisedText(
       page.liferIppSummary(),
-      'This person is not a lifer and has not been imprisoned for public protection.',
+      'A lifer registration is present but the latest release date was over five years ago.',
     )
 
     page.registrationRow('domesticAbuse').should('contain.text', 'Yes').should('contain.text', 'E')

@@ -1,4 +1,4 @@
-import { isBefore, parseISO, subYears } from 'date-fns'
+import { isBefore, parseISO, startOfDay, subYears } from 'date-fns'
 import { telemetry } from '@ministryofjustice/hmpps-azure-telemetry'
 import { DeliusInputs, OASysInputs, Tier } from '../data/models/tier'
 import { AllPredictorDto, BasePredictorDto, ValidPredictor } from '../data/models/arns'
@@ -108,11 +108,12 @@ export function calculateLiferAndImprisonmentForPublicProtection({
 }: DeliusInputs): StepResult {
   const { hasLiferIpp } = registrations
   const data = { hasLiferIpp, latestReleaseDate }
-  const today = new Date()
   if (!latestReleaseDate || !hasLiferIpp) return { tier: null, data }
-  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 1))) return { tier: 'B', data }
-  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 4))) return { tier: 'C', data }
-  if (!isBefore(parseISO(latestReleaseDate), subYears(today, 5))) return { tier: 'D', data }
+  const today = startOfDay(new Date())
+  const releaseDate = parseISO(latestReleaseDate)
+  if (!isBefore(releaseDate, subYears(today, 1))) return { tier: 'B', data }
+  if (!isBefore(releaseDate, subYears(today, 4))) return { tier: 'C', data }
+  if (!isBefore(releaseDate, subYears(today, 5))) return { tier: 'D', data }
   return { tier: null, data }
 }
 
