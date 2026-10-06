@@ -23,7 +23,7 @@
               "hasNoMandate": false,
               "registrations": {
                 "hasIomNominal": false,
-                "hasLiferIpp": false,
+                "hasLiferIpp": true,
                 "hasDomesticAbuse": true,
                 "hasStalking": false,
                 "hasChildProtection": true,
@@ -34,7 +34,7 @@
                 "unsupervised": false
               },
               "previousEnforcementActivity": false,
-              "latestReleaseDate": null,
+              "latestReleaseDate": "2020-01-01",
               "latestSentencingAct2026ExcludedOffenceDate": "2020-01-01",
               "latestChildSexualExploitationSentenceDate": "2019-02-03",
               "hasActiveEvent": true

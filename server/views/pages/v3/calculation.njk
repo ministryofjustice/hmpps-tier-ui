@@ -322,35 +322,38 @@
     <div class="govuk-grid-row">
       <div class="govuk-grid-column-two-thirds">
         <h2 id="liferIpp" class="govuk-heading-l">Lifer/{{ 'IPP' | abbr }}</h2>
-        {% if stepResults.liferIpp.tier %}
+        {% if stepResults.liferIpp.data.hasLiferIpp %}
           <p>
             A lifer registration is present
-            {% if stepResults.liferIpp.data.inFirstYearOfRelease %}
+            {% if not stepResults.liferIpp.data.latestReleaseDate %}
+              but the tier will not be affected until the person leaves custody.
+            {% elseif stepResults.liferIpp.tier == 'B' %}
               and the latest release date is within the last year,
+              resulting in a tier of <strong>{{ stepResults.liferIpp.tier }}</strong>.
+            {% elseif stepResults.liferIpp.tier == 'C' %}
+              and the latest release date is within the last four years,
+              resulting in a tier of <strong>{{ stepResults.liferIpp.tier }}</strong>.
+            {% elseif stepResults.liferIpp.tier == 'D' %}
+              and the latest release date is within the last five years,
+              resulting in a tier of <strong>{{ stepResults.liferIpp.tier }}</strong>.
             {% else %}
-              and the latest release date is not within the last year,
+              but the latest release date was over five years ago.
             {% endif %}
-            resulting in a tier of <strong>{{ stepResults.liferIpp.tier }}</strong>.
           </p>
+          {{ govukTable({
+            firstCellIsHeader: true,
+            head: [{ text: "Factor" }, { text: "Value" }, { text: "Tier" }],
+            rows: [
+              [
+                { html: '<span id="release-date">Latest release date</span>' },
+                { text: (deliusInputs.latestReleaseDate | formatDate("d MMMM yyyy")) if deliusInputs.latestReleaseDate else "None" },
+                { text: stepResults.liferIpp.tier if stepResults.liferIpp.tier else "Not applicable" }
+              ]
+            ]
+          }) }}
         {% else %}
           <p>This person is not a lifer and has not been imprisoned for public protection.</p>
         {% endif %}
-        {{ govukTable({
-          firstCellIsHeader: true,
-          head: [{ text: "Factor" }, { text: "Value" }, { text: "Tier" }],
-          rows: [
-            [
-              { html: '<span id="lifer">Lifer</span>' },
-              { text: "Yes" if stepResults.liferIpp.tier else "No" },
-              { text: (("<s>F</s>" | safe) if stepResults.liferIpp.data.inFirstYearOfRelease else "F") if stepResults.liferIpp.tier else "Not applicable" }
-            ],
-            [
-              { html: '<span id="release-date">Latest release date</span>' },
-              { text: (deliusInputs.latestReleaseDate | formatDate("d MMMM yyyy")) if deliusInputs.latestReleaseDate else "None" },
-              { text: "B" if stepResults.liferIpp.tier and stepResults.liferIpp.data.inFirstYearOfRelease else "Not applicable" }
-            ]
-          ]
-        }) }}
       </div>
       <div class="govuk-grid-column-one-third">
         <table class="govuk-table heatmap">
