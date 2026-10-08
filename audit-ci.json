@@ -2,5 +2,13 @@
   "low": true,
   "package-manager": "auto",
   "registry": "https://registry.npmjs.org",
-  "allowlist": []
+  "allowlist": [
+    {
+      "braces": {
+        "active": true,
+        "expiry": "2026-12-01",
+        "notes": "No untrusted brace expansion"
+      }
+    }
+  ]
 }
