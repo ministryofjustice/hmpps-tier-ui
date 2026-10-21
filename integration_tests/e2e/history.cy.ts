@@ -9,7 +9,8 @@ context('History page', () => {
     cy.visit('/v3/case/A000006/history')
     const page = Page.verifyOnPage(HistoryPage)
 
-    page.headerTier().should('have.text', 'Tier: B').should('have.attr', 'aria-label', 'Tier: B')
+    cy.get('[data-qa="new-pop-header"]').should('contain.text', 'Morgan Manager')
+    page.headerTier().should('have.text', 'B')
     page.headerProvisionalTag().should('not.exist')
     page.warnings().should('not.exist')
 

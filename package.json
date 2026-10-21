@@ -36,9 +36,11 @@
     "@ministryofjustice/hmpps-auth-clients": "^3.0.0",
     "@ministryofjustice/hmpps-azure-telemetry": "^1.1.0",
     "@ministryofjustice/hmpps-monitoring": "^2.1.0",
+    "@ministryofjustice/hmpps-mpop-frontend-components-lib": "^0.0.23",
     "@ministryofjustice/hmpps-probation-frontend-components": "^1.2.0",
     "@ministryofjustice/hmpps-rest-client": "^2.2.0",
     "@ministryofjustice/probation-search-frontend": "^4.2.3",
+    "approve": "0.0.12",
     "bunyan": "^1.8.15",
     "bunyan-format": "^0.2.1",
     "compression": "^1.8.2",
@@ -58,6 +60,7 @@
     "passport": "^0.7.0",
     "passport-oauth2": "^1.8.0",
     "redis": "^6.3.0",
+    "scripts": "0.1.0",
     "superagent": "^10.4.1"
   },
   "devDependencies": {
@@ -82,7 +85,7 @@
     "@types/superagent": "^8.1.11",
     "@types/supertest": "^7.2.1",
     "audit-ci": "^7.1.0",
-    "cypress": "^15.21.0",
+    "cypress": "15.21.1",
     "cypress-multi-reporters": "^2.0.5",
     "del": "8.0.1",
     "esbuild": "^0.28.2",

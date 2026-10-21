@@ -9,7 +9,7 @@ context('Calculation page', () => {
     cy.visit('/v3/case/A000006/calculation')
     const page = Page.verifyOnPage(CalculationPage)
 
-    page.headerTier().should('have.text', 'Tier: B').should('have.attr', 'aria-label', 'Tier: B')
+    page.headerTier().should('have.text', 'B')
     page.headerProvisionalTag().should('not.exist')
     page.warnings().should('not.exist')
 

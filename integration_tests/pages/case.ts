@@ -5,13 +5,13 @@ export default class CasePage extends Page {
     super('Tier - View')
   }
 
-  headerCrn = (): PageElement => cy.get('[data-qa=case-details-header-crn]')
+  headerCrn = (): PageElement => cy.get('[data-qa=crn]')
 
-  headerDob = (): PageElement => cy.get('[data-qa=case-details-header-dob]')
+  headerDob = (): PageElement => cy.get('[data-qa=dob]')
 
-  headerTier = (): PageElement => cy.get('[data-qa=case-details-header-tier]')
+  headerTier = (): PageElement => cy.get('[data-qa=tier]')
 
-  headerProvisionalTag = (): PageElement => this.headerTier().siblings('.govuk-tag')
+  headerProvisionalTag = (): PageElement => cy.get('.person-header__meta .govuk-tag')
 
   headerRosh = (): PageElement => cy.get('[data-qa=case-details-header-rosh]')
 

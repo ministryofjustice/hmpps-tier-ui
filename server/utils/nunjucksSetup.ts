@@ -5,6 +5,7 @@ import express from 'express'
 import fs from 'fs'
 import { format, formatDistance, parseISO } from 'date-fns'
 import { arnsNunjucksSetup } from '@ministryofjustice/hmpps-arns-frontend-components-lib'
+import { mpopNunjucksSetup } from '@ministryofjustice/hmpps-mpop-frontend-components-lib'
 import { displayTier, initialiseName } from './utils'
 import config from '../config'
 import logger from '../../logger'
@@ -39,6 +40,7 @@ export default function nunjucksSetup(app: express.Express): void {
       'node_modules/@ministryofjustice/probation-search-frontend/components',
       'node_modules/@ministryofjustice/hmpps-probation-frontend-components/dist/assets/',
       'node_modules/@ministryofjustice/hmpps-arns-frontend-components-lib/dist/',
+      'node_modules/@ministryofjustice/hmpps-mpop-frontend-components-lib/dist/',
     ],
     {
       autoescape: true,
@@ -47,6 +49,7 @@ export default function nunjucksSetup(app: express.Express): void {
     },
   )
   arnsNunjucksSetup(njkEnv)
+  mpopNunjucksSetup(njkEnv)
 
   njkEnv.addFilter('initialiseName', initialiseName)
   njkEnv.addFilter('formatNumber', (num: number) => num.toLocaleString('en-GB'))
