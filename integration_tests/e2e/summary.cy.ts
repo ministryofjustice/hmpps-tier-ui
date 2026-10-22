@@ -10,13 +10,10 @@ context('Summary page', () => {
     cy.location('pathname').should('eq', '/v3/case/A000006')
     const page = Page.verifyOnPage(SummaryPage)
 
+    cy.get('[data-qa="new-pop-header"]').should('contain.text', 'Morgan Manager')
     page.headerCrn().should('have.text', 'A000006')
     page.headerDob().should('have.text', '15 May 1990')
-    page
-      .headerTier()
-      .should('have.text', 'Tier: B')
-      .should('have.attr', 'href', '/case/A000006')
-      .should('have.attr', 'aria-label', 'Tier: B')
+    page.headerTier().should('have.text', 'B').should('have.attr', 'href', '/case/A000006')
     page.headerProvisionalTag().should('not.exist')
     page.headerRosh().should('contain.text', 'RISK OF SERIOUS HARM').should('contain.text', 'MEDIUM')
     page
@@ -88,10 +85,7 @@ context('Summary page', () => {
 
     page.headerCrn().should('have.text', 'A000007')
     page.headerDob().should('have.text', '20 July 1987')
-    page
-      .headerTier()
-      .should('have.text', 'Tier: Not supervised')
-      .should('have.attr', 'aria-label', 'Tier: Not supervised')
+    page.headerTier().should('have.text', 'Not supervised')
     page.headerProvisionalTag().should('not.exist')
     page.warnings().should('not.exist')
 

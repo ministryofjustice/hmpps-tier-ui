@@ -17,6 +17,7 @@
   {{ probationCaseDetailsHeader({
     environment: environmentName,
     name: (personalDetails.name.forename + " " + personalDetails.name.surname),
+    manager: personalDetails.manager,
     crn: personalDetails.crn,
     dateOfBirth: (personalDetails.dateOfBirth | formatDate("d MMMM yyyy")),
     age: personalDetails.age,

@@ -115,11 +115,15 @@
         "jsonBody": {
           "crn": "A000001",
           "name": {
-            "forenames": "Jane",
+            "forename": "Jane",
             "surname": "Doe"
           },
           "dateOfBirth": "2000-01-01",
-          "age": "26"
+          "age": "26",
+          "manager": {
+            "forename": "Jordan",
+            "surname": "Officer"
+          }
         },
         "headers": {
           "Content-Type": "application/json"

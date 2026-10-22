@@ -122,7 +122,11 @@
             "surname": "Rivera"
           },
           "dateOfBirth": "1990-05-15",
-          "age": "35"
+          "age": "35",
+          "manager": {
+            "forename": "Morgan",
+            "surname": "Manager"
+          }
         },
         "headers": {
           "Content-Type": "application/json"

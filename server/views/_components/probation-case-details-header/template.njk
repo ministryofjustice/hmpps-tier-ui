@@ -1,6 +1,8 @@
 {%- from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs -%}
 {%- from "../predictor-timeline-item/macro.njk" import predictorTimelineItem -%}
 {%- from "arns/components/predictor-badge/macro.njk" import predictorBadge -%}
+{%- from "mpop/components/pop-header/macro.njk" import popHeader -%}
+{%- from "mpop/components/person-header/macro.njk" import personHeader -%}
 {%- if params.url and params.url | length > 0 -%}
   {%- set url = params.url -%}
 {%- else -%}
@@ -19,24 +21,22 @@
     { text: params.name, href: url + "/case/" + params.crn }
   ].concat(params.breadcrumbs | default([]))
 }) }}
+
+<div data-qa="new-pop-header">
+  {{ personHeader({
+    name: params.name,
+    crn: params.crn,
+    dob: params.dateOfBirth,
+    tier: params.tierScore | displayTier,
+    historyHref: "/case/" + params.crn,
+    tierProvisional: params.tierProvisional,
+    managedBy: params.manager.forename + ' ' + params.manager.surname
+  })
+  }}
+  </div>
+
 <div class="case-details-header">
   <div class="case-details-header__row">
-    <ul class="govuk-list govuk-caption-m govuk-!-margin-bottom-3">
-      <li>
-        CRN: <span data-qa="case-details-header-crn">{{ params.crn }}</span>
-      </li>
-      <li>
-        Date of birth:
-        <span data-qa="case-details-header-dob">{{ params.dateOfBirth }}</span>
-        (<span data-qa="case-details-header-age">{{ params.age }}</span> years old)
-      </li>
-      <li>
-        <a data-qa="case-details-header-tier" href="/case/{{ params.crn }}" aria-label="Tier: {{ params.tierScore | displayTier }}{% if params.tierProvisional %} Provisional{% endif %}">Tier: {{ params.tierScore | displayTier }}</a>
-        {% if params.tierProvisional %}
-        <strong class="govuk-tag govuk-tag--orange govuk-!-margin-left-1" aria-hidden="true">Provisional</strong>
-        {% endif %}
-      </li>
-    </ul>
     {%- if not params.riskData or params.riskData.assessments | length == 0 -%}
     <div class="case-details-header__predictors">
           {%- if params.rosh and params.rosh !== "NOT_FOUND" -%}
@@ -51,9 +51,6 @@
           {%- endif -%}
     </div>
     {%- endif -%}
-  </div>
-  <div class="case-details-header__row case-details-header__name">
-    <h1 class="govuk-heading-xl govuk-!-margin-bottom-4">{{ params.name }}</h1>
   </div>
   {%- if params.riskData and params.riskData.assessments | length -%}
   <div class="case-details-header__row">

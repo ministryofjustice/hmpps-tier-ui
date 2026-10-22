@@ -13,6 +13,11 @@ export interface PersonalDetails {
   }
   dateOfBirth: string
   age: string
+  manager: {
+    forename: string
+    middleName?: string
+    surname: string
+  }
 }
 
 export interface DeliusResponse {

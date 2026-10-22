@@ -5,13 +5,10 @@ context('V2 case view screen', () => {
   it('displays case details header', () => {
     cy.visit('/v2/case/A000001')
     const page = Page.verifyOnPage(CasePage)
+    cy.get('[data-qa="new-pop-header"]').should('contain.text', 'Jordan Officer')
     page.headerCrn().should('have.text', 'A000001')
     page.headerDob().should('have.text', '1 January 2000')
-    page
-      .headerTier()
-      .should('have.text', 'Tier: B2')
-      .should('have.attr', 'href', '/case/A000001')
-      .should('have.attr', 'aria-label', 'Tier: B2')
+    page.headerTier().should('have.text', 'B2').should('have.attr', 'href', '/case/A000001')
     page.headerProvisionalTag().should('not.exist')
     page.headerRosh().should('contain.text', 'ROSH').should('contain.text', 'MEDIUM')
     page.headerRsr().should('contain.text', 'RSR').should('contain.text', 'HIGH').should('contain.text', '12.3')
