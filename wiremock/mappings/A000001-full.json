@@ -120,7 +120,7 @@
           },
           "dateOfBirth": "2000-01-01",
           "age": "26",
-          "om": {
+          "manager": {
             "forename": "Jordan",
             "surname": "Officer"
           }

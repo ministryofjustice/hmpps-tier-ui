@@ -13,7 +13,7 @@ export interface PersonalDetails {
   }
   dateOfBirth: string
   age: string
-  om: {
+  manager: {
     forename: string
     middleName?: string
     surname: string

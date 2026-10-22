@@ -123,7 +123,7 @@
           },
           "dateOfBirth": "1990-05-15",
           "age": "35",
-          "om": {
+          "manager": {
             "forename": "Morgan",
             "surname": "Manager"
           }
