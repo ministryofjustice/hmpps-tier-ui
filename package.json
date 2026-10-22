@@ -48,7 +48,7 @@
     "date-fns": "^4.4.0",
     "express": "^5.3.0",
     "express-session": "^1.19.0",
-    "govuk-frontend": "^6.5.1",
+    "govuk-frontend": "^6.6.0",
     "helmet": "^8.3.0",
     "http-errors": "^2.0.1",
     "jsonwebtoken": "^9.0.3",
@@ -96,7 +96,7 @@
     "lint-staged": "^17.6.0",
     "nock": "^14.0.17",
     "supertest": "^7.3.1",
-    "ts-jest": "^29.4.14",
+    "ts-jest": "^29.4.15",
     "typescript": "^5.9.3",
     "wait-on": "9.5.1",
     "wiremock": "^3.13.2"
