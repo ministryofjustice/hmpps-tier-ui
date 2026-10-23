@@ -33,7 +33,7 @@ export default function caseV2Routes(router: Router, { hmppsAuthClient }: Servic
     if (config.audit.enabled) {
       await auditService.sendAuditMessage({
         action: 'VIEW_TIER_INFORMATION',
-        who: res.locals.user.username,
+        who: res.locals.user.userUuid,
         subjectId: crn,
         subjectType: 'CRN',
         correlationId: randomUUID(),
