@@ -16,7 +16,7 @@ export default function authorisationMiddleware(allowedRoles: string[] = []): Re
         authSource !== 'delius' ||
         (allowedAuthorities.length && !authorities.some(authority => allowedAuthorities.includes(authority)))
       ) {
-        logger.error('User is not authorised to access this')
+        logger.error(`User is not authorised to access this`, { userUuid: res.locals?.user?.userUuid })
         return res.redirect('/authError')
       }
 

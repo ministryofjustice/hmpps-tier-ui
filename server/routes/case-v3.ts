@@ -23,7 +23,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
         res.render('autherror-lao')
         return
       }
-      await audit('VIEW_TIER_INFORMATION', crn, res.locals.user.username)
+      await audit('VIEW_TIER_INFORMATION', crn, res.locals.user.userUuid)
 
       const tierClient = new TierV3ApiClient(hmppsAuthClient)
       const arnsClient = new ArnsApiClient(hmppsAuthClient)
@@ -95,7 +95,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       context: { username: res.locals.user.username },
     })
     if (!result.enabled) {
-      telemetry.trackEvent('UserNotAuthorisedToAccessV3', { username: res.locals.user.username })
+      telemetry.trackEvent('UserNotAuthorisedToAccessV3', { userUuid: res.locals.user.userUuid })
       res.redirect('/authError')
     } else next()
   })
@@ -112,7 +112,7 @@ export default function caseV3Routes(router: Router, { hmppsAuthClient }: Servic
       res.render('autherror-lao')
       return
     }
-    await audit('VIEW_TIER_HISTORY', crn, res.locals.user.username)
+    await audit('VIEW_TIER_HISTORY', crn, res.locals.user.userUuid)
 
     const tierClient = new TierV3ApiClient(hmppsAuthClient)
     const arnsClient = new ArnsApiClient(hmppsAuthClient)
