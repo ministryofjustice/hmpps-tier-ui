@@ -1,5 +1,5 @@
 # Stage: base image
-FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime AS base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine AS base
 
 ARG BUILD_NUMBER
 ARG GIT_REF
@@ -32,7 +32,11 @@ RUN npm run build
 RUN npm prune --no-audit --no-fund --omit=dev
 
 # Stage: copy production assets and dependencies
-FROM base
+FROM ghcr.io/ministryofjustice/hmpps-node:24-alpine-runtime
+
+ARG BUILD_NUMBER
+ARG GIT_REF
+ARG GIT_BRANCH
 
 COPY --from=build --chown=appuser:appgroup \
         /app/package.json \
@@ -49,7 +53,10 @@ COPY --from=build --chown=appuser:appgroup \
         /app/node_modules ./node_modules
 
 EXPOSE 3000
+ENV BUILD_NUMBER=${BUILD_NUMBER}
+ENV GIT_REF=${GIT_REF}
+ENV GIT_BRANCH=${GIT_BRANCH}
 ENV NODE_ENV='production'
 USER 2000
 
-CMD [ "npm", "start" ]
+CMD [ "sh", "-c", "node $NODE_OPTIONS dist/server.js | ./node_modules/.bin/bunyan -o short" ]
